@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Payment Failed — GITAcademy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--ink:#0d0d0f;--cream:#f5f0e8;--gold:#e8c547;--moss:#2d4a3e;--rust:#c4522a;--smoke:#f0ece4;--error:#e05555;--font-display:'Fraunces',Georgia,serif;--font-body:'DM Sans',system-ui,sans-serif;--shadow-sm:0 2px 8px rgba(13,13,15,.06);--shadow-md:0 4px 20px rgba(13,13,15,.1);--radius-md:12px;--radius-lg:18px;--radius-xl:24px}
+    body{font-family:var(--font-body);background:var(--smoke);color:var(--ink);min-height:100vh}
+    a{text-decoration:none;color:inherit}
+    button{cursor:pointer;font-family:inherit;border:none;background:none}
+    .navbar{height:64px;background:var(--cream);border-bottom:1px solid rgba(13,13,15,.08);display:flex;align-items:center;padding:0 2rem;justify-content:space-between}
+    .nav-logo{font-family:var(--font-display);font-size:1.4rem;font-weight:900;color:var(--ink);letter-spacing:-.03em}
+    .nav-logo span{color:var(--rust)}
+    .page{max-width:680px;margin:0 auto;padding:3rem 2rem 5rem}
+    .failed-hero{text-align:center;padding:3rem 2rem 2.5rem;background:white;border-radius:var(--radius-xl);border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-md);margin-bottom:2rem;position:relative;overflow:hidden}
+    .failed-blob{position:absolute;border-radius:50%;pointer-events:none}
+    .failed-blob-1{width:350px;height:350px;background:radial-gradient(circle,rgba(224,85,85,.06),transparent 70%);top:-100px;left:-80px}
+    .failed-blob-2{width:280px;height:280px;background:radial-gradient(circle,rgba(196,82,42,.06),transparent 70%);bottom:-80px;right:-60px}
+    .failed-icon-wrap{position:relative;z-index:1;width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,#e05555,#c43030);display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;box-shadow:0 8px 30px rgba(224,85,85,.3);animation:shake .6s ease both .3s;font-size:2.5rem;color:white}
+    @keyframes shake{0%,100%{transform:rotate(0)}20%{transform:rotate(-8deg)}40%{transform:rotate(8deg)}60%{transform:rotate(-4deg)}80%{transform:rotate(4deg)}}
+    .failed-eyebrow{font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--error);margin-bottom:.75rem;position:relative;z-index:1}
+    .failed-title{font-family:var(--font-display);font-size:clamp(1.8rem,5vw,2.6rem);font-weight:900;letter-spacing:-.03em;margin-bottom:.75rem;line-height:1.05;position:relative;z-index:1}
+    .failed-title em{font-style:italic;font-weight:300;color:var(--error)}
+    .failed-sub{font-size:.95rem;color:rgba(13,13,15,.55);max-width:440px;margin:0 auto 1.5rem;line-height:1.7;position:relative;z-index:1}
+    .error-pill{display:inline-flex;align-items:center;gap:.5rem;background:rgba(224,85,85,.08);border:1px solid rgba(224,85,85,.2);border-radius:100px;padding:.4rem 1rem;font-size:.78rem;font-weight:600;color:var(--error);position:relative;z-index:1;margin-bottom:2rem}
+    .failed-actions{display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;position:relative;z-index:1}
+    .btn-retry{background:var(--rust);color:white;border:none;padding:1rem 2.2rem;border-radius:100px;font-size:.95rem;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit;display:inline-flex;align-items:center;gap:.5rem;text-decoration:none}
+    .btn-retry:hover{background:#b04424;transform:translateY(-2px)}
+    .btn-cart{background:transparent;color:var(--ink);border:1.5px solid rgba(13,13,15,.15);padding:1rem 2rem;border-radius:100px;font-size:.95rem;font-weight:500;cursor:pointer;transition:.2s;font-family:inherit;display:inline-flex;align-items:center;gap:.5rem;text-decoration:none}
+    .btn-cart:hover{background:var(--ink);color:var(--cream)}
+    .section-title{font-family:var(--font-display);font-size:1.2rem;font-weight:900;letter-spacing:-.02em;margin-bottom:1rem}
+    .reasons-card{background:white;border-radius:var(--radius-xl);border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);padding:1.5rem;margin-bottom:1.5rem}
+    .reasons-list{display:flex;flex-direction:column;gap:.85rem}
+    .reason-item{display:flex;align-items:flex-start;gap:.85rem;padding:.85rem;border-radius:var(--radius-md);background:var(--smoke)}
+    .reason-icon{font-size:1.3rem;flex-shrink:0}
+    .reason-text strong{display:block;font-size:.875rem;font-weight:700;margin-bottom:.2rem}
+    .reason-text span{font-size:.8rem;color:rgba(13,13,15,.5);line-height:1.5}
+    .tips-card{background:var(--ink);border-radius:var(--radius-xl);padding:1.75rem;margin-bottom:1.5rem}
+    .tips-title{font-family:var(--font-display);font-size:1.05rem;font-weight:700;color:var(--cream);margin-bottom:1.1rem}
+    .tips-list{display:flex;flex-direction:column;gap:.65rem}
+    .tip-item{display:flex;align-items:flex-start;gap:.65rem}
+    .tip-bullet{width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:.4rem}
+    .tip-text{font-size:.82rem;color:rgba(245,240,232,.6);line-height:1.5}
+    .tip-text strong{color:rgba(245,240,232,.85)}
+    .alt-payments{background:white;border-radius:var(--radius-xl);border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:1.5rem}
+    .alt-hdr{padding:1.2rem 1.5rem;border-bottom:1px solid rgba(13,13,15,.06);font-family:var(--font-display);font-size:1rem;font-weight:700}
+    .alt-body{padding:1.25rem 1.5rem;display:flex;flex-direction:column;gap:.6rem}
+    .alt-option{display:flex;align-items:center;gap:.85rem;padding:.85rem 1rem;border-radius:var(--radius-md);border:1.5px solid rgba(13,13,15,.08);cursor:pointer;transition:.2s;text-decoration:none;color:inherit}
+    .alt-option:hover{border-color:var(--moss);background:rgba(45,74,62,.04)}
+    .alt-icon{font-size:1.4rem}
+    .alt-info strong{display:block;font-size:.875rem;font-weight:600;margin-bottom:.1rem}
+    .alt-info span{font-size:.75rem;color:rgba(13,13,15,.45)}
+    .alt-arrow{margin-left:auto;color:rgba(13,13,15,.3)}
+    .support-note{text-align:center;padding:1.5rem;background:white;border-radius:var(--radius-xl);border:1px solid rgba(13,13,15,.06)}
+    .support-note p{font-size:.875rem;color:rgba(13,13,15,.5);margin-bottom:.75rem}
+    .support-links{display:flex;align-items:center;justify-content:center;gap:1.5rem;flex-wrap:wrap}
+    .support-link{font-size:.82rem;font-weight:600;color:var(--rust);display:flex;align-items:center;gap:.3rem}
+    @media(max-width:600px){.page{padding:2rem 1.25rem 4rem}.failed-actions{flex-direction:column}.btn-retry,.btn-cart{width:100%;justify-content:center}}
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="learnhub_responsive.html" class="nav-logo">GIT<span>Academy</span></a>
+  <a href="cart.html" style="font-size:.82rem;color:rgba(13,13,15,.5);font-weight:500;display:flex;align-items:center;gap:.4rem"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Back to Cart</a>
+</nav>
+<div class="page">
+  <div class="failed-hero">
+    <div class="failed-blob failed-blob-1"></div>
+    <div class="failed-blob failed-blob-2"></div>
+    <div class="failed-icon-wrap">✕</div>
+    <p class="failed-eyebrow">Payment Failed</p>
+    <h1 class="failed-title">Oops! Something<br>went <em>wrong.</em></h1>
+    <p class="failed-sub">Your payment could not be processed. Don't worry — your cart is saved and you haven't been charged.</p>
+    <div class="error-pill"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Error: Card declined — insufficient funds</div>
+    <div class="failed-actions">
+      <a href="checkout.html" class="btn-retry"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.49-3.46"/></svg>Try Again</a>
+      <a href="cart.html" class="btn-cart"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>View Cart</a>
+    </div>
+  </div>
+  <div class="section-title">Why did this happen?</div>
+  <div class="reasons-card">
+    <div class="reasons-list">
+      <div class="reason-item"><span class="reason-icon">💳</span><div class="reason-text"><strong>Insufficient funds</strong><span>Your card doesn't have enough balance to cover this transaction.</span></div></div>
+      <div class="reason-item"><span class="reason-icon">🔒</span><div class="reason-text"><strong>Card blocked by your bank</strong><span>Some banks block online international transactions. Contact your bank to authorize it.</span></div></div>
+      <div class="reason-item"><span class="reason-icon">📅</span><div class="reason-text"><strong>Expired or incorrect card details</strong><span>Double-check your card number, expiry date and CVV.</span></div></div>
+    </div>
+  </div>
+  <div class="tips-card">
+    <div class="tips-title">💡 Tips to fix it</div>
+    <div class="tips-list">
+      <div class="tip-item"><span class="tip-bullet"></span><span class="tip-text"><strong>Check your balance</strong> — ensure your card has enough funds</span></div>
+      <div class="tip-item"><span class="tip-bullet"></span><span class="tip-text"><strong>Call your bank</strong> — ask them to whitelist online international transactions</span></div>
+      <div class="tip-item"><span class="tip-bullet"></span><span class="tip-text"><strong>Try Mobile Money</strong> — MTN MoMo, Airtel Money and M-Pesa are fully supported</span></div>
+      <div class="tip-item"><span class="tip-bullet"></span><span class="tip-text"><strong>Use PayPal</strong> — a fast and reliable alternative</span></div>
+    </div>
+  </div>
+  <div class="alt-payments">
+    <div class="alt-hdr">Try an alternative payment method</div>
+    <div class="alt-body">
+      <a href="checkout.html" class="alt-option"><span class="alt-icon">📱</span><div class="alt-info"><strong>Mobile Money</strong><span>MTN MoMo, Airtel Money, Vodafone Cash, M-Pesa</span></div><span class="alt-arrow">›</span></a>
+      <a href="checkout.html" class="alt-option"><span class="alt-icon">🅿</span><div class="alt-info"><strong>PayPal</strong><span>Pay securely with your PayPal balance or linked card</span></div><span class="alt-arrow">›</span></a>
+      <a href="checkout.html" class="alt-option"><span class="alt-icon">💳</span><div class="alt-info"><strong>Different Card</strong><span>Try another Visa, Mastercard or prepaid virtual card</span></div><span class="alt-arrow">›</span></a>
+    </div>
+  </div>
+  <div class="support-note">
+    <p>Still having trouble? Our support team is available 24/7.</p>
+    <div class="support-links">
+      <a href="help.html" class="support-link"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Help Centre</a>
+      <a href="contact.html" class="support-link"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Live Chat</a>
+      <a href="/cdn-cgi/l/email-protection#72010702021d0006321e1713001c1a07105c111d1f" class="support-link"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Email Support</a>
+
+
+<script>
+  // ── Retry timer countdown ─────────────────────────────────
+  // Show a gentle "You can try again in Xs" after arriving
+  let retrySeconds = 0;
+  const retryBtns = document.querySelectorAll('.btn-retry');
+
+  // ── Alt payment method click tracking ────────────────────
+  document.querySelectorAll('.alt-option').forEach(opt => {
+    opt.addEventListener('click', function(e) {
+      // Store preferred payment method for checkout page
+      const method = this.querySelector('.alt-info strong')?.textContent || '';
+      if (method) localStorage.setItem('lh_preferred_payment', method);
+    });
+  });
+
+  // ── Animate error icon on load ────────────────────────────
+  const errIcon = document.querySelector('.failed-icon-wrap');
+  if (errIcon) {
+    errIcon.style.animation = 'none';
+    requestAnimationFrame(() => {
+      errIcon.style.animation = '';
+    });
+  }
+
+  // ── Support links ─────────────────────────────────────────
+  document.querySelectorAll('.support-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+      const text = this.textContent.trim();
+      if (text.includes('Chat')) {
+        e.preventDefault();
+        alert('Live chat opening... (connect to your chat widget here)');
+      }
+    });
+  });
+
+  // ── User nav populate ─────────────────────────────────────
+  try {
+    const user = JSON.parse(localStorage.getItem('lh_user'));
+    if (user) {
+      const nav = document.querySelector('.navbar');
+      if (nav) {
+        const n = nav.querySelector('.nav-user-name');
+        const a = nav.querySelector('.avatar');
+        if (n) n.textContent = user.first_name || 'You';
+        if (a) a.textContent = ((user.first_name?.[0]||'') + (user.last_name?.[0]||'')).toUpperCase() || 'U';
+      }
+    }
+  } catch(_) {}
+</script>
+</body>
+</html>

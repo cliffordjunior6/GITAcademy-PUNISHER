@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Categories — GITAcademy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --ink:#0d0d0f;--cream:#f5f0e8;--gold:#e8c547;--moss:#2d4a3e;
+      --rust:#c4522a;--paper:#faf8f3;--smoke:#f0ece4;
+      --font-display:'Fraunces',Georgia,serif;--font-body:'DM Sans',system-ui,sans-serif;
+      --nav-h:64px;--shadow-sm:0 2px 8px rgba(13,13,15,.06);--shadow-md:0 4px 20px rgba(13,13,15,.1);
+      --radius-sm:8px;--radius-md:12px;--radius-lg:18px;--radius-xl:24px;
+    }
+    body{font-family:var(--font-body);background:var(--smoke);color:var(--ink);overflow-x:hidden}
+    a{text-decoration:none;color:inherit}
+    button{cursor:pointer;font-family:inherit;border:none;background:none}
+
+    /* NAVBAR */
+    .navbar{position:sticky;top:0;z-index:500;height:var(--nav-h);background:var(--cream);border-bottom:1px solid rgba(13,13,15,.08);display:flex;align-items:center;padding:0 2rem;gap:1.5rem}
+    .nav-logo{font-family:var(--font-display);font-size:1.4rem;font-weight:900;color:var(--ink);letter-spacing:-.03em;flex-shrink:0}
+    .nav-logo span{color:var(--rust)}
+    .nav-links{display:flex;align-items:center;gap:.25rem}
+    .nav-link{font-size:.875rem;font-weight:500;color:rgba(13,13,15,.55);padding:.4rem .8rem;border-radius:var(--radius-md);transition:.15s}
+    .nav-link:hover,.nav-link.active{color:var(--ink);background:var(--smoke)}
+    .nav-search{flex:1;max-width:420px;position:relative;margin:0 auto}
+    .nav-search input{width:100%;background:var(--smoke);border:1.5px solid transparent;border-radius:100px;padding:.5rem 1rem .5rem 2.5rem;font-size:.875rem;color:var(--ink);outline:none;transition:.2s;font-family:var(--font-body)}
+    .nav-search input:focus{background:white;border-color:var(--moss);box-shadow:0 0 0 3px rgba(45,74,62,.08)}
+    .nav-search input::placeholder{color:rgba(13,13,15,.4)}
+    .nav-search-icon{position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:rgba(13,13,15,.4);pointer-events:none}
+    .nav-actions{display:flex;align-items:center;gap:.75rem;margin-left:auto;flex-shrink:0}
+    .btn-ghost{background:none;border:1.5px solid rgba(13,13,15,.18);padding:.5rem 1.2rem;border-radius:100px;font-size:.85rem;font-weight:500;color:var(--ink);transition:.2s;font-family:inherit}
+    .btn-ghost:hover{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+    .btn-primary{background:var(--ink);color:var(--cream);border:none;padding:.5rem 1.4rem;border-radius:100px;font-size:.85rem;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit}
+    .btn-primary:hover{background:var(--rust)}
+    .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--moss),var(--rust));display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:var(--cream);flex-shrink:0}
+    .nav-user{display:flex;align-items:center;gap:.5rem;padding:.3rem .5rem .3rem .85rem;border-radius:100px;border:1.5px solid rgba(13,13,15,.1);cursor:pointer;transition:.2s;background:none}
+    .nav-user:hover{border-color:var(--ink);background:var(--smoke)}
+    .nav-user-name{font-size:.82rem;font-weight:500;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .hamburger{display:none;flex-direction:column;gap:5px;padding:4px}
+    .hamburger span{display:block;width:22px;height:2px;background:var(--ink);border-radius:2px}
+
+    /* HERO */
+    .cat-hero{background:var(--ink);padding:4rem 2rem;text-align:center;position:relative;overflow:hidden}
+    .cat-hero-blob{position:absolute;border-radius:50%;pointer-events:none}
+    .cat-hero-blob-1{width:500px;height:500px;background:radial-gradient(circle,rgba(45,74,62,.5),transparent 70%);top:-200px;left:-100px}
+    .cat-hero-blob-2{width:400px;height:400px;background:radial-gradient(circle,rgba(232,197,71,.1),transparent 70%);top:-150px;right:-100px}
+    .cat-hero-inner{position:relative;z-index:1;max-width:600px;margin:0 auto}
+    .cat-hero h1{font-family:var(--font-display);font-size:clamp(2.2rem,5vw,4rem);font-weight:900;color:var(--cream);letter-spacing:-.03em;margin-bottom:.75rem;line-height:1}
+    .cat-hero h1 em{font-style:italic;font-weight:300;color:var(--gold)}
+    .cat-hero p{font-size:1rem;color:rgba(245,240,232,.5);font-weight:300;margin-bottom:2rem}
+    .cat-search{max-width:480px;margin:0 auto;display:flex;gap:.5rem;background:white;border-radius:100px;padding:.35rem .35rem .35rem 1.2rem;box-shadow:0 8px 30px rgba(13,13,15,.25)}
+    .cat-search input{flex:1;border:none;outline:none;font-size:.9rem;font-family:var(--font-body);color:var(--ink);background:transparent}
+    .cat-search input::placeholder{color:rgba(13,13,15,.35)}
+    .cat-search-btn{background:var(--ink);color:var(--cream);border:none;padding:.65rem 1.4rem;border-radius:100px;font-size:.85rem;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;transition:.2s}
+    .cat-search-btn:hover{background:var(--rust)}
+
+    /* CONTENT */
+    .container{max-width:1200px;margin:0 auto;padding:0 2rem}
+    .section{padding:4rem 0}
+    .section-hdr{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:2rem}
+    .section-eyebrow{font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--rust);margin-bottom:.35rem}
+    .section-title{font-family:var(--font-display);font-size:clamp(1.8rem,3vw,2.4rem);font-weight:900;letter-spacing:-.03em}
+
+    /* FEATURED CATEGORIES */
+    .featured-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-bottom:3rem}
+    .featured-cat{
+      border-radius:var(--radius-xl);padding:2.2rem;min-height:200px;
+      display:flex;flex-direction:column;justify-content:flex-end;
+      position:relative;overflow:hidden;transition:.2s;cursor:pointer
+    }
+    .featured-cat:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(13,13,15,.18)}
+    .featured-cat-icon{font-size:3.5rem;position:absolute;top:1.5rem;right:1.5rem;opacity:.4}
+    .featured-cat-eyebrow{font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.4rem;opacity:.75}
+    .featured-cat-title{font-family:var(--font-display);font-size:1.6rem;font-weight:900;letter-spacing:-.02em;margin-bottom:.3rem}
+    .featured-cat-count{font-size:.82rem;opacity:.65}
+    .featured-cat.dev{background:linear-gradient(135deg,#0d0d0f,#2d4a3e);color:var(--cream)}
+    .featured-cat.design{background:linear-gradient(135deg,#c4522a,#e8c547);color:var(--ink)}
+    .featured-cat.data{background:linear-gradient(135deg,#1a237e,#3949ab);color:var(--cream)}
+
+    /* ALL CATEGORIES GRID */
+    .all-cats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+    .cat-card{
+      background:white;border-radius:var(--radius-lg);padding:1.5rem;
+      border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);
+      transition:.2s;display:flex;align-items:flex-start;gap:1rem
+    }
+    .cat-card:hover{box-shadow:var(--shadow-md);transform:translateY(-3px);border-color:rgba(45,74,62,.2)}
+    .cat-card-icon{font-size:2rem;flex-shrink:0;width:52px;height:52px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;background:var(--smoke)}
+    .cat-card-info{flex:1}
+    .cat-card-name{font-weight:700;font-size:.95rem;margin-bottom:.3rem}
+    .cat-card-count{font-size:.78rem;color:rgba(13,13,15,.45);margin-bottom:.6rem}
+    .cat-card-sub{display:flex;flex-direction:column;gap:.2rem}
+    .cat-sub-link{font-size:.78rem;color:var(--moss);font-weight:500;transition:.15s}
+    .cat-sub-link:hover{color:var(--rust)}
+
+    /* POPULAR TOPICS */
+    .topics-wrap{display:flex;flex-wrap:wrap;gap:.65rem;margin-top:1.5rem}
+    .topic-tag{
+      background:white;border:1.5px solid rgba(13,13,15,.1);border-radius:100px;
+      padding:.5rem 1.1rem;font-size:.85rem;font-weight:500;
+      transition:.2s;cursor:pointer
+    }
+    .topic-tag:hover{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+    .topic-tag.hot::after{content:'🔥';margin-left:.35rem;font-size:.75rem}
+
+    /* FOOTER */
+    footer{background:var(--ink);color:var(--cream);padding:3rem 2rem 1.5rem;margin-top:0}
+    .footer-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;padding-bottom:2rem;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:1.5rem}
+    .footer-logo{font-family:var(--font-display);font-size:1.4rem;font-weight:900}
+    .footer-logo span{color:var(--rust)}
+    .footer-links-row{display:flex;gap:2rem;flex-wrap:wrap}
+    .footer-links-row a{font-size:.85rem;color:rgba(245,240,232,.5);transition:.15s}
+    .footer-links-row a:hover{color:var(--cream)}
+    .footer-bottom{max-width:1200px;margin:0 auto;text-align:center;font-size:.78rem;color:rgba(245,240,232,.25)}
+
+    /* FADE */
+    .fade{animation:fadeUp .6s ease both}
+    .d1{animation-delay:.05s}.d2{animation-delay:.15s}.d3{animation-delay:.25s}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+    /* RESPONSIVE */
+    @media(max-width:1024px){.all-cats-grid{grid-template-columns:repeat(3,1fr)}.featured-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:768px){
+      .nav-links,.nav-search{display:none}.hamburger{display:flex}
+      .nav-actions .btn-ghost,.nav-actions .btn-primary{display:none}
+      .nav-user-name{display:none}
+      .all-cats-grid{grid-template-columns:repeat(2,1fr)}
+      .featured-grid{grid-template-columns:1fr}
+      .cat-hero{padding:3rem 1.25rem}
+      .container{padding:0 1.25rem}
+    }
+    @media(max-width:480px){.all-cats-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <button class="hamburger" id="hamburgerBtn"><span></span><span></span><span></span></button>
+  <a href="learnhub_responsive.html" class="nav-logo">GIT<span>Academy</span></a>
+  <ul class="nav-links">
+    <li><a href="home.html" class="nav-link">Browse</a></li>
+    <li><a href="category-list.html" class="nav-link active">Categories</a></li>
+    <li><a href="about.html" class="nav-link">About</a></li>
+  </ul>
+  <div class="nav-search">
+    <svg class="nav-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" placeholder="Search courses…"/>
+  </div>
+  <div class="nav-actions">
+    <a href="login.html" class="btn-ghost">Log in</a>
+    <a href="register.html" class="btn-primary">Sign up</a>
+    <div style="display:flex;align-items:center;gap:.5rem">
+      <button class="nav-user" id="userMenuBtn"><span class="nav-user-name">Justice Elorm</span><div class="avatar">JE</div></button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="cat-hero">
+  <div class="cat-hero-blob cat-hero-blob-1"></div>
+  <div class="cat-hero-blob cat-hero-blob-2"></div>
+  <div class="cat-hero-inner">
+    <h1 class="fade d1">Explore <em>every</em><br>topic imaginable.</h1>
+    <p class="fade d2">8,400+ courses across 50+ categories. Find exactly what you're looking for.</p>
+    <div class="cat-search fade d3">
+      <input type="text" placeholder="What do you want to learn?"/>
+      <button class="cat-search-btn" onclick="window.location='course-list.html'">Search</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div style="background:var(--smoke)">
+  <div class="container">
+
+    <!-- Featured -->
+    <div class="section">
+      <div class="section-hdr">
+        <div>
+          <div class="section-eyebrow">Most Popular</div>
+          <div class="section-title">Top Categories</div>
+        </div>
+      </div>
+      <div class="featured-grid">
+        <a href="course-list.html?cat=development" class="featured-cat dev">
+          <div class="featured-cat-icon">💻</div>
+          <div class="featured-cat-eyebrow">Most Enrolled</div>
+          <div class="featured-cat-title">Development</div>
+          <div class="featured-cat-count">1,240 courses · 620K learners</div>
+        </a>
+        <a href="course-list.html?cat=design" class="featured-cat design">
+          <div class="featured-cat-icon">🎨</div>
+          <div class="featured-cat-eyebrow">Creative Skills</div>
+          <div class="featured-cat-title">Design</div>
+          <div class="featured-cat-count">820 courses · 340K learners</div>
+        </a>
+        <a href="course-list.html?cat=data" class="featured-cat data">
+          <div class="featured-cat-icon">📊</div>
+          <div class="featured-cat-eyebrow">Fastest Growing</div>
+          <div class="featured-cat-title">Data Science</div>
+          <div class="featured-cat-count">640 courses · 280K learners</div>
+        </a>
+      </div>
+
+      <!-- All Categories -->
+      <div class="section-hdr" style="margin-bottom:1.5rem">
+        <div>
+          <div class="section-eyebrow">Browse All</div>
+          <div class="section-title">All Categories</div>
+        </div>
+      </div>
+      <div class="all-cats-grid">
+        <a href="course-list.html?cat=development" class="cat-card">
+          <div class="cat-card-icon">💻</div>
+          <div class="cat-card-info">
+            <div class="cat-card-name">Development</div>
+            <div class="cat-card-count">1,240 courses</div>
+            <div class="cat-card-sub">
+              <span class="cat-sub-link">Web Development</span>
+              <span class="cat-sub-link">Mobile Apps</span>
+              <span class="cat-sub-link">Game Dev</span>
+            </div>
+          </div>
+        </a>
+        <a href="course-list.html?cat=design" class="cat-card">
+          <div class="cat-card-icon">🎨</div>
+          <div class="cat-card-info">
+            <div class="cat-card-name">Design</div>
+            <div class="cat-card-count">820 courses</div>
+            <div class="cat-card-sub">
+              <span class="cat-sub-link">UI/UX Design</span>
+              <span class="cat-sub-link">Graphic Design</span>
+              <span class="cat-sub-link">Motion Design</span>
+            </div>
+          </div>
+        </a>
+        <a href="course-list.html?cat=data" class="cat-card">
+          <div class="cat-card-icon">📊</div>
+          <div class="cat-card-info">
+            <div class="cat-card-name">Data Science</div>
+            <div class="cat-card-count">640 courses</div>
+            <div class="cat-card-sub">
+              <span class="cat-sub-link">Machine Learning</span>
+              <span class="cat-sub-link">Data Analysis</span>
+              <span class="cat-sub-link">Deep Learning</span>
+            </div>
+          </div>
+        </a>
+        <a href="course-list.html?cat=business" class="cat-card">
+          <div class="cat-card-icon">💼</div>
+          <div class="cat-card-info">
+            <div class="cat-card-name">Business</div>
+            <div class="cat-card-count">530 courses</div>
+            <div class="cat-card-sub">
+              <span class="cat-sub-link">Entrepreneurship</span>
+              <span class="cat-sub-link">Finance</span>
+              <span class="cat-sub-link">Management</span>
+            </div>
+          </div>
+        </a>
+        <a href="course-list.html?cat=marketing" class="cat-card">
+          <div class="cat-card-icon">📢</div>
+          <div class="cat-card-info">
+            <div class="cat-card-name">Marketing</div>
+            <div class="cat-card-count">410 courses</div>
+            <div class="cat-card-sub">
+              <span class="cat-sub-link">Digital Marketing</span>
+              <span class="cat-sub-link">Social Media</span>
+              <span class="cat-sub-link">SEO & SEM</span>
+            </div>
+          </div>
+        </a>
+        <a href="course-list.html?cat=photography" class="cat-card">
+          <div class="cat-card-icon">📸</div>
+          <div class="cat-card-info">
+            <div class="cat-card-name">Photography</div>
+            <div class="cat-card-count">280 courses</div>
+            <div class="cat-card-sub">
+              <span class="cat-sub-link">Portrait</span>
+              <span class="cat-sub-link">Landscape</span>
+              <span class="cat-sub-link">Photo Editing</span>
+            </div>
+          </div>
+        </a>
+        <a href="course-list.html?cat=music" class="cat-card">
+          <div class="cat-card-icon">🎵</div>
+          <div class="cat-card-info">
+            <div class="cat-card-name">Music</div>
+            <div class="cat-card-count">190 courses</div>
+            <div class="cat-card-sub">
+              <span class="cat-sub-link">Guitar</span>
+              <span class="cat-sub-link">Music Production</span>
+              <span class="cat-sub-link">Piano</span>
+            </div>
+          </div>
+        </a>
+        <a href="course-list.html?cat=health" class="cat-card">
+          <div class="cat-card-icon">🏋️</div>
+          <div class="cat-card-info">
+            <div class="cat-card-name">Health & Fitness</div>
+            <div class="cat-card-count">320 courses</div>
+            <div class="cat-card-sub">
+              <span class="cat-sub-link">Yoga</span>
+              <span class="cat-sub-link">Nutrition</span>
+              <span class="cat-sub-link">Mental Health</span>
+            </div>
+          </div>
+        </a>
+        <a href="course-list.html?cat=language" class="cat-card">
+          <div class="cat-card-icon">🌍</div>
+          <div class="cat-card-info">
+            <div class="cat-card-name">Language</div>
+            <div class="cat-card-count">240 courses</div>
+            <div class="cat-card-sub">
+              <span class="cat-sub-link">English</span>
+              <span class="cat-sub-link">French</span>
+              <span class="cat-sub-link">Mandarin</span>
+            </div>
+          </div>
+        </a>
+        <a href="course-list.html?cat=personal" class="cat-card">
+          <div class="cat-card-icon">🧠</div>
+          <div class="cat-card-info">
+            <div class="cat-card-name">Personal Dev</div>
+            <div class="cat-card-count">380 courses</div>
+            <div class="cat-card-sub">
+              <span class="cat-sub-link">Productivity</span>
+              <span class="cat-sub-link">Leadership</span>
+              <span class="cat-sub-link">Mindfulness</span>
+            </div>
+          </div>
+        </a>
+        <a href="course-list.html?cat=video" class="cat-card">
+          <div class="cat-card-icon">🎬</div>
+          <div class="cat-card-info">
+            <div class="cat-card-name">Video Production</div>
+            <div class="cat-card-count">210 courses</div>
+            <div class="cat-card-sub">
+              <span class="cat-sub-link">Filmmaking</span>
+              <span class="cat-sub-link">Video Editing</span>
+              <span class="cat-sub-link">YouTube</span>
+            </div>
+          </div>
+        </a>
+        <a href="course-list.html?cat=security" class="cat-card">
+          <div class="cat-card-icon">🔐</div>
+          <div class="cat-card-info">
+            <div class="cat-card-name">Cybersecurity</div>
+            <div class="cat-card-count">180 courses</div>
+            <div class="cat-card-sub">
+              <span class="cat-sub-link">Ethical Hacking</span>
+              <span class="cat-sub-link">Network Security</span>
+              <span class="cat-sub-link">Cloud Security</span>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Popular Topics -->
+      <div style="margin-top:3rem">
+        <div class="section-eyebrow" style="margin-bottom:.75rem">Trending Right Now</div>
+        <div class="section-title" style="margin-bottom:0">Popular Topics</div>
+        <div class="topics-wrap">
+          <a href="course-list.html?q=python" class="topic-tag hot">Python</a>
+          <a href="course-list.html?q=chatgpt" class="topic-tag hot">ChatGPT & AI</a>
+          <a href="course-list.html?q=react" class="topic-tag hot">React</a>
+          <a href="course-list.html?q=figma" class="topic-tag">Figma</a>
+          <a href="course-list.html?q=excel" class="topic-tag">Excel</a>
+          <a href="course-list.html?q=sql" class="topic-tag">SQL</a>
+          <a href="course-list.html?q=javascript" class="topic-tag">JavaScript</a>
+          <a href="course-list.html?q=aws" class="topic-tag">AWS</a>
+          <a href="course-list.html?q=docker" class="topic-tag">Docker</a>
+          <a href="course-list.html?q=photoshop" class="topic-tag">Photoshop</a>
+          <a href="course-list.html?q=nodejs" class="topic-tag">Node.js</a>
+          <a href="course-list.html?q=flutter" class="topic-tag">Flutter</a>
+          <a href="course-list.html?q=cybersecurity" class="topic-tag">Cybersecurity</a>
+          <a href="course-list.html?q=powerbi" class="topic-tag">Power BI</a>
+          <a href="course-list.html?q=django" class="topic-tag">Django</a>
+          <a href="course-list.html?q=blockchain" class="topic-tag">Blockchain</a>
+          <a href="course-list.html?q=laravel" class="topic-tag">Laravel</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">GIT<span>Academy</span></div>
+    <div class="footer-links-row">
+      <a href="home.html">Browse Courses</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="terms.html">Terms</a>
+      <a href="privacy.html">Privacy</a>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 GITAcademy. All rights reserved.</div>
+</footer>
+
+<script>
+  document.getElementById('hamburgerBtn').addEventListener('click', () => {});
+  document.getElementById('userMenuBtn').addEventListener('click', e => e.stopPropagation());
+</script>
+</body>
+</html>

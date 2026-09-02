@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Cart — GITAcademy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --ink:#0d0d0f;--cream:#f5f0e8;--gold:#e8c547;--moss:#2d4a3e;
+      --rust:#c4522a;--paper:#faf8f3;--smoke:#f0ece4;--mist:#e8e3db;
+      --error:#e05555;--success:#2d7a4f;
+      --font-display:'Fraunces',Georgia,serif;--font-body:'DM Sans',system-ui,sans-serif;
+      --nav-h:64px;
+      --shadow-sm:0 2px 8px rgba(13,13,15,.06);--shadow-md:0 4px 20px rgba(13,13,15,.1);--shadow-lg:0 12px 40px rgba(13,13,15,.14);
+      --radius-sm:8px;--radius-md:12px;--radius-lg:18px;--radius-xl:24px;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:var(--font-body);background:var(--smoke);color:var(--ink);min-height:100vh}
+    a{text-decoration:none;color:inherit}
+    button{cursor:pointer;font-family:inherit;border:none;background:none}
+
+    /* ══ NAVBAR ══ */
+    .navbar{position:sticky;top:0;z-index:500;height:var(--nav-h);background:var(--cream);border-bottom:1px solid rgba(13,13,15,.08);display:flex;align-items:center;padding:0 2rem;gap:1.5rem}
+    .nav-logo{font-family:var(--font-display);font-size:1.4rem;font-weight:900;color:var(--ink);letter-spacing:-.03em}
+    .nav-logo span{color:var(--rust)}
+    .nav-links{display:flex;gap:.25rem}
+    .nav-link{font-size:.875rem;font-weight:500;color:rgba(13,13,15,.5);padding:.4rem .8rem;border-radius:var(--radius-md);transition:.15s}
+    .nav-link:hover{color:var(--ink);background:var(--smoke)}
+    .nav-right{display:flex;align-items:center;gap:.75rem;margin-left:auto}
+    .btn-ghost{background:none;border:1.5px solid rgba(13,13,15,.18);padding:.5rem 1.2rem;border-radius:100px;font-size:.85rem;font-weight:500;color:var(--ink);transition:.2s;font-family:inherit}
+    .btn-ghost:hover{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+    .btn-primary-sm{background:var(--ink);color:var(--cream);border:none;padding:.5rem 1.3rem;border-radius:100px;font-size:.85rem;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit}
+    .btn-primary-sm:hover{background:var(--rust)}
+    .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--moss),var(--rust));display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:var(--cream)}
+    .nav-user{display:flex;align-items:center;gap:.5rem;padding:.3rem .5rem .3rem .85rem;border-radius:100px;border:1.5px solid rgba(13,13,15,.1);cursor:pointer;transition:.2s;background:none}
+    .nav-user:hover{border-color:var(--ink)}
+    .nav-user-name{font-size:.82rem;font-weight:500;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .nav-user-wrap{position:relative}
+    .user-dropdown{position:absolute;top:calc(100% + 8px);right:0;background:white;border:1px solid rgba(13,13,15,.08);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:.5rem;min-width:200px;opacity:0;pointer-events:none;transform:translateY(-8px);transition:.2s;z-index:600}
+    .user-dropdown.open{opacity:1;pointer-events:all;transform:translateY(0)}
+    .dropdown-item{display:flex;align-items:center;gap:.6rem;padding:.6rem .75rem;border-radius:var(--radius-sm);font-size:.875rem;font-weight:500;color:rgba(13,13,15,.7);transition:.15s}
+    .dropdown-item:hover{background:var(--smoke);color:var(--ink)}
+    .dropdown-item.danger{color:var(--error)}
+    .dropdown-sep{height:1px;background:rgba(13,13,15,.06);margin:.4rem 0}
+    .hamburger{display:none;flex-direction:column;gap:5px;padding:4px}
+    .hamburger span{display:block;width:22px;height:2px;background:var(--ink);border-radius:2px}
+
+    /* ══ PAGE ══ */
+    .page-header{padding:2.5rem 2rem 1.5rem;max-width:1100px;margin:0 auto}
+    .page-title{font-family:var(--font-display);font-size:clamp(1.8rem,4vw,2.8rem);font-weight:900;letter-spacing:-.03em;margin-bottom:.3rem}
+    .page-subtitle{font-size:.9rem;color:rgba(13,13,15,.45)}
+
+    .page-body{max-width:1100px;margin:0 auto;padding:0 2rem 4rem;display:grid;grid-template-columns:1fr 360px;gap:2.5rem;align-items:start}
+
+    /* ══ CART ITEMS ══ */
+    .cart-items{display:flex;flex-direction:column;gap:1rem}
+
+    /* Empty state */
+    .empty-cart{background:white;border-radius:var(--radius-xl);border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);padding:4rem 2rem;text-align:center;display:none}
+    .empty-cart.show{display:block}
+    .empty-icon{font-size:4rem;margin-bottom:1rem}
+    .empty-title{font-family:var(--font-display);font-size:1.6rem;font-weight:700;margin-bottom:.5rem;letter-spacing:-.02em}
+    .empty-sub{font-size:.9rem;color:rgba(13,13,15,.45);margin-bottom:2rem}
+    .btn-browse{background:var(--ink);color:var(--cream);border:none;padding:.85rem 2rem;border-radius:100px;font-size:.9rem;font-weight:600;cursor:pointer;font-family:inherit;transition:.2s;display:inline-flex;align-items:center;gap:.5rem}
+    .btn-browse:hover{background:var(--rust)}
+
+    .cart-item{background:white;border-radius:var(--radius-xl);border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);padding:1.25rem 1.5rem;display:flex;gap:1.25rem;align-items:flex-start;transition:.2s;position:relative}
+    .cart-item:hover{box-shadow:var(--shadow-md)}
+    .cart-item-thumb{width:110px;height:75px;border-radius:var(--radius-md);background:var(--smoke);display:flex;align-items:center;justify-content:center;font-size:2.5rem;flex-shrink:0;overflow:hidden}
+    .cart-item-info{flex:1;min-width:0}
+    .cart-item-cat{font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--moss);margin-bottom:.3rem}
+    .cart-item-title{font-size:.95rem;font-weight:700;line-height:1.3;margin-bottom:.35rem}
+    .cart-item-instructor{font-size:.78rem;color:rgba(13,13,15,.45);margin-bottom:.5rem}
+    .cart-item-meta{display:flex;align-items:center;gap.75rem;flex-wrap:wrap;gap:.6rem;font-size:.75rem;color:rgba(13,13,15,.45)}
+    .cart-item-rating{color:var(--gold);font-size:.75rem}
+    .cart-item-badge{background:rgba(45,74,62,.1);color:var(--moss);font-size:.65rem;font-weight:700;padding:.18rem .5rem;border-radius:100px;text-transform:uppercase}
+    .cart-item-actions{display:flex;align-items:center;gap:.5rem;margin-top:.75rem}
+    .btn-remove{font-size:.78rem;font-weight:600;color:var(--error);background:none;border:none;cursor:pointer;font-family:inherit;padding:.3rem 0;transition:.2s;display:flex;align-items:center;gap:.3rem}
+    .btn-remove:hover{opacity:.7}
+    .btn-save-later{font-size:.78rem;font-weight:600;color:rgba(13,13,15,.5);background:none;border:none;cursor:pointer;font-family:inherit;padding:.3rem 0;transition:.2s;border-left:1px solid rgba(13,13,15,.12);padding-left:.5rem;display:flex;align-items:center;gap:.3rem}
+    .btn-save-later:hover{color:var(--ink)}
+    .cart-item-price-col{display:flex;flex-direction:column;align-items:flex-end;gap:.2rem;flex-shrink:0}
+    .cart-price{font-family:var(--font-display);font-size:1.3rem;font-weight:700}
+    .cart-price-old{font-size:.82rem;color:rgba(13,13,15,.3);text-decoration:line-through}
+    .cart-price-badge{font-size:.65rem;font-weight:700;background:rgba(196,82,42,.1);color:var(--rust);padding:.18rem .5rem;border-radius:100px}
+
+    /* ══ SAVED FOR LATER ══ */
+    .saved-section{margin-top:2rem}
+    .saved-title{font-family:var(--font-display);font-size:1.1rem;font-weight:700;letter-spacing:-.02em;margin-bottom:1rem}
+    .saved-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.85rem}
+    .saved-item{background:white;border-radius:var(--radius-lg);border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);padding:.9rem;display:flex;gap:.75rem;align-items:flex-start;transition:.2s}
+    .saved-item:hover{box-shadow:var(--shadow-md)}
+    .saved-thumb{width:56px;height:44px;border-radius:var(--radius-sm);background:var(--smoke);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+    .saved-info{flex:1;min-width:0}
+    .saved-title-text{font-size:.82rem;font-weight:600;line-height:1.3;margin-bottom:.3rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .saved-price{font-size:.85rem;font-weight:700;margin-bottom:.3rem}
+    .btn-move-cart{font-size:.72rem;font-weight:700;color:var(--rust);background:none;border:none;cursor:pointer;font-family:inherit;padding:0;transition:.2s}
+    .btn-move-cart:hover{opacity:.7}
+
+    /* ══ ORDER SUMMARY ══ */
+    .order-summary{background:white;border-radius:var(--radius-xl);border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);padding:1.75rem;position:sticky;top:calc(var(--nav-h) + 1rem)}
+    .summary-title{font-family:var(--font-display);font-size:1.2rem;font-weight:900;letter-spacing:-.02em;margin-bottom:1.5rem}
+
+    .summary-line{display:flex;align-items:center;justify-content:space-between;font-size:.875rem;color:rgba(13,13,15,.6);margin-bottom:.75rem}
+    .summary-line.total{font-size:1rem;font-weight:700;color:var(--ink);margin-top:1rem;padding-top:1rem;border-top:2px solid rgba(13,13,15,.08)}
+    .summary-line.total .summary-val{font-family:var(--font-display);font-size:1.5rem;font-weight:900}
+    .summary-line.savings{color:var(--success);font-weight:600}
+    .summary-line.savings .summary-val{font-weight:700}
+
+    /* Coupon */
+    .coupon-row{display:flex;gap:.5rem;margin:1.25rem 0}
+    .coupon-input{flex:1;background:var(--smoke);border:1.5px solid transparent;border-radius:var(--radius-md);padding:.65rem .9rem;font-size:.85rem;color:var(--ink);font-family:inherit;outline:none;transition:.2s}
+    .coupon-input:focus{background:white;border-color:var(--moss)}
+    .coupon-input::placeholder{color:rgba(13,13,15,.3)}
+    .btn-apply{background:var(--ink);color:var(--cream);border:none;padding:.65rem 1.1rem;border-radius:var(--radius-md);font-size:.82rem;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit;white-space:nowrap}
+    .btn-apply:hover{background:var(--rust)}
+    .coupon-success{font-size:.75rem;color:var(--success);font-weight:600;display:none;align-items:center;gap:.3rem;margin-bottom:.75rem}
+    .coupon-success.show{display:flex}
+
+    .btn-checkout{width:100%;background:var(--rust);color:white;border:none;padding:1rem;border-radius:var(--radius-md);font-size:1rem;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:.5rem;margin-bottom:.75rem}
+    .btn-checkout:hover{background:#b04424;transform:translateY(-1px);box-shadow:0 8px 24px rgba(196,82,42,.28)}
+    .guarantee{text-align:center;font-size:.75rem;color:rgba(13,13,15,.4);margin-bottom:1.25rem;display:flex;align-items:center;justify-content:center;gap:.3rem}
+
+    .payment-icons{display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap;margin-top:.5rem}
+    .payment-icon{background:var(--smoke);border-radius:var(--radius-sm);padding:.35rem .6rem;font-size:.65rem;font-weight:700;color:rgba(13,13,15,.45);border:1px solid rgba(13,13,15,.07)}
+
+    /* ══ RECOMMENDED ══ */
+    .recommended-section{margin-top:2rem}
+    .rec-title{font-family:var(--font-display);font-size:1.1rem;font-weight:700;letter-spacing:-.02em;margin-bottom:1rem}
+    .rec-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.85rem}
+    .rec-card{background:white;border-radius:var(--radius-lg);border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);overflow:hidden;transition:.2s;cursor:pointer}
+    .rec-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+    .rec-thumb{height:90px;background:var(--smoke);display:flex;align-items:center;justify-content:center;font-size:2rem}
+    .rec-body{padding:.75rem}
+    .rec-course-title{font-size:.78rem;font-weight:600;line-height:1.35;margin-bottom:.35rem}
+    .rec-meta{display:flex;justify-content:space-between;font-size:.72rem;color:rgba(13,13,15,.45)}
+    .rec-price{font-weight:700;color:var(--ink)}
+
+    /* ══ RESPONSIVE ══ */
+    @media(max-width:1024px){.page-body{grid-template-columns:1fr}.order-summary{position:static}.rec-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:768px){
+      .navbar-links,.nav-links{display:none}.hamburger{display:flex}
+      .nav-actions .btn-ghost,.btn-primary-sm{display:none}
+      .nav-user-name{display:none}
+      .page-header,.page-body{padding-left:1.25rem;padding-right:1.25rem}
+      .cart-item{flex-wrap:wrap}
+      .cart-item-thumb{width:80px;height:58px}
+      .saved-grid{grid-template-columns:1fr}
+      .rec-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <button class="hamburger" id="hamburgerBtn"><span></span><span></span><span></span></button>
+  <a href="learnhub_responsive.html" class="nav-logo">GIT<span>Academy</span></a>
+  <ul class="nav-links">
+    <li><a href="home.html" class="nav-link">Browse</a></li>
+    <li><a href="category-list.html" class="nav-link">Categories</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="login.html" class="btn-ghost">Log in</a>
+    <a href="register.html" class="btn-primary-sm">Sign up</a>
+    <div class="nav-user-wrap">
+      <button class="nav-user" id="userMenuBtn"><span class="nav-user-name">Justice Elorm</span><div class="avatar">JE</div></button>
+      <div class="user-dropdown" id="userDropdown">
+        <a href="dashboard.html" class="dropdown-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</a>
+        <a href="profile.html" class="dropdown-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profile</a>
+        <div class="dropdown-sep"></div>
+        <a href="login.html" class="dropdown-item danger"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Log Out</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <h1 class="page-title">My Cart</h1>
+  <p class="page-subtitle" id="cartCount">2 courses in your cart</p>
+</div>
+
+<div class="page-body">
+
+  <!-- LEFT: Cart Items -->
+  <div>
+
+    <!-- Empty state -->
+    <div class="empty-cart" id="emptyCart">
+      <div class="empty-icon">🛒</div>
+      <div class="empty-title">Your cart is empty</div>
+      <p class="empty-sub">Browse our courses and add something you'd like to learn.</p>
+      <a href="home.html" class="btn-browse">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        Browse Courses
+      </a>
+    </div>
+
+    <!-- Cart Items -->
+    <div class="cart-items" id="cartItems">
+
+      <div class="cart-item" id="item-1">
+        <div class="cart-item-thumb" style="background:#e8f5e9">🤖</div>
+        <div class="cart-item-info">
+          <div class="cart-item-cat">Machine Learning</div>
+          <div class="cart-item-title">Machine Learning A-Z: Hands-On Python & R</div>
+          <div class="cart-item-instructor">By Prof. ATO SIAW QUARSHIE</div>
+          <div class="cart-item-meta">
+            <span class="cart-item-rating">★★★★★</span>
+            <span>4.8 (12,400 reviews)</span>
+            <span>·</span><span>45h total</span>
+            <span class="cart-item-badge">Bestseller</span>
+          </div>
+          <div class="cart-item-actions">
+            <button class="btn-remove" onclick="removeItem('item-1')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+              Remove
+            </button>
+            <button class="btn-save-later" onclick="saveForLater('item-1')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              Save for later
+            </button>
+          </div>
+        </div>
+        <div class="cart-item-price-col">
+          <div class="cart-price">$49</div>
+          <div class="cart-price-old">$129</div>
+          <div class="cart-price-badge">62% off</div>
+        </div>
+      </div>
+
+      <div class="cart-item" id="item-2">
+        <div class="cart-item-thumb" style="background:#e8eaf6">🎨</div>
+        <div class="cart-item-info">
+          <div class="cart-item-cat">UI/UX Design</div>
+          <div class="cart-item-title">UI/UX Design Bootcamp: Figma to Prototype</div>
+          <div class="cart-item-instructor">By JOSEPH GADASU Design Studio</div>
+          <div class="cart-item-meta">
+            <span class="cart-item-rating">★★★★★</span>
+            <span>4.7 (6,200 reviews)</span>
+            <span>·</span><span>32h total</span>
+          </div>
+          <div class="cart-item-actions">
+            <button class="btn-remove" onclick="removeItem('item-2')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+              Remove
+            </button>
+            <button class="btn-save-later" onclick="saveForLater('item-2')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              Save for later
+            </button>
+          </div>
+        </div>
+        <div class="cart-item-price-col">
+          <div class="cart-price">$44</div>
+          <div class="cart-price-old">$109</div>
+          <div class="cart-price-badge">60% off</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Saved for Later -->
+    <div class="saved-section" id="savedSection">
+      <div class="saved-title">Saved for Later (1)</div>
+      <div class="saved-grid">
+        <div class="saved-item">
+          <div class="saved-thumb" style="background:#fce4ec">🐍</div>
+          <div class="saved-info">
+            <div class="saved-title-text">Python for Everybody — Zero to Hero</div>
+            <div class="saved-price" style="color:#2d7a4f">Free</div>
+            <button class="btn-move-cart">Move to cart →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recommended -->
+    <div class="recommended-section">
+      <div class="rec-title">You might also like</div>
+      <div class="rec-grid">
+        <a href="course-details.html" class="rec-card">
+          <div class="rec-thumb" style="background:#e0f2f1">📊</div>
+          <div class="rec-body">
+            <div class="rec-course-title">Data Analysis with Pandas</div>
+            <div class="rec-meta"><span>⭐ 4.8</span><span class="rec-price">$34</span></div>
+          </div>
+        </a>
+        <a href="course-details.html" class="rec-card">
+          <div class="rec-thumb" style="background:#fff8e1">🧠</div>
+          <div class="rec-body">
+            <div class="rec-course-title">Deep Learning with TensorFlow</div>
+            <div class="rec-meta"><span>⭐ 4.8</span><span class="rec-price">$54</span></div>
+          </div>
+        </a>
+        <a href="course-details.html" class="rec-card">
+          <div class="rec-thumb" style="background:#f3e5f5">🔐</div>
+          <div class="rec-body">
+            <div class="rec-course-title">Ethical Hacking Complete Course</div>
+            <div class="rec-meta"><span>⭐ 4.9</span><span class="rec-price">$54</span></div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT: Order Summary -->
+  <div>
+    <div class="order-summary">
+      <div class="summary-title">Order Summary</div>
+
+      <div class="summary-line"><span>Original Price</span><span class="summary-val">$238</span></div>
+      <div class="summary-line savings"><span>Discounts applied</span><span class="summary-val" id="discountAmt">−$145</span></div>
+      <div id="couponSavingsLine" class="summary-line savings" style="display:none"><span>Coupon (LEARN20)</span><span class="summary-val">−$18.60</span></div>
+      <div class="summary-line total"><span>Total</span><span class="summary-val" id="totalPrice">$93</span></div>
+
+      <!-- Coupon -->
+      <div class="coupon-row">
+        <input class="coupon-input" type="text" placeholder="Enter coupon code" id="couponInput"/>
+        <button class="btn-apply" id="applyBtn">Apply</button>
+      </div>
+      <div class="coupon-success" id="couponSuccess">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Coupon LEARN20 applied — 20% off!
+      </div>
+
+      <a href="checkout.html" class="btn-checkout">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        Checkout — $93
+      </a>
+
+      <p class="guarantee">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        30-Day Money-Back Guarantee
+      </p>
+
+      <div class="payment-icons">
+        <div class="payment-icon">💳 Visa</div>
+        <div class="payment-icon">💳 Mastercard</div>
+        <div class="payment-icon">📱 Mobile Money</div>
+        <div class="payment-icon">🅿 PayPal</div>
+        <div class="payment-icon">₿ Crypto</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Navbar
+  document.getElementById('hamburgerBtn').addEventListener('click', () => {});
+  const userMenuBtn = document.getElementById('userMenuBtn');
+  const userDropdown = document.getElementById('userDropdown');
+  userMenuBtn.addEventListener('click', e => { e.stopPropagation(); userDropdown.classList.toggle('open'); });
+  document.addEventListener('click', () => userDropdown.classList.remove('open'));
+
+  let cartCount = 2;
+
+  function removeItem(id) {
+    const item = document.getElementById(id);
+    item.style.opacity = '0';
+    item.style.transform = 'translateX(20px)';
+    item.style.transition = '.3s';
+    setTimeout(() => {
+      item.remove();
+      cartCount--;
+      updateCart();
+    }, 300);
+  }
+
+  function saveForLater(id) {
+    removeItem(id);
+  }
+
+  function updateCart() {
+    document.getElementById('cartCount').textContent = cartCount + ' course' + (cartCount !== 1 ? 's' : '') + ' in your cart';
+    if (cartCount === 0) {
+      document.getElementById('emptyCart').classList.add('show');
+      document.getElementById('cartItems').style.display = 'none';
+    }
+  }
+
+  // Coupon
+  document.getElementById('applyBtn').addEventListener('click', () => {
+    const code = document.getElementById('couponInput').value.trim().toUpperCase();
+    if (code === 'LEARN20') {
+      document.getElementById('couponSuccess').classList.add('show');
+      document.getElementById('couponSavingsLine').style.display = 'flex';
+      document.getElementById('totalPrice').textContent = '$74.40';
+      document.querySelector('.btn-checkout').textContent = '💳  Checkout — $74.40';
+      document.querySelector('.btn-checkout').style.display = 'flex';
+      document.querySelector('.btn-checkout').innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Checkout — $74.40';
+    } else {
+      document.getElementById('couponInput').style.borderColor = 'var(--error)';
+      setTimeout(() => document.getElementById('couponInput').style.borderColor = '', 2000);
+    }
+  });
+</script>
+</body>
+</html>

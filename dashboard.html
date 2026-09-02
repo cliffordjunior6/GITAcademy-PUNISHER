@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Dashboard — GITAcademy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --ink:#0d0d0f;--cream:#f5f0e8;--gold:#e8c547;--moss:#2d4a3e;
+      --rust:#c4522a;--paper:#faf8f3;--smoke:#f0ece4;--mist:#e8e3db;
+      --error:#e05555;--success:#2d7a4f;
+      --font-display:'Fraunces',Georgia,serif;
+      --font-body:'DM Sans',system-ui,sans-serif;
+      --nav-h:64px;--sidebar-w:260px;
+      --radius-sm:8px;--radius-md:12px;--radius-lg:18px;--radius-xl:24px;
+      --shadow-sm:0 2px 8px rgba(13,13,15,.06);
+      --shadow-md:0 4px 20px rgba(13,13,15,.1);
+      --shadow-lg:0 12px 40px rgba(13,13,15,.14);
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:var(--font-body);background:var(--smoke);color:var(--ink);line-height:1.6;overflow-x:hidden}
+    a{text-decoration:none;color:inherit}
+    img{max-width:100%;display:block}
+    button{cursor:pointer;font-family:inherit;border:none;background:none}
+
+    /* ══ NAVBAR ══ */
+    .navbar{
+      position:sticky;top:0;z-index:500;height:var(--nav-h);
+      background:var(--cream);border-bottom:1px solid rgba(13,13,15,.08);
+      display:flex;align-items:center;padding:0 1.5rem;gap:1rem;
+    }
+    .nav-logo{font-family:var(--font-display);font-size:1.35rem;font-weight:900;color:var(--ink);letter-spacing:-.03em;flex-shrink:0}
+    .nav-logo span{color:var(--rust)}
+    .nav-search{flex:1;max-width:380px;position:relative;margin-left:.5rem}
+    .nav-search input{
+      width:100%;background:var(--smoke);border:1.5px solid transparent;
+      border-radius:100px;padding:.5rem 1rem .5rem 2.4rem;font-size:.875rem;
+      color:var(--ink);outline:none;transition:.2s;font-family:var(--font-body)
+    }
+    .nav-search input:focus{background:white;border-color:var(--moss);box-shadow:0 0 0 3px rgba(45,74,62,.08)}
+    .nav-search input::placeholder{color:rgba(13,13,15,.4)}
+    .nav-search-icon{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);color:rgba(13,13,15,.4);pointer-events:none}
+    .nav-right{display:flex;align-items:center;gap:.75rem;margin-left:auto}
+    .nav-icon-btn{
+      width:38px;height:38px;border-radius:var(--radius-md);display:flex;
+      align-items:center;justify-content:center;color:rgba(13,13,15,.6);
+      transition:.2s;position:relative
+    }
+    .nav-icon-btn:hover{background:var(--smoke);color:var(--ink)}
+    .nav-badge{
+      position:absolute;top:5px;right:5px;width:8px;height:8px;
+      background:var(--rust);border-radius:50%;border:2px solid var(--cream)
+    }
+    .nav-user{
+      display:flex;align-items:center;gap:.5rem;padding:.3rem .5rem .3rem .85rem;
+      border-radius:100px;border:1.5px solid rgba(13,13,15,.1);cursor:pointer;transition:.2s
+    }
+    .nav-user:hover{border-color:var(--ink);background:var(--smoke)}
+    .nav-user-name{font-size:.85rem;font-weight:500;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .avatar{
+      width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--moss),var(--rust));
+      display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:var(--cream);flex-shrink:0
+    }
+    .avatar-lg{width:56px;height:56px;font-size:1.1rem}
+
+    /* ── User dropdown ── */
+    .nav-user-wrap{position:relative}
+    .user-dropdown{
+      position:absolute;top:calc(100% + 8px);right:0;background:white;
+      border:1px solid rgba(13,13,15,.08);border-radius:var(--radius-lg);
+      box-shadow:var(--shadow-lg);padding:.5rem;min-width:200px;
+      opacity:0;pointer-events:none;transform:translateY(-8px);transition:.2s;z-index:600
+    }
+    .user-dropdown.open{opacity:1;pointer-events:all;transform:translateY(0)}
+    .dropdown-item{
+      display:flex;align-items:center;gap:.6rem;padding:.6rem .75rem;
+      border-radius:var(--radius-sm);font-size:.875rem;font-weight:500;
+      color:rgba(13,13,15,.7);transition:.15s;cursor:pointer
+    }
+    .dropdown-item:hover{background:var(--smoke);color:var(--ink)}
+    .dropdown-item.danger{color:var(--error)}
+    .dropdown-item.danger:hover{background:rgba(224,85,85,.08)}
+    .dropdown-sep{height:1px;background:rgba(13,13,15,.06);margin:.4rem 0}
+
+    /* ══ LAYOUT ══ */
+    .page-wrap{display:flex;min-height:calc(100vh - var(--nav-h))}
+
+    /* ══ SIDEBAR ══ */
+    .sidebar{
+      width:var(--sidebar-w);flex-shrink:0;background:var(--cream);
+      border-right:1px solid rgba(13,13,15,.08);padding:1.5rem 1rem;
+      display:flex;flex-direction:column;gap:.25rem;position:sticky;
+      top:var(--nav-h);height:calc(100vh - var(--nav-h));overflow-y:auto
+    }
+    .sidebar-section{font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(13,13,15,.35);padding:.6rem .75rem .3rem;margin-top:.5rem}
+    .sidebar-link{
+      display:flex;align-items:center;gap:.65rem;padding:.65rem .75rem;
+      border-radius:var(--radius-md);font-size:.875rem;font-weight:500;
+      color:rgba(13,13,15,.6);transition:.15s;cursor:pointer
+    }
+    .sidebar-link:hover{background:var(--smoke);color:var(--ink)}
+    .sidebar-link.active{background:var(--ink);color:var(--cream)}
+    .sidebar-link svg{flex-shrink:0;opacity:.7}
+    .sidebar-link.active svg{opacity:1}
+    .sidebar-count{
+      margin-left:auto;background:var(--rust);color:white;
+      font-size:.65rem;font-weight:700;padding:.15rem .45rem;border-radius:100px
+    }
+    .sidebar-link.active .sidebar-count{background:var(--gold);color:var(--ink)}
+
+    /* ══ MAIN CONTENT ══ */
+    .main{flex:1;padding:2rem;overflow-x:hidden}
+
+    /* ── Welcome banner ── */
+    .welcome-banner{
+      background:var(--ink);border-radius:var(--radius-xl);padding:2.2rem 2.5rem;
+      margin-bottom:2rem;position:relative;overflow:hidden;
+      display:flex;align-items:center;justify-content:space-between;gap:2rem
+    }
+    .welcome-blob{
+      position:absolute;border-radius:50%;pointer-events:none
+    }
+    .welcome-blob-1{width:300px;height:300px;background:radial-gradient(circle,rgba(232,197,71,.13),transparent 70%);top:-100px;right:-60px}
+    .welcome-blob-2{width:200px;height:200px;background:radial-gradient(circle,rgba(196,82,42,.1),transparent 70%);bottom:-80px;left:30%}
+    .welcome-text{position:relative;z-index:1}
+    .welcome-eyebrow{
+      display:inline-flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.12);color:rgba(245,240,232,.7);
+      font-size:.7rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;
+      padding:.35rem .85rem;border-radius:100px;margin-bottom:1rem
+    }
+    .welcome-dot{width:5px;height:5px;background:var(--gold);border-radius:50%;animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+    .welcome-title{font-family:var(--font-display);font-size:clamp(1.6rem,3vw,2.4rem);font-weight:900;color:var(--cream);line-height:1.05;letter-spacing:-.03em;margin-bottom:.5rem}
+    .welcome-title em{font-style:italic;font-weight:300;color:var(--gold)}
+    .welcome-sub{font-size:.9rem;color:rgba(245,240,232,.5);font-weight:300;max-width:400px}
+    .welcome-actions{display:flex;gap:.75rem;flex-shrink:0;position:relative;z-index:1;flex-wrap:wrap}
+    .btn-gold{background:var(--gold);color:var(--ink);border:none;padding:.75rem 1.5rem;border-radius:100px;font-size:.875rem;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit;display:inline-flex;align-items:center;gap:.4rem;text-decoration:none}
+    .btn-gold:hover{background:#f0d258;transform:translateY(-2px);box-shadow:0 8px 24px rgba(232,197,71,.25)}
+    .btn-outline-light{background:transparent;color:var(--cream);border:1.5px solid rgba(255,255,255,.2);padding:.75rem 1.5rem;border-radius:100px;font-size:.875rem;font-weight:500;cursor:pointer;transition:.2s;font-family:inherit;display:inline-flex;align-items:center;gap:.4rem;text-decoration:none}
+    .btn-outline-light:hover{border-color:rgba(255,255,255,.5);background:rgba(255,255,255,.06)}
+
+    /* ── Stats row ── */
+    .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem}
+    .stat-card{
+      background:white;border-radius:var(--radius-lg);padding:1.3rem 1.5rem;
+      border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);
+      display:flex;align-items:flex-start;gap:1rem;transition:.2s
+    }
+    .stat-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+    .stat-icon{
+      width:42px;height:42px;border-radius:var(--radius-md);display:flex;
+      align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0
+    }
+    .stat-icon.moss{background:rgba(45,74,62,.12)}
+    .stat-icon.gold{background:rgba(232,197,71,.18)}
+    .stat-icon.rust{background:rgba(196,82,42,.12)}
+    .stat-icon.ink{background:rgba(13,13,15,.07)}
+    .stat-num{font-family:var(--font-display);font-size:1.8rem;font-weight:700;line-height:1;margin-bottom:.2rem}
+    .stat-label{font-size:.78rem;color:rgba(13,13,15,.45);font-weight:400}
+    .stat-change{font-size:.72rem;font-weight:600;margin-top:.3rem}
+    .stat-change.up{color:var(--success)}
+    .stat-change.down{color:var(--error)}
+
+    /* ── Section header ── */
+    .section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
+    .section-title{font-family:var(--font-display);font-size:1.4rem;font-weight:700;letter-spacing:-.02em}
+    .section-link{font-size:.82rem;font-weight:600;color:var(--rust);text-decoration:none;transition:.2s}
+    .section-link:hover{opacity:.7}
+
+    /* ── Continue Learning ── */
+    .continue-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-bottom:2rem}
+    .course-progress-card{
+      background:white;border-radius:var(--radius-lg);padding:1.3rem;
+      border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);
+      display:flex;gap:1rem;transition:.2s;text-decoration:none;color:inherit
+    }
+    .course-progress-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+    .course-thumb{
+      width:80px;height:60px;border-radius:var(--radius-sm);background:var(--smoke);
+      flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1.8rem
+    }
+    .course-info{flex:1;min-width:0}
+    .course-category{font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--rust);margin-bottom:.3rem}
+    .course-name{font-size:.9rem;font-weight:600;line-height:1.3;margin-bottom:.6rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .progress-wrap{background:rgba(13,13,15,.08);border-radius:100px;overflow:hidden;height:5px;margin-bottom:.4rem}
+    .progress-bar{height:5px;border-radius:100px;background:var(--moss);transition:width .5s ease}
+    .progress-meta{display:flex;justify-content:space-between;font-size:.72rem;color:rgba(13,13,15,.45)}
+
+    /* ── Recommended ── */
+    .rec-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem}
+    .course-card{
+      background:white;border-radius:var(--radius-lg);border:1px solid rgba(13,13,15,.06);
+      box-shadow:var(--shadow-sm);overflow:hidden;transition:.2s;text-decoration:none;color:inherit;display:flex;flex-direction:column
+    }
+    .course-card:hover{box-shadow:var(--shadow-md);transform:translateY(-3px)}
+    .course-card-thumb{
+      height:130px;background:var(--smoke);display:flex;align-items:center;
+      justify-content:center;font-size:3rem;position:relative;overflow:hidden
+    }
+    .course-card-body{padding:1rem;flex:1;display:flex;flex-direction:column}
+    .course-card-cat{font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--moss);margin-bottom:.4rem}
+    .course-card-title{font-size:.9rem;font-weight:600;line-height:1.35;margin-bottom:.5rem;flex:1}
+    .course-card-meta{display:flex;align-items:center;justify-content:space-between;font-size:.75rem;color:rgba(13,13,15,.45)}
+    .course-card-rating{display:flex;align-items:center;gap:.3rem;font-size:.75rem;font-weight:600}
+    .stars{color:var(--gold)}
+    .course-card-price{font-weight:700;color:var(--ink);font-size:.9rem}
+    .course-card-price.free{color:var(--success)}
+
+    /* ── Activity feed ── */
+    .bottom-grid{display:grid;grid-template-columns:1fr 320px;gap:1.5rem}
+    .activity-card{background:white;border-radius:var(--radius-lg);padding:1.5rem;border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm)}
+    .activity-list{display:flex;flex-direction:column;gap:0}
+    .activity-item{display:flex;align-items:flex-start;gap:.85rem;padding:.85rem 0;border-bottom:1px solid rgba(13,13,15,.05)}
+    .activity-item:last-child{border-bottom:none;padding-bottom:0}
+    .activity-icon{
+      width:36px;height:36px;border-radius:var(--radius-sm);display:flex;
+      align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0
+    }
+    .activity-icon.green{background:rgba(45,122,79,.12)}
+    .activity-icon.gold{background:rgba(232,197,71,.18)}
+    .activity-icon.blue{background:rgba(37,99,235,.1)}
+    .activity-icon.rust{background:rgba(196,82,42,.1)}
+    .activity-text{font-size:.85rem;line-height:1.4;flex:1}
+    .activity-text strong{font-weight:600;color:var(--ink)}
+    .activity-time{font-size:.72rem;color:rgba(13,13,15,.35);margin-top:.2rem;white-space:nowrap}
+
+    /* ── Achievements ── */
+    .achievements-card{background:white;border-radius:var(--radius-lg);padding:1.5rem;border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm)}
+    .achievement-list{display:flex;flex-direction:column;gap:.75rem;margin-top:.75rem}
+    .achievement-item{
+      display:flex;align-items:center;gap:.75rem;padding:.75rem;
+      background:var(--smoke);border-radius:var(--radius-md)
+    }
+    .achievement-badge{font-size:1.4rem;flex-shrink:0}
+    .achievement-info strong{display:block;font-size:.85rem;font-weight:600;margin-bottom:.1rem}
+    .achievement-info span{font-size:.75rem;color:rgba(13,13,15,.45)}
+    .achievement-new{
+      margin-left:auto;background:var(--rust);color:white;
+      font-size:.6rem;font-weight:700;padding:.2rem .5rem;border-radius:100px;flex-shrink:0
+    }
+
+    /* ── Deadline widget ── */
+    .deadlines-card{background:var(--ink);border-radius:var(--radius-lg);padding:1.5rem;margin-top:1rem;position:relative;overflow:hidden}
+    .deadlines-blob{position:absolute;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(232,197,71,.1),transparent 70%);top:-80px;right:-60px;pointer-events:none}
+    .deadlines-title{font-family:var(--font-display);font-size:1rem;font-weight:700;color:var(--cream);margin-bottom:1rem;position:relative;z-index:1}
+    .deadline-item{display:flex;align-items:center;gap:.75rem;padding:.7rem 0;border-bottom:1px solid rgba(255,255,255,.06);position:relative;z-index:1}
+    .deadline-item:last-child{border-bottom:none}
+    .deadline-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+    .deadline-dot.urgent{background:var(--error)}
+    .deadline-dot.soon{background:var(--gold)}
+    .deadline-dot.ok{background:var(--success)}
+    .deadline-text{flex:1;font-size:.82rem;color:rgba(245,240,232,.7)}
+    .deadline-text strong{display:block;color:var(--cream);font-size:.85rem;font-weight:500}
+    .deadline-date{font-size:.72rem;color:rgba(245,240,232,.35)}
+
+    /* ── Hamburger / mobile ── */
+    .hamburger{display:none;flex-direction:column;gap:5px;padding:4px;background:none;border:none;cursor:pointer}
+    .hamburger span{display:block;width:22px;height:2px;background:var(--ink);border-radius:2px;transition:.3s}
+    .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(13,13,15,.5);z-index:400}
+
+    /* ── Fade animations ── */
+    .fade{animation:fadeUp .6s ease both}
+    .d1{animation-delay:.05s}.d2{animation-delay:.15s}.d3{animation-delay:.25s}.d4{animation-delay:.35s}.d5{animation-delay:.45s}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+    /* ══ RESPONSIVE ══ */
+    @media(max-width:1200px){
+      .stats-row{grid-template-columns:repeat(2,1fr)}
+      .rec-grid{grid-template-columns:repeat(2,1fr)}
+      .bottom-grid{grid-template-columns:1fr}
+    }
+    @media(max-width:1024px){
+      .continue-grid{grid-template-columns:1fr}
+      .bottom-grid{grid-template-columns:1fr}
+    }
+    @media(max-width:768px){
+      .sidebar{position:fixed;left:-100%;top:var(--nav-h);z-index:450;transition:.3s;height:calc(100vh - var(--nav-h))}
+      .sidebar.open{left:0}
+      .sidebar-overlay.open{display:block}
+      .hamburger{display:flex}
+      .nav-search{display:none}
+      .main{padding:1.25rem}
+      .welcome-banner{flex-direction:column;align-items:flex-start;padding:1.5rem}
+      .welcome-actions{width:100%}
+      .btn-gold,.btn-outline-light{flex:1;justify-content:center}
+      .stats-row{grid-template-columns:repeat(2,1fr);gap:.75rem}
+      .rec-grid{grid-template-columns:1fr}
+      .continue-grid{grid-template-columns:1fr}
+      .nav-user-name{display:none}
+    }
+    @media(max-width:480px){
+      .stats-row{grid-template-columns:1fr}
+      .welcome-title{font-size:1.6rem}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ NAVBAR ══ -->
+<nav class="navbar">
+  <button class="hamburger" id="hamburgerBtn" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <a href="learnhub_responsive.html" class="nav-logo">GIT<span>Academy</span></a>
+
+  <div class="nav-search">
+    <svg class="nav-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" placeholder="Search courses…"/>
+  </div>
+
+  <div class="nav-right">
+    <button class="nav-icon-btn" title="Notifications">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <span class="nav-badge"></span>
+    </button>
+
+    <div class="nav-user-wrap">
+      <button class="nav-user" id="userMenuBtn">
+        <span class="nav-user-name">Justice Elorm</span>
+        <div class="avatar">JE</div>
+      </button>
+      <div class="user-dropdown" id="userDropdown">
+        <a href="profile.html" class="dropdown-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          My Profile
+        </a>
+        <a href="edit-profile.html" class="dropdown-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Edit Profile
+        </a>
+        <a href="course-list.html" class="dropdown-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          My Courses
+        </a>
+        <div class="dropdown-sep"></div>
+        <a href="login.html" class="dropdown-item danger">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Log Out
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- ══ PAGE WRAP ══ -->
+<div class="page-wrap">
+
+  <!-- ══ SIDEBAR ══ -->
+  <aside class="sidebar" id="sidebar">
+    <a href="dashboard.html" class="sidebar-link active">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </a>
+
+    <div class="sidebar-section">Learning</div>
+    <a href="course-list.html" class="sidebar-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      My Courses
+      <span class="sidebar-count">4</span>
+    </a>
+    <a href="course-list.html#bookmarks" class="sidebar-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+      Saved
+      <span class="sidebar-count">7</span>
+    </a>
+    <a href="course-list.html#certificates" class="sidebar-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+      Certificates
+    </a>
+
+    <div class="sidebar-section">Explore</div>
+    <a href="home.html" class="sidebar-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Browse Courses
+    </a>
+    <a href="category-list.html" class="sidebar-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h7"/></svg>
+      Categories
+    </a>
+    <a href="cart.html" class="sidebar-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      Cart
+      <span class="sidebar-count">2</span>
+    </a>
+
+    <div class="sidebar-section">Account</div>
+    <a href="profile.html" class="sidebar-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Profile
+    </a>
+    <a href="edit-profile.html" class="sidebar-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Settings
+    </a>
+    <a href="login.html" class="sidebar-link" style="margin-top:auto;color:var(--error)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Log Out
+    </a>
+  </aside>
+
+  <!-- ══ MAIN ══ -->
+  <main class="main">
+
+    <!-- Welcome Banner -->
+    <div class="welcome-banner fade d1">
+      <div class="welcome-blob welcome-blob-1"></div>
+      <div class="welcome-blob welcome-blob-2"></div>
+      <div class="welcome-text">
+        <div class="welcome-eyebrow"><span class="welcome-dot"></span> Thursday, March 27</div>
+        <h1 class="welcome-title">Welcome back,<br><em>Elorm!</em></h1>
+        <p class="welcome-sub">You're on a 5-day streak 🔥 Keep going — you're 68% through Python Fundamentals.</p>
+      </div>
+      <div class="welcome-actions">
+        <a href="course-player.html" class="btn-gold">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Continue Learning
+        </a>
+        <a href="home.html" class="btn-outline-light">Browse Courses</a>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row fade d2">
+      <div class="stat-card">
+        <div class="stat-icon moss">📚</div>
+        <div>
+          <div class="stat-num">4</div>
+          <div class="stat-label">Active Courses</div>
+          <div class="stat-change up">↑ 1 this month</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon gold">⏱</div>
+        <div>
+          <div class="stat-num">42h</div>
+          <div class="stat-label">Hours Learned</div>
+          <div class="stat-change up">↑ 8h this week</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon rust">🏆</div>
+        <div>
+          <div class="stat-num">2</div>
+          <div class="stat-label">Certificates</div>
+          <div class="stat-change up">↑ 1 new</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon ink">🔥</div>
+        <div>
+          <div class="stat-num">5</div>
+          <div class="stat-label">Day Streak</div>
+          <div class="stat-change up">Personal best!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Continue Learning -->
+    <div class="fade d3">
+      <div class="section-hdr">
+        <h2 class="section-title">Continue Learning</h2>
+        <a href="course-list.html" class="section-link">View all →</a>
+      </div>
+      <div class="continue-grid">
+        <a href="course-player.html" class="course-progress-card">
+          <div class="course-thumb">🐍</div>
+          <div class="course-info">
+            <div class="course-category">Python</div>
+            <div class="course-name">Python Fundamentals for Beginners</div>
+            <div class="progress-wrap"><div class="progress-bar" style="width:68%"></div></div>
+            <div class="progress-meta"><span>68% complete</span><span>Lesson 17/25</span></div>
+          </div>
+        </a>
+        <a href="course-player.html" class="course-progress-card">
+          <div class="course-thumb">🎨</div>
+          <div class="course-info">
+            <div class="course-category">Design</div>
+            <div class="course-name">UI/UX Design Masterclass</div>
+            <div class="progress-wrap"><div class="progress-bar" style="width:32%"></div></div>
+            <div class="progress-meta"><span>32% complete</span><span>Lesson 8/25</span></div>
+          </div>
+        </a>
+        <a href="course-player.html" class="course-progress-card">
+          <div class="course-thumb">📊</div>
+          <div class="course-info">
+            <div class="course-category">Data Science</div>
+            <div class="course-name">Data Analysis with Pandas</div>
+            <div class="progress-wrap"><div class="progress-bar" style="width:15%"></div></div>
+            <div class="progress-meta"><span>15% complete</span><span>Lesson 3/20</span></div>
+          </div>
+        </a>
+        <a href="course-player.html" class="course-progress-card">
+          <div class="course-thumb">🌐</div>
+          <div class="course-info">
+            <div class="course-category">Web Dev</div>
+            <div class="course-name">Full-Stack Web Development</div>
+            <div class="progress-wrap"><div class="progress-bar" style="width:5%"></div></div>
+            <div class="progress-meta"><span>5% complete</span><span>Lesson 1/30</span></div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Recommended -->
+    <div class="fade d4">
+      <div class="section-hdr">
+        <h2 class="section-title">Recommended for You</h2>
+        <a href="home.html" class="section-link">Browse all →</a>
+      </div>
+      <div class="rec-grid">
+        <a href="course-details.html" class="course-card">
+          <div class="course-card-thumb" style="background:#e8f5e9">🤖</div>
+          <div class="course-card-body">
+            <div class="course-card-cat">Machine Learning</div>
+            <div class="course-card-title">Machine Learning A-Z: Hands-On Python</div>
+            <div class="course-card-meta">
+              <div class="course-card-rating"><span class="stars">★★★★★</span> 4.8</div>
+              <div class="course-card-price">$49</div>
+            </div>
+          </div>
+        </a>
+        <a href="course-details.html" class="course-card">
+          <div class="course-card-thumb" style="background:#fff8e1">📱</div>
+          <div class="course-card-body">
+            <div class="course-card-cat">Mobile Dev</div>
+            <div class="course-card-title">React Native — Build iOS & Android Apps</div>
+            <div class="course-card-meta">
+              <div class="course-card-rating"><span class="stars">★★★★☆</span> 4.6</div>
+              <div class="course-card-price">$39</div>
+            </div>
+          </div>
+        </a>
+        <a href="course-details.html" class="course-card">
+          <div class="course-card-thumb" style="background:#fce4ec">📸</div>
+          <div class="course-card-body">
+            <div class="course-card-cat">Photography</div>
+            <div class="course-card-title">Photography Masterclass: Complete Guide</div>
+            <div class="course-card-meta">
+              <div class="course-card-rating"><span class="stars">★★★★★</span> 4.9</div>
+              <div class="course-card-price free">Free</div>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Bottom grid: activity + achievements -->
+    <div class="bottom-grid fade d5">
+      <!-- Recent Activity -->
+      <div class="activity-card">
+        <div class="section-hdr" style="margin-bottom:0">
+          <h2 class="section-title" style="font-size:1.1rem">Recent Activity</h2>
+        </div>
+        <div class="activity-list">
+          <div class="activity-item">
+            <div class="activity-icon green">✅</div>
+            <div style="flex:1">
+              <div class="activity-text"><strong>Completed Lesson 17</strong> — Python Fundamentals</div>
+              <div class="activity-time">2 hours ago</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon gold">🏆</div>
+            <div style="flex:1">
+              <div class="activity-text">Earned certificate — <strong>JavaScript Basics</strong></div>
+              <div class="activity-time">Yesterday</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon blue">📝</div>
+            <div style="flex:1">
+              <div class="activity-text">Left a review on <strong>UI/UX Design Masterclass</strong></div>
+              <div class="activity-time">2 days ago</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon rust">🛒</div>
+            <div style="flex:1">
+              <div class="activity-text">Enrolled in <strong>Data Analysis with Pandas</strong></div>
+              <div class="activity-time">3 days ago</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon green">✅</div>
+            <div style="flex:1">
+              <div class="activity-text"><strong>Completed Quiz</strong> — Python Variables & Data Types</div>
+              <div class="activity-time">4 days ago</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Achievements + Deadlines -->
+      <div>
+        <div class="achievements-card">
+          <div class="section-hdr" style="margin-bottom:.25rem">
+            <h2 class="section-title" style="font-size:1.1rem">Achievements</h2>
+            <a href="profile.html#achievements" class="section-link">All →</a>
+          </div>
+          <div class="achievement-list">
+            <div class="achievement-item">
+              <div class="achievement-badge">🔥</div>
+              <div class="achievement-info">
+                <strong>5-Day Streak</strong>
+                <span>Logged in 5 days in a row</span>
+              </div>
+              <span class="achievement-new">NEW</span>
+            </div>
+            <div class="achievement-item">
+              <div class="achievement-badge">🎓</div>
+              <div class="achievement-info">
+                <strong>First Certificate</strong>
+                <span>Completed your first course</span>
+              </div>
+            </div>
+            <div class="achievement-item">
+              <div class="achievement-badge">⚡</div>
+              <div class="achievement-info">
+                <strong>Fast Learner</strong>
+                <span>Completed 3 lessons in one day</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="deadlines-card">
+          <div class="deadlines-blob"></div>
+          <div class="deadlines-title">Upcoming Deadlines</div>
+          <div class="deadline-item">
+            <span class="deadline-dot urgent"></span>
+            <div class="deadline-text">
+              <strong>Python Quiz #3</strong>
+              Due in 2 days
+            </div>
+          </div>
+          <div class="deadline-item">
+            <span class="deadline-dot soon"></span>
+            <div class="deadline-text">
+              <strong>UI/UX Project Submit</strong>
+              Due in 5 days
+            </div>
+          </div>
+          <div class="deadline-item">
+            <span class="deadline-dot ok"></span>
+            <div class="deadline-text">
+              <strong>Data Science Final</strong>
+              Due in 14 days
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // Hamburger toggle
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  hamburgerBtn.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('open');
+  });
+  overlay.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('open');
+  });
+
+  // User dropdown
+  const userMenuBtn = document.getElementById('userMenuBtn');
+  const userDropdown = document.getElementById('userDropdown');
+  userMenuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    userDropdown.classList.toggle('open');
+  });
+  document.addEventListener('click', () => userDropdown.classList.remove('open'));
+</script>
+</body>
+</html>

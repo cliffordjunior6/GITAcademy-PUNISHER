@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checkout — GITAcademy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --ink:#0d0d0f;--cream:#f5f0e8;--gold:#e8c547;--moss:#2d4a3e;
+      --rust:#c4522a;--paper:#faf8f3;--smoke:#f0ece4;--mist:#e8e3db;
+      --error:#e05555;--success:#2d7a4f;
+      --font-display:'Fraunces',Georgia,serif;--font-body:'DM Sans',system-ui,sans-serif;
+      --nav-h:64px;--shadow-sm:0 2px 8px rgba(13,13,15,.06);--shadow-md:0 4px 20px rgba(13,13,15,.1);--shadow-lg:0 12px 40px rgba(13,13,15,.14);
+      --radius-sm:8px;--radius-md:12px;--radius-lg:18px;--radius-xl:24px;
+    }
+    body{font-family:var(--font-body);background:var(--smoke);color:var(--ink);min-height:100vh}
+    a{text-decoration:none;color:inherit}
+    button{cursor:pointer;font-family:inherit;border:none;background:none}
+
+    /* NAVBAR */
+    .navbar{height:var(--nav-h);background:var(--cream);border-bottom:1px solid rgba(13,13,15,.08);display:flex;align-items:center;padding:0 2rem;gap:1.5rem}
+    .nav-logo{font-family:var(--font-display);font-size:1.4rem;font-weight:900;color:var(--ink);letter-spacing:-.03em}
+    .nav-logo span{color:var(--rust)}
+    .nav-center{flex:1;display:flex;justify-content:center}
+    .checkout-steps{display:flex;align-items:center;gap:0}
+    .cstep{display:flex;align-items:center;gap:.5rem;font-size:.8rem;font-weight:500;color:rgba(13,13,15,.35);padding:.3rem .6rem}
+    .cstep.active{color:var(--ink);font-weight:700}
+    .cstep.done{color:var(--success)}
+    .cstep-num{width:20px;height:20px;border-radius:50%;border:2px solid rgba(13,13,15,.2);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700}
+    .cstep.active .cstep-num{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+    .cstep.done .cstep-num{background:var(--success);color:white;border-color:var(--success)}
+    .cstep-arrow{color:rgba(13,13,15,.2);font-size:.75rem;padding:0 .1rem}
+    .secure-badge{display:flex;align-items:center;gap:.4rem;font-size:.75rem;color:rgba(13,13,15,.4)}
+
+    /* BODY */
+    .page-body{max-width:1060px;margin:0 auto;padding:2.5rem 2rem 4rem;display:grid;grid-template-columns:1fr 360px;gap:2.5rem;align-items:start}
+
+    /* ══ PAYMENT FORM ══ */
+    .checkout-form{display:flex;flex-direction:column;gap:1.5rem}
+
+    .form-card{background:white;border-radius:var(--radius-xl);border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);overflow:hidden}
+    .form-card-hdr{padding:1.3rem 1.75rem;border-bottom:1px solid rgba(13,13,15,.06);display:flex;align-items:center;justify-content:space-between}
+    .form-card-title{font-family:var(--font-display);font-size:1.05rem;font-weight:700;letter-spacing:-.02em;display:flex;align-items:center;gap:.6rem}
+    .form-card-body{padding:1.75rem;display:flex;flex-direction:column;gap:1.1rem}
+
+    .form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
+    .form-group{display:flex;flex-direction:column;gap:.4rem}
+    .form-label{font-size:.8rem;font-weight:600;color:rgba(13,13,15,.65)}
+    .form-label span{color:var(--rust)}
+    .form-input{background:var(--smoke);border:1.5px solid transparent;border-radius:var(--radius-md);padding:.8rem 1rem;font-size:16px;color:var(--ink);font-family:inherit;outline:none;transition:.2s;width:100%}
+    .form-input:focus{background:white;border-color:var(--moss);box-shadow:0 0 0 3px rgba(45,74,62,.08)}
+    .form-input.error{border-color:var(--error)}
+    .form-input::placeholder{color:rgba(13,13,15,.3)}
+    select.form-input{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center;padding-right:2.5rem}
+
+    /* Payment method tabs */
+    .payment-tabs{display:flex;gap:.5rem;margin-bottom:.25rem}
+    .pay-tab{flex:1;display:flex;align-items:center;justify-content:center;gap:.5rem;padding:.75rem;border-radius:var(--radius-md);border:2px solid rgba(13,13,15,.1);cursor:pointer;transition:.2s;font-size:.82rem;font-weight:600;color:rgba(13,13,15,.5);background:var(--smoke)}
+    .pay-tab:hover{border-color:rgba(13,13,15,.25);color:var(--ink)}
+    .pay-tab.active{border-color:var(--moss);background:rgba(45,74,62,.06);color:var(--moss)}
+    .pay-tab-icon{font-size:1.1rem}
+
+    /* Card number field with icon */
+    .card-input-wrap{position:relative}
+    .card-input-wrap .form-input{padding-right:3.5rem}
+    .card-type-icon{position:absolute;right:1rem;top:50%;transform:translateY(-50%);font-size:1.1rem;pointer-events:none}
+
+    /* Mobile money panel */
+    .momo-panel{display:none}
+    .momo-panel.show{display:flex;flex-direction:column;gap:1.1rem}
+
+    /* Security note */
+    .security-note{display:flex;align-items:flex-start;gap:.6rem;background:rgba(45,74,62,.06);border:1px solid rgba(45,74,62,.15);border-radius:var(--radius-md);padding:.85rem 1rem;font-size:.78rem;color:rgba(13,13,15,.6);line-height:1.5}
+    .security-note-icon{font-size:1rem;flex-shrink:0;margin-top:.05rem}
+
+    /* Terms checkbox */
+    .terms-check{display:flex;align-items:flex-start;gap:.65rem;font-size:.82rem;color:rgba(13,13,15,.55);line-height:1.5}
+    .terms-check input{width:16px;height:16px;margin-top:.1rem;accent-color:var(--moss);cursor:pointer;flex-shrink:0}
+    .terms-check a{color:var(--rust);font-weight:500}
+
+    /* Submit button */
+    .btn-pay{width:100%;background:var(--rust);color:white;border:none;padding:1.1rem;border-radius:var(--radius-md);font-size:1.05rem;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:.5rem;margin-top:.5rem}
+    .btn-pay:hover{background:#b04424;transform:translateY(-1px);box-shadow:0 10px 28px rgba(196,82,42,.3)}
+    .btn-pay:disabled{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none}
+
+    /* ══ ORDER REVIEW ══ */
+    .order-review{background:white;border-radius:var(--radius-xl);border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);padding:1.75rem;position:sticky;top:2rem}
+    .or-title{font-family:var(--font-display);font-size:1.1rem;font-weight:900;letter-spacing:-.02em;margin-bottom:1.25rem}
+    .or-items{display:flex;flex-direction:column;gap:.85rem;margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid rgba(13,13,15,.07)}
+    .or-item{display:flex;gap:.75rem;align-items:flex-start}
+    .or-thumb{width:52px;height:40px;border-radius:var(--radius-sm);background:var(--smoke);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+    .or-info{flex:1;min-width:0}
+    .or-name{font-size:.82rem;font-weight:600;line-height:1.3;margin-bottom:.1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .or-instructor{font-size:.72rem;color:rgba(13,13,15,.4)}
+    .or-price{font-size:.9rem;font-weight:700;flex-shrink:0}
+
+    .or-line{display:flex;justify-content:space-between;font-size:.875rem;color:rgba(13,13,15,.6);margin-bottom:.6rem}
+    .or-line.total{font-weight:700;color:var(--ink);font-size:1rem;margin-top:.75rem;padding-top:.75rem;border-top:2px solid rgba(13,13,15,.08)}
+    .or-line.total .or-val{font-family:var(--font-display);font-size:1.4rem;font-weight:900}
+    .or-line.green{color:var(--success);font-weight:600}
+
+    .guarantee-strip{display:flex;align-items:center;gap:.6rem;background:rgba(45,74,62,.06);border:1px solid rgba(45,74,62,.12);border-radius:var(--radius-md);padding:.75rem 1rem;font-size:.78rem;color:rgba(13,13,15,.6);line-height:1.5;margin-top:1rem}
+    .guarantee-strip-icon{font-size:1.2rem;flex-shrink:0}
+
+    /* RESPONSIVE */
+    @media(max-width:900px){.page-body{grid-template-columns:1fr}.order-review{position:static}}
+    @media(max-width:600px){
+      .checkout-steps{display:none}
+      .page-body{padding:1.5rem 1.25rem}
+      .form-grid-2{grid-template-columns:1fr}
+      .payment-tabs{flex-wrap:wrap}
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a href="learnhub_responsive.html" class="nav-logo">GIT<span>Academy</span></a>
+  <div class="nav-center">
+    <div class="checkout-steps">
+      <div class="cstep done"><div class="cstep-num">✓</div>Cart</div>
+      <span class="cstep-arrow">›</span>
+      <div class="cstep active"><div class="cstep-num">2</div>Checkout</div>
+      <span class="cstep-arrow">›</span>
+      <div class="cstep"><div class="cstep-num">3</div>Confirmation</div>
+    </div>
+  </div>
+  <div class="secure-badge">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    Secure Checkout
+  </div>
+</nav>
+
+<div class="page-body">
+
+  <!-- CHECKOUT FORM -->
+  <div class="checkout-form">
+
+    <!-- Billing Info -->
+    <div class="form-card">
+      <div class="form-card-hdr">
+        <div class="form-card-title">👤 Billing Information</div>
+      </div>
+      <div class="form-card-body">
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label">First Name <span>*</span></label>
+            <input class="form-input" type="text" value="Justice" placeholder="First name"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name <span>*</span></label>
+            <input class="form-input" type="text" value="Elorm" placeholder="Last name"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address <span>*</span></label>
+            <input class="form-input" type="email" value="justiceelorm@example.com" placeholder="Email"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Country <span>*</span></label>
+            <select class="form-input">
+              <option selected>Ghana</option>
+              <option>Nigeria</option><option>Kenya</option><option>South Africa</option>
+              <option>United States</option><option>United Kingdom</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment Method -->
+    <div class="form-card">
+      <div class="form-card-hdr">
+        <div class="form-card-title">💳 Payment Method</div>
+        <div style="display:flex;gap:.4rem">
+          <div style="background:var(--smoke);border-radius:4px;padding:.2rem .5rem;font-size:.65rem;font-weight:700;color:rgba(13,13,15,.4)">SSL</div>
+          <div style="background:var(--smoke);border-radius:4px;padding:.2rem .5rem;font-size:.65rem;font-weight:700;color:rgba(13,13,15,.4)">256-bit</div>
+        </div>
+      </div>
+      <div class="form-card-body">
+
+        <!-- Method tabs -->
+        <div class="payment-tabs">
+          <div class="pay-tab active" onclick="switchPayment('card',this)">
+            <span class="pay-tab-icon">💳</span> Card
+          </div>
+          <div class="pay-tab" onclick="switchPayment('momo',this)">
+            <span class="pay-tab-icon">📱</span> Mobile Money
+          </div>
+          <div class="pay-tab" onclick="switchPayment('paypal',this)">
+            <span class="pay-tab-icon">🅿</span> PayPal
+          </div>
+        </div>
+
+        <!-- Card Panel -->
+        <div id="cardPanel">
+          <div style="display:flex;flex-direction:column;gap:1.1rem">
+            <div class="form-group">
+              <label class="form-label">Card Number <span>*</span></label>
+              <div class="card-input-wrap">
+                <input class="form-input" id="cardNum" type="text" placeholder="1234 5678 9012 3456" maxlength="19" autocomplete="cc-number"/>
+                <span class="card-type-icon" id="cardTypeIcon">💳</span>
+              </div>
+            </div>
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label">Expiry Date <span>*</span></label>
+                <input class="form-input" type="text" placeholder="MM / YY" maxlength="7" autocomplete="cc-exp"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">CVV <span>*</span></label>
+                <input class="form-input" type="text" placeholder="123" maxlength="4" autocomplete="cc-csc"/>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Name on Card <span>*</span></label>
+              <input class="form-input" type="text" placeholder="As it appears on your card"/>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile Money Panel -->
+        <div class="momo-panel" id="momoPanel">
+          <div class="form-group">
+            <label class="form-label">Network <span>*</span></label>
+            <select class="form-input">
+              <option>MTN Mobile Money (Ghana)</option>
+              <option>AirtelTigo Cash</option>
+              <option>Vodafone Cash</option>
+              <option>M-Pesa (Kenya)</option>
+              <option>Airtel Money (Nigeria)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mobile Number <span>*</span></label>
+            <input class="form-input" type="tel" placeholder="+233 XX XXX XXXX"/>
+          </div>
+          <div style="background:rgba(232,197,71,.08);border:1px solid rgba(232,197,71,.2);border-radius:var(--radius-md);padding:.85rem 1rem;font-size:.82rem;color:rgba(13,13,15,.6);line-height:1.6">
+            📱 You will receive a prompt on your phone to confirm the payment of <strong>$93.00</strong>. This is safe and secure.
+          </div>
+        </div>
+
+        <!-- PayPal Panel -->
+        <div id="paypalPanel" style="display:none;text-align:center;padding:1rem 0">
+          <div style="font-size:3rem;margin-bottom:.75rem">🅿</div>
+          <p style="font-size:.875rem;color:rgba(13,13,15,.55);margin-bottom:1rem">You will be redirected to PayPal to complete your payment securely.</p>
+          <div style="background:var(--smoke);border-radius:var(--radius-md);padding:.75rem 1rem;font-size:.82rem;color:rgba(13,13,15,.45)">Total: <strong style="color:var(--ink)">$93.00 USD</strong></div>
+        </div>
+
+        <!-- Security note -->
+        <div class="security-note" style="margin-top:.5rem">
+          <span class="security-note-icon">🔒</span>
+          Your payment information is encrypted with 256-bit SSL. LearnHub never stores your full card details.
+        </div>
+      </div>
+    </div>
+
+    <!-- Terms -->
+    <div class="form-card">
+      <div class="form-card-body" style="padding:1.25rem 1.75rem">
+        <label class="terms-check">
+          <input type="checkbox" id="termsCheck"/>
+          I agree to LearnHub's <a href="terms.html">Terms of Service</a> and <a href="privacy.html">Privacy Policy</a>. I understand I will have lifetime access to these courses.
+        </label>
+        <button class="btn-pay" id="payBtn" disabled onclick="processPayment()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Complete Purchase — $93.00
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ORDER REVIEW -->
+  <div>
+    <div class="order-review">
+      <div class="or-title">Order Review</div>
+      <div class="or-items">
+        <div class="or-item">
+          <div class="or-thumb" style="background:#e8f5e9">🤖</div>
+          <div class="or-info">
+            <div class="or-name">Machine Learning A-Z: Hands-On Python & R</div>
+            <div class="or-instructor">Prof. ATO SIAW QUARSHIE</div>
+          </div>
+          <div class="or-price">$49</div>
+        </div>
+        <div class="or-item">
+          <div class="or-thumb" style="background:#e8eaf6">🎨</div>
+          <div class="or-info">
+            <div class="or-name">UI/UX Design Bootcamp: Figma to Prototype</div>
+            <div class="or-instructor">JOSEPH GADASU Design Studio</div>
+          </div>
+          <div class="or-price">$44</div>
+        </div>
+      </div>
+      <div class="or-line"><span>Subtotal</span><span class="or-val">$93</span></div>
+      <div class="or-line green"><span>You save</span><span class="or-val">$145</span></div>
+      <div class="or-line"><span>Tax</span><span class="or-val">$0.00</span></div>
+      <div class="or-line total"><span>Total</span><span class="or-val">$93</span></div>
+
+      <div class="guarantee-strip">
+        <span class="guarantee-strip-icon">🛡</span>
+        <span><strong>30-Day Money-Back Guarantee.</strong> If you're not satisfied, get a full refund within 30 days — no questions asked.</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Terms checkbox enables pay button
+  document.getElementById('termsCheck').addEventListener('change', function() {
+    document.getElementById('payBtn').disabled = !this.checked;
+  });
+
+  // Payment method switch
+  function switchPayment(method, tab) {
+    document.querySelectorAll('.pay-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('cardPanel').style.display = method === 'card' ? 'block' : 'none';
+    document.getElementById('momoPanel').classList.toggle('show', method === 'momo');
+    document.getElementById('paypalPanel').style.display = method === 'paypal' ? 'block' : 'none';
+  }
+
+  // Card number formatting
+  document.getElementById('cardNum').addEventListener('input', function() {
+    let v = this.value.replace(/\D/g,'').substring(0,16);
+    this.value = v.replace(/(.{4})/g,'$1 ').trim();
+    const icon = document.getElementById('cardTypeIcon');
+    if (v.startsWith('4')) icon.textContent = '💙';
+    else if (v.startsWith('5')) icon.textContent = '🔴';
+    else if (v.startsWith('3')) icon.textContent = '🟢';
+    else icon.textContent = '💳';
+  });
+
+  // Process payment
+  function processPayment() {
+    const btn = document.getElementById('payBtn');
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin .7s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Processing…';
+    btn.disabled = true;
+    setTimeout(() => window.location = 'payment-success.html', 2000);
+  }
+</script>
+</body>
+</html>

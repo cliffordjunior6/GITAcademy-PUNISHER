@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Machine Learning A-Z — Course Player | GITAcademy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --ink:#0d0d0f;--cream:#f5f0e8;--gold:#e8c547;--moss:#2d4a3e;
+      --rust:#c4522a;--paper:#faf8f3;--smoke:#f0ece4;--dark:#161618;--darker:#111113;
+      --font-display:'Fraunces',Georgia,serif;--font-body:'DM Sans',system-ui,sans-serif;
+      --player-nav-h:56px;--sidebar-w:340px;
+      --shadow-sm:0 2px 8px rgba(13,13,15,.06);--shadow-md:0 4px 20px rgba(13,13,15,.1);
+      --radius-sm:6px;--radius-md:10px;--radius-lg:16px;
+    }
+    html,body{height:100%;overflow:hidden}
+    body{font-family:var(--font-body);background:var(--darker);color:var(--cream);display:flex;flex-direction:column}
+    a{text-decoration:none;color:inherit}
+    button{cursor:pointer;font-family:inherit;border:none;background:none}
+    ul{list-style:none}
+
+    /* ══ TOP NAV ══ */
+    .player-nav{
+      height:var(--player-nav-h);background:var(--dark);border-bottom:1px solid rgba(255,255,255,.07);
+      display:flex;align-items:center;padding:0 1.25rem;gap:1rem;flex-shrink:0;z-index:100
+    }
+    .player-nav-logo{font-family:var(--font-display);font-size:1.2rem;font-weight:900;color:var(--cream);letter-spacing:-.03em;flex-shrink:0}
+    .player-nav-logo span{color:var(--rust)}
+    .player-nav-sep{width:1px;height:20px;background:rgba(255,255,255,.12)}
+    .player-course-title{font-size:.82rem;font-weight:500;color:rgba(245,240,232,.5);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .player-progress-wrap{width:120px;height:4px;background:rgba(255,255,255,.12);border-radius:100px;overflow:hidden;flex-shrink:0}
+    .player-progress-bar{height:4px;background:var(--moss);border-radius:100px;transition:.3s}
+    .player-progress-label{font-size:.72rem;color:rgba(245,240,232,.4);white-space:nowrap;flex-shrink:0}
+    .player-nav-right{display:flex;align-items:center;gap:.5rem;flex-shrink:0}
+    .player-nav-btn{
+      display:flex;align-items:center;gap:.4rem;padding:.4rem .85rem;border-radius:100px;
+      font-size:.78rem;font-weight:500;color:rgba(245,240,232,.6);border:1.5px solid rgba(255,255,255,.1);
+      transition:.15s;cursor:pointer;background:none
+    }
+    .player-nav-btn:hover{background:rgba(255,255,255,.07);color:var(--cream);border-color:rgba(255,255,255,.2)}
+    .avatar-sm{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--moss),var(--rust));display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:var(--cream);flex-shrink:0}
+    .hamburger-player{display:none;flex-direction:column;gap:4px;padding:4px}
+    .hamburger-player span{display:block;width:18px;height:1.5px;background:var(--cream);border-radius:2px}
+
+    /* ══ BODY ══ */
+    .player-body{display:flex;flex:1;overflow:hidden}
+
+    /* ══ VIDEO AREA ══ */
+    .video-area{flex:1;display:flex;flex-direction:column;overflow:hidden;background:#000}
+
+    /* Video Container */
+    .video-container{flex:1;background:#000;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;cursor:pointer}
+    .video-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;user-select:none}
+    .video-emoji{font-size:5rem;opacity:.4}
+    .video-label{font-size:1rem;color:rgba(245,240,232,.3)}
+    /* Fake progress overlay */
+    .video-overlay{position:absolute;inset:0;background:rgba(0,0,0,0);display:flex;align-items:center;justify-content:center;transition:.2s}
+    .video-container:hover .video-overlay{background:rgba(0,0,0,.2)}
+    .center-play{width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.9);display:flex;align-items:center;justify-content:center;opacity:0;transition:.2s;box-shadow:0 4px 24px rgba(0,0,0,.4)}
+    .video-container:hover .center-play,.center-play.visible{opacity:1}
+    .center-play svg{color:var(--ink);margin-left:4px}
+
+    /* Controls bar */
+    .controls-bar{
+      background:var(--dark);border-top:1px solid rgba(255,255,255,.07);
+      padding:.6rem 1.25rem;display:flex;flex-direction:column;gap:.5rem;flex-shrink:0
+    }
+    .progress-row{display:flex;align-items:center;gap:.75rem}
+    .progress-track{
+      flex:1;height:4px;background:rgba(255,255,255,.15);border-radius:100px;
+      cursor:pointer;position:relative;transition:.15s
+    }
+    .progress-track:hover{height:6px}
+    .progress-fill{height:100%;background:var(--rust);border-radius:100px;width:38%;position:relative}
+    .progress-fill::after{content:'';position:absolute;right:-6px;top:50%;transform:translateY(-50%);width:12px;height:12px;border-radius:50%;background:white;box-shadow:0 1px 4px rgba(0,0,0,.3);opacity:0;transition:.15s}
+    .progress-track:hover .progress-fill::after{opacity:1}
+    .time-label{font-size:.72rem;color:rgba(245,240,232,.4);white-space:nowrap}
+    .controls-row{display:flex;align-items:center;gap:.5rem}
+    .ctrl-btn{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:rgba(245,240,232,.7);transition:.15s;background:none;border:none;cursor:pointer;flex-shrink:0}
+    .ctrl-btn:hover{color:var(--cream);background:rgba(255,255,255,.08)}
+    .ctrl-btn.active{color:var(--gold)}
+    .ctrl-sep{width:1px;height:18px;background:rgba(255,255,255,.1)}
+    .volume-wrap{display:flex;align-items:center;gap:.4rem}
+    .volume-slider{width:80px;height:3px;background:rgba(255,255,255,.2);border-radius:100px;cursor:pointer;appearance:none;outline:none}
+    .volume-slider::-webkit-slider-thumb{appearance:none;width:12px;height:12px;border-radius:50%;background:white;cursor:pointer}
+    .speed-btn{font-size:.75rem;font-weight:700;color:rgba(245,240,232,.6);padding:.2rem .5rem;border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,.12);cursor:pointer;background:none;transition:.15s}
+    .speed-btn:hover{color:var(--cream);border-color:rgba(255,255,255,.3)}
+    .controls-right{margin-left:auto;display:flex;align-items:center;gap:.4rem}
+    .lesson-nav-btns{display:flex;align-items:center;gap:.4rem;margin-left:auto}
+    .lesson-nav-btn{display:flex;align-items:center;gap:.3rem;padding:.35rem .75rem;border-radius:100px;font-size:.75rem;font-weight:600;color:rgba(245,240,232,.6);border:1px solid rgba(255,255,255,.1);transition:.15s;background:none;cursor:pointer}
+    .lesson-nav-btn:hover{background:rgba(255,255,255,.07);color:var(--cream)}
+
+    /* ══ TABS PANEL (below video) ══ */
+    .tabs-panel{background:var(--dark);border-top:1px solid rgba(255,255,255,.07);flex-shrink:0}
+    .tabs-row{display:flex;border-bottom:1px solid rgba(255,255,255,.07);padding:0 1.25rem}
+    .tab-btn{padding:.7rem 1.1rem;font-size:.82rem;font-weight:500;color:rgba(245,240,232,.45);cursor:pointer;border:none;background:none;font-family:inherit;border-bottom:2px solid transparent;margin-bottom:-1px;transition:.15s;white-space:nowrap}
+    .tab-btn:hover{color:rgba(245,240,232,.8)}
+    .tab-btn.active{color:var(--cream);border-bottom-color:var(--gold)}
+    .tab-content{max-height:220px;overflow-y:auto;padding:1.25rem}
+    .tab-panel{display:none}
+    .tab-panel.active{display:block}
+
+    /* Overview tab */
+    .overview-title{font-family:var(--font-display);font-size:1.1rem;font-weight:700;color:var(--cream);margin-bottom:.6rem}
+    .overview-text{font-size:.85rem;line-height:1.7;color:rgba(245,240,232,.55)}
+
+    /* Notes tab */
+    .notes-form{display:flex;flex-direction:column;gap:.75rem}
+    .note-timestamp{font-size:.75rem;color:var(--gold);font-weight:600;margin-bottom:.4rem}
+    .note-input{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-md);padding:.75rem 1rem;font-size:.85rem;color:var(--cream);font-family:inherit;outline:none;resize:none;min-height:80px;transition:.2s;width:100%}
+    .note-input::placeholder{color:rgba(245,240,232,.25)}
+    .note-input:focus{border-color:var(--gold);background:rgba(232,197,71,.05)}
+    .btn-save-note{background:var(--moss);color:var(--cream);border:none;padding:.5rem 1.2rem;border-radius:100px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit;transition:.2s;align-self:flex-start}
+    .btn-save-note:hover{background:#1e3329}
+    .saved-notes{margin-top:1rem;display:flex;flex-direction:column;gap:.6rem}
+    .note-item{background:rgba(255,255,255,.04);border-radius:var(--radius-sm);padding:.7rem .9rem;font-size:.82rem;color:rgba(245,240,232,.65);border-left:2px solid var(--gold)}
+    .note-item-time{font-size:.7rem;color:var(--gold);font-weight:600;margin-bottom:.25rem}
+
+    /* Q&A tab */
+    .qa-form{display:flex;gap:.75rem;margin-bottom:1.25rem}
+    .qa-input{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:100px;padding:.6rem 1rem;font-size:.82rem;color:var(--cream);font-family:inherit;outline:none;transition:.2s}
+    .qa-input::placeholder{color:rgba(245,240,232,.25)}
+    .qa-input:focus{border-color:var(--gold)}
+    .btn-qa{background:var(--moss);color:var(--cream);border:none;padding:.6rem 1.2rem;border-radius:100px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;transition:.2s}
+    .btn-qa:hover{background:#1e3329}
+    .qa-list{display:flex;flex-direction:column;gap:.85rem}
+    .qa-item{display:flex;gap:.75rem}
+    .qa-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--moss),var(--rust));display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;color:var(--cream);flex-shrink:0}
+    .qa-content{}
+    .qa-author{font-size:.75rem;font-weight:600;color:rgba(245,240,232,.7);margin-bottom:.2rem}
+    .qa-text{font-size:.82rem;color:rgba(245,240,232,.5);line-height:1.5}
+    .qa-actions{display:flex;gap:.75rem;margin-top:.3rem}
+    .qa-action-btn{font-size:.72rem;color:rgba(245,240,232,.3);cursor:pointer;background:none;border:none;font-family:inherit;transition:.15s}
+    .qa-action-btn:hover{color:rgba(245,240,232,.7)}
+
+    /* Resources tab */
+    .resource-list{display:flex;flex-direction:column;gap:.5rem}
+    .resource-item{display:flex;align-items:center;gap:.75rem;padding:.6rem .85rem;background:rgba(255,255,255,.04);border-radius:var(--radius-sm);transition:.15s;cursor:pointer}
+    .resource-item:hover{background:rgba(255,255,255,.08)}
+    .resource-icon{font-size:1.1rem;flex-shrink:0}
+    .resource-name{font-size:.82rem;color:rgba(245,240,232,.7);flex:1}
+    .resource-size{font-size:.72rem;color:rgba(245,240,232,.3)}
+    .resource-dl{color:rgba(245,240,232,.35);transition:.15s}
+    .resource-item:hover .resource-dl{color:var(--gold)}
+
+    /* ══ SIDEBAR ══ */
+    .player-sidebar{
+      width:var(--sidebar-w);flex-shrink:0;background:var(--dark);
+      border-left:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column;overflow:hidden
+    }
+    .sidebar-header{padding:.85rem 1rem;border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0}
+    .sidebar-header-title{font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:rgba(245,240,232,.4);margin-bottom:.5rem}
+    .sidebar-course-progress{display:flex;align-items:center;gap:.75rem}
+    .sidebar-progress-text{font-size:.75rem;color:rgba(245,240,232,.45)}
+    .sidebar-progress-wrap{flex:1;height:4px;background:rgba(255,255,255,.1);border-radius:100px;overflow:hidden}
+    .sidebar-progress-bar{height:4px;background:var(--moss);border-radius:100px;width:68%}
+    .sidebar-search{padding:.6rem 1rem;border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0;position:relative}
+    .sidebar-search input{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:100px;padding:.45rem .85rem .45rem 2.2rem;font-size:.78rem;color:var(--cream);font-family:inherit;outline:none;transition:.2s}
+    .sidebar-search input::placeholder{color:rgba(245,240,232,.25)}
+    .sidebar-search input:focus{border-color:rgba(255,255,255,.2)}
+    .sidebar-search-icon{position:absolute;left:1.75rem;top:50%;transform:translateY(-50%);color:rgba(245,240,232,.3);pointer-events:none}
+    .sidebar-content{flex:1;overflow-y:auto}
+
+    /* Sections */
+    .sidebar-section{border-bottom:1px solid rgba(255,255,255,.05)}
+    .sidebar-section-header{
+      display:flex;align-items:center;gap:.6rem;padding:.85rem 1rem;
+      cursor:pointer;transition:.15s;background:none;border:none;width:100%;text-align:left
+    }
+    .sidebar-section-header:hover{background:rgba(255,255,255,.04)}
+    .sidebar-section-header.active-section{background:rgba(255,255,255,.05)}
+    .ss-chevron{font-size:.65rem;color:rgba(245,240,232,.3);transition:.2s;flex-shrink:0}
+    .sidebar-section.expanded .ss-chevron{transform:rotate(90deg)}
+    .ss-info{flex:1;min-width:0}
+    .ss-title{font-size:.8rem;font-weight:600;color:rgba(245,240,232,.75);line-height:1.3;margin-bottom:.15rem}
+    .ss-meta{font-size:.7rem;color:rgba(245,240,232,.3)}
+    .ss-check{width:18px;height:18px;border-radius:50%;border:1.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.6rem}
+    .ss-check.done{background:var(--moss);border-color:var(--moss);color:white}
+
+    /* Lessons */
+    .sidebar-lessons{display:none}
+    .sidebar-section.expanded .sidebar-lessons{display:block}
+    .sidebar-lesson{
+      display:flex;align-items:flex-start;gap:.65rem;padding:.65rem 1rem .65rem 2.4rem;
+      cursor:pointer;transition:.15s;border-left:2px solid transparent
+    }
+    .sidebar-lesson:hover{background:rgba(255,255,255,.04)}
+    .sidebar-lesson.active{background:rgba(232,197,71,.08);border-left-color:var(--gold)}
+    .lesson-check{width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:.1rem;font-size:.55rem;transition:.2s}
+    .lesson-check.done{background:var(--moss);border-color:var(--moss);color:white}
+    .lesson-check.active{border-color:var(--gold)}
+    .lesson-info{flex:1;min-width:0}
+    .lesson-title{font-size:.8rem;line-height:1.4;color:rgba(245,240,232,.65);margin-bottom:.2rem}
+    .sidebar-lesson.active .lesson-title{color:var(--cream);font-weight:600}
+    .lesson-meta-row{display:flex;align-items:center;gap:.5rem;font-size:.68rem;color:rgba(245,240,232,.3)}
+    .lesson-type-icon{font-size:.7rem}
+    .lesson-free-badge{background:rgba(45,74,62,.2);color:var(--moss);font-size:.6rem;font-weight:700;padding:.1rem .4rem;border-radius:100px}
+
+    /* ══ RESPONSIVE ══ */
+    @media(max-width:900px){
+      html,body{overflow:auto;height:auto}
+      .player-sidebar{display:none;position:fixed;right:0;top:var(--player-nav-h);bottom:0;z-index:300;width:300px}
+      .player-sidebar.open{display:flex}
+      .hamburger-player{display:flex}
+      .player-nav .player-progress-wrap,.player-nav .player-progress-label{display:none}
+      .tabs-panel .tab-content{max-height:none}
+      .controls-bar{padding:.5rem .85rem}
+      .volume-wrap{display:none}
+      .lesson-nav-btns{display:none}
+      body{overflow-y:auto}
+      html,body{height:auto;overflow:auto}
+      .player-body{flex-direction:column}
+      .video-area{min-height:60vh}
+    }
+    @media(max-width:480px){
+      .player-nav-btn span{display:none}
+      .player-course-title{display:none}
+      .controls-row .ctrl-sep{display:none}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ TOP NAV ══ -->
+<nav class="player-nav">
+  <button class="hamburger-player" id="sidebarToggle"><span></span><span></span><span></span></button>
+  <a href="learnhub_responsive.html" class="player-nav-logo">GIT<span>Academy</span></a>
+  <div class="player-nav-sep"></div>
+  <div class="player-course-title">Machine Learning A-Z: Hands-On Python & R</div>
+  <div class="player-progress-wrap"><div class="player-progress-bar" style="width:68%"></div></div>
+  <span class="player-progress-label">68% complete</span>
+  <div class="player-nav-right">
+    <a href="course-details.html" class="player-nav-btn">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      <span>Course Info</span>
+    </a>
+    <a href="dashboard.html" class="player-nav-btn">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      <span>Dashboard</span>
+    </a>
+    <div class="avatar-sm">BA</div>
+  </div>
+</nav>
+
+<!-- ══ BODY ══ -->
+<div class="player-body">
+
+  <!-- ══ VIDEO AREA ══ -->
+  <div class="video-area">
+
+    <!-- Video -->
+    <div class="video-container" id="videoContainer">
+      <div class="video-placeholder">
+        <div class="video-emoji">🎬</div>
+        <div class="video-label">Data Preprocessing in Python — Lesson 2</div>
+      </div>
+      <div class="video-overlay">
+        <div class="center-play" id="centerPlay">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls-bar">
+      <div class="progress-row">
+        <span class="time-label">06:42</span>
+        <div class="progress-track" id="progressTrack">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <span class="time-label">18:30</span>
+      </div>
+      <div class="controls-row">
+        <!-- Playback -->
+        <button class="ctrl-btn" id="playBtn" title="Play/Pause">
+          <svg id="playIcon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </button>
+        <button class="ctrl-btn" title="Skip back 10s">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.46"/><text x="8" y="15" font-size="6" fill="currentColor" stroke="none">10</text></svg>
+        </button>
+        <button class="ctrl-btn" title="Skip forward 10s">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.49-3.46"/></svg>
+        </button>
+
+        <!-- Volume -->
+        <div class="volume-wrap">
+          <button class="ctrl-btn" title="Mute">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+          </button>
+          <input type="range" class="volume-slider" min="0" max="100" value="80"/>
+        </div>
+
+        <div class="ctrl-sep"></div>
+
+        <!-- Speed -->
+        <button class="speed-btn" id="speedBtn">1×</button>
+
+        <!-- Auto-play -->
+        <button class="ctrl-btn active" title="Autoplay">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+        </button>
+
+        <!-- Subtitles -->
+        <button class="ctrl-btn" title="Subtitles">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"/><path d="M17 2l-5 5-5-5"/></svg>
+        </button>
+
+        <!-- Fullscreen -->
+        <button class="ctrl-btn" title="Fullscreen">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+        </button>
+
+        <!-- Lesson nav -->
+        <div class="lesson-nav-btns">
+          <button class="lesson-nav-btn">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            Prev
+          </button>
+          <button class="lesson-nav-btn">
+            Next
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <button class="lesson-nav-btn" style="background:rgba(45,74,62,.2);border-color:rgba(45,74,62,.4);color:var(--moss)">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            Mark Complete
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TABS ══ -->
+    <div class="tabs-panel">
+      <div class="tabs-row">
+        <button class="tab-btn active" data-tab="overview">Overview</button>
+        <button class="tab-btn" data-tab="notes">Notes</button>
+        <button class="tab-btn" data-tab="qa">Q&A</button>
+        <button class="tab-btn" data-tab="resources">Resources</button>
+      </div>
+      <div class="tab-content">
+
+        <!-- Overview -->
+        <div class="tab-panel active" id="tab-overview">
+          <div class="overview-title">Data Preprocessing in Python</div>
+          <p class="overview-text">In this lesson we cover the essential techniques for preparing raw data before feeding it into any machine learning model. We explore handling missing values using imputation strategies, encoding categorical variables with Label Encoding and One Hot Encoding, and applying Feature Scaling with Standardisation vs Normalisation. You'll follow along using the real-world <code style="background:rgba(255,255,255,.1);padding:.1rem .3rem;border-radius:4px;font-size:.8rem">Data.csv</code> dataset from the resources tab.</p>
+        </div>
+
+        <!-- Notes -->
+        <div class="tab-panel" id="tab-notes">
+          <div class="notes-form">
+            <div class="note-timestamp">📍 Adding note at 06:42</div>
+            <textarea class="note-input" placeholder="Type your note here…" id="noteInput"></textarea>
+            <button class="btn-save-note" id="saveNoteBtn">Save Note</button>
+          </div>
+          <div class="saved-notes" id="savedNotes">
+            <div class="note-item">
+              <div class="note-item-time">📍 02:15</div>
+              StandardScaler subtracts mean and divides by std dev. MinMaxScaler scales to [0,1]. Use StandardScaler for most ML algorithms.
+            </div>
+            <div class="note-item">
+              <div class="note-item-time">📍 04:30</div>
+              Always split data BEFORE applying feature scaling to avoid data leakage!
+            </div>
+          </div>
+        </div>
+
+        <!-- Q&A -->
+        <div class="tab-panel" id="tab-qa">
+          <div class="qa-form">
+            <input class="qa-input" type="text" placeholder="Ask the instructor a question…" id="qaInput"/>
+            <button class="btn-qa" id="qaSubmitBtn">Ask</button>
+          </div>
+          <div class="qa-list" id="qaList">
+            <div class="qa-item">
+              <div class="qa-avatar">MO</div>
+              <div class="qa-content">
+                <div class="qa-author">Mohammed O. · 3 days ago</div>
+                <div class="qa-text">Should we apply feature scaling on the test set using the parameters from the training set?</div>
+                <div class="qa-actions">
+                  <button class="qa-action-btn">👍 12</button>
+                  <button class="qa-action-btn">Reply</button>
+                </div>
+              </div>
+            </div>
+            <div class="qa-item">
+              <div class="qa-avatar" style="background:linear-gradient(135deg,#c4522a,#e8c547)">BA</div>
+              <div class="qa-content">
+                <div class="qa-author">Prof. BRIGHT ABEO (Instructor) · 3 days ago</div>
+                <div class="qa-text">Exactly right! Fit the scaler on training data only, then transform both train and test. This prevents data leakage.</div>
+                <div class="qa-actions">
+                  <button class="qa-action-btn">👍 8</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resources -->
+        <div class="tab-panel" id="tab-resources">
+          <div class="resource-list">
+            <div class="resource-item">
+              <span class="resource-icon">📄</span>
+              <span class="resource-name">Data.csv — Lesson Dataset</span>
+              <span class="resource-size">4 KB</span>
+              <svg class="resource-dl" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </div>
+            <div class="resource-item">
+              <span class="resource-icon">🐍</span>
+              <span class="resource-name">data_preprocessing.py — Starter code</span>
+              <span class="resource-size">2 KB</span>
+              <svg class="resource-dl" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </div>
+            <div class="resource-item">
+              <span class="resource-icon">📝</span>
+              <span class="resource-name">Section 1 Slides — PDF</span>
+              <span class="resource-size">1.2 MB</span>
+              <svg class="resource-dl" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </div>
+            <div class="resource-item">
+              <span class="resource-icon">🔗</span>
+              <span class="resource-name">scikit-learn documentation</span>
+              <span class="resource-size">Link</span>
+              <svg class="resource-dl" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SIDEBAR ══ -->
+  <aside class="player-sidebar" id="playerSidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-header-title">Course Content</div>
+      <div class="sidebar-course-progress">
+        <span class="sidebar-progress-text">68% complete</span>
+        <div class="sidebar-progress-wrap"><div class="sidebar-progress-bar"></div></div>
+      </div>
+    </div>
+    <div class="sidebar-search">
+      <svg class="sidebar-search-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search lessons…"/>
+    </div>
+    <div class="sidebar-content">
+
+      <!-- Section 1 -->
+      <div class="sidebar-section expanded">
+        <button class="sidebar-section-header active-section">
+          <span class="ss-chevron">›</span>
+          <div class="ss-info">
+            <div class="ss-title">Part 1 — Data Preprocessing</div>
+            <div class="ss-meta">3/5 complete · 1h 20m</div>
+          </div>
+          <div class="ss-check done">✓</div>
+        </button>
+        <div class="sidebar-lessons">
+          <div class="sidebar-lesson">
+            <div class="lesson-check done">✓</div>
+            <div class="lesson-info">
+              <div class="lesson-title">Welcome to the course!</div>
+              <div class="lesson-meta-row"><span class="lesson-type-icon">▶</span><span>5:00</span><span class="lesson-free-badge">FREE</span></div>
+            </div>
+          </div>
+          <div class="sidebar-lesson active">
+            <div class="lesson-check active">▶</div>
+            <div class="lesson-info">
+              <div class="lesson-title">Data Preprocessing in Python</div>
+              <div class="lesson-meta-row"><span class="lesson-type-icon">▶</span><span>18:30</span><span class="lesson-free-badge">FREE</span></div>
+            </div>
+          </div>
+          <div class="sidebar-lesson">
+            <div class="lesson-check done">✓</div>
+            <div class="lesson-info">
+              <div class="lesson-title">Data Preprocessing in R</div>
+              <div class="lesson-meta-row"><span class="lesson-type-icon">▶</span><span>16:00</span></div>
+            </div>
+          </div>
+          <div class="sidebar-lesson">
+            <div class="lesson-check"></div>
+            <div class="lesson-info">
+              <div class="lesson-title">Handling Missing Data</div>
+              <div class="lesson-meta-row"><span class="lesson-type-icon">▶</span><span>14:20</span></div>
+            </div>
+          </div>
+          <div class="sidebar-lesson">
+            <div class="lesson-check"></div>
+            <div class="lesson-info">
+              <div class="lesson-title">Feature Scaling</div>
+              <div class="lesson-meta-row"><span class="lesson-type-icon">▶</span><span>12:10</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2 -->
+      <div class="sidebar-section">
+        <button class="sidebar-section-header">
+          <span class="ss-chevron">›</span>
+          <div class="ss-info">
+            <div class="ss-title">Part 2 — Regression</div>
+            <div class="ss-meta">0/8 complete · 3h 40m</div>
+          </div>
+          <div class="ss-check"></div>
+        </button>
+        <div class="sidebar-lessons">
+          <div class="sidebar-lesson"><div class="lesson-check"></div><div class="lesson-info"><div class="lesson-title">Simple Linear Regression Intuition</div><div class="lesson-meta-row"><span class="lesson-type-icon">▶</span><span>22:00</span></div></div></div>
+          <div class="sidebar-lesson"><div class="lesson-check"></div><div class="lesson-info"><div class="lesson-title">Simple Linear Regression in Python</div><div class="lesson-meta-row"><span class="lesson-type-icon">▶</span><span>18:00</span></div></div></div>
+          <div class="sidebar-lesson"><div class="lesson-check"></div><div class="lesson-info"><div class="lesson-title">Multiple Linear Regression</div><div class="lesson-meta-row"><span class="lesson-type-icon">▶</span><span>28:00</span></div></div></div>
+        </div>
+      </div>
+
+      <!-- Section 3 -->
+      <div class="sidebar-section">
+        <button class="sidebar-section-header">
+          <span class="ss-chevron">›</span>
+          <div class="ss-info">
+            <div class="ss-title">Part 3 — Classification</div>
+            <div class="ss-meta">0/10 complete · 4h 15m</div>
+          </div>
+          <div class="ss-check"></div>
+        </button>
+        <div class="sidebar-lessons"></div>
+      </div>
+
+      <!-- Section 4 -->
+      <div class="sidebar-section">
+        <button class="sidebar-section-header">
+          <span class="ss-chevron">›</span>
+          <div class="ss-info">
+            <div class="ss-title">Part 4 — Clustering</div>
+            <div class="ss-meta">0/6 complete · 2h 30m</div>
+          </div>
+          <div class="ss-check"></div>
+        </button>
+        <div class="sidebar-lessons"></div>
+      </div>
+
+      <!-- Section 5 -->
+      <div class="sidebar-section">
+        <button class="sidebar-section-header">
+          <span class="ss-chevron">›</span>
+          <div class="ss-info">
+            <div class="ss-title">Part 5 — Deep Learning</div>
+            <div class="ss-meta">0/8 complete · 5h 00m</div>
+          </div>
+          <div class="ss-check"></div>
+        </button>
+        <div class="sidebar-lessons"></div>
+      </div>
+
+      <!-- Section 6 -->
+      <div class="sidebar-section">
+        <button class="sidebar-section-header">
+          <span class="ss-chevron">›</span>
+          <div class="ss-info">
+            <div class="ss-title">Part 6 — Natural Language Processing</div>
+            <div class="ss-meta">0/6 complete · 3h 10m</div>
+          </div>
+          <div class="ss-check"></div>
+        </button>
+        <div class="sidebar-lessons"></div>
+      </div>
+
+    </div>
+  </aside>
+
+</div>
+
+<script>
+  // Sidebar toggle (mobile)
+  const sidebarToggle = document.getElementById('sidebarToggle');
+  const playerSidebar = document.getElementById('playerSidebar');
+  sidebarToggle.addEventListener('click', () => playerSidebar.classList.toggle('open'));
+
+  // Sidebar section accordion
+  document.querySelectorAll('.sidebar-section-header').forEach(btn => {
+    btn.addEventListener('click', () => btn.parentElement.classList.toggle('expanded'));
+  });
+
+  // Lesson click
+  document.querySelectorAll('.sidebar-lesson').forEach(lesson => {
+    lesson.addEventListener('click', () => {
+      document.querySelectorAll('.sidebar-lesson').forEach(l => l.classList.remove('active'));
+      lesson.classList.add('active');
+    });
+  });
+
+  // Play/pause toggle
+  let playing = false;
+  const playBtn = document.getElementById('playBtn');
+  const playIcon = document.getElementById('playIcon');
+  const centerPlay = document.getElementById('centerPlay');
+  const videoContainer = document.getElementById('videoContainer');
+
+  function togglePlay() {
+    playing = !playing;
+    playIcon.innerHTML = playing
+      ? '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>'
+      : '<polygon points="5 3 19 12 5 21 5 3"/>';
+    centerPlay.classList.toggle('visible', !playing);
+    if (playing) simulateProgress();
+  }
+
+  playBtn.addEventListener('click', togglePlay);
+  videoContainer.addEventListener('click', togglePlay);
+
+  // Simulate progress
+  let progressInterval;
+  const progressFill = document.getElementById('progressFill');
+  let currentPct = 36;
+  function simulateProgress() {
+    clearInterval(progressInterval);
+    if (!playing) return;
+    progressInterval = setInterval(() => {
+      if (!playing) { clearInterval(progressInterval); return; }
+      currentPct = Math.min(currentPct + 0.1, 100);
+      progressFill.style.width = currentPct + '%';
+    }, 300);
+  }
+
+  // Progress click
+  document.getElementById('progressTrack').addEventListener('click', function(e) {
+    const rect = this.getBoundingClientRect();
+    currentPct = ((e.clientX - rect.left) / rect.width) * 100;
+    progressFill.style.width = currentPct + '%';
+  });
+
+  // Speed
+  const speeds = ['0.75×', '1×', '1.25×', '1.5×', '2×'];
+  let speedIdx = 1;
+  document.getElementById('speedBtn').addEventListener('click', function() {
+    speedIdx = (speedIdx + 1) % speeds.length;
+    this.textContent = speeds[speedIdx];
+  });
+
+  // Tabs
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // Notes
+  document.getElementById('saveNoteBtn').addEventListener('click', () => {
+    const val = document.getElementById('noteInput').value.trim();
+    if (!val) return;
+    const note = document.createElement('div');
+    note.className = 'note-item';
+    note.innerHTML = `<div class="note-item-time">📍 New Note</div>${val}`;
+    document.getElementById('savedNotes').prepend(note);
+    document.getElementById('noteInput').value = '';
+  });
+
+  // Q&A
+  document.getElementById('qaSubmitBtn').addEventListener('click', () => {
+    const val = document.getElementById('qaInput').value.trim();
+    if (!val) return;
+    const item = document.createElement('div');
+    item.className = 'qa-item';
+    item.innerHTML = `<div class="qa-avatar">AK</div><div class="qa-content"><div class="qa-author">You · just now</div><div class="qa-text">${val}</div></div>`;
+    document.getElementById('qaList').prepend(item);
+    document.getElementById('qaInput').value = '';
+  });
+  document.getElementById('qaInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('qaSubmitBtn').click();
+  });
+</script>
+</body>
+</html>

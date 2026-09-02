@@ -1,0 +1,356 @@
+/* ============================================================
+   GITAcademy — main.css
+   Master CSS bundle — imports all stylesheets in correct order.
+
+   Usage in HTML (replaces individual <link> tags):
+     <link rel="stylesheet" href="main.css"/>
+
+   Or when using a Laravel/Vite build pipeline:
+     import './main.css';  in your app.js entry point
+   ============================================================ */
+
+/* 1. Design tokens, resets, base typography, global utilities */
+@import url('./global.css');
+
+/* 2. Navigation */
+@import url('./navbar.css');
+
+/* 3. Footer */
+@import url('./footer.css');
+
+/* 4. Form elements */
+@import url('./forms.css');
+
+/* 5. Buttons */
+@import url('./buttons.css');
+
+/* 6. Course cards */
+@import url('./course-card.css');
+
+/* 7. Course player */
+@import url('./course-player.css');
+
+/* 8. Dashboard (student) */
+@import url('./dashboard.css');
+
+/* 9. Instructor portal */
+@import url('./instructor.css');
+
+/* 10. Admin panel */
+@import url('./admin.css');
+
+/* 11. Responsive overrides — always last */
+@import url('./responsive.css');
+
+
+/* ────────────────────────────────────────────────────────────
+   Page-level overrides & one-off styles that don't belong
+   in any of the component files above go here.
+   ──────────────────────────────────────────────────────────── */
+
+/* ── Landing / Marketing pages ─────────────────────────────── */
+.hero-section {
+  background: var(--ink);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-blob {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.marquee-track {
+  display: flex;
+  gap: 1rem;
+  animation: marquee 28s linear infinite;
+  will-change: transform;
+}
+.marquee-track:hover { animation-play-state: paused; }
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ── Search results dropdown ────────────────────────────────── */
+.search-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0; right: 0;
+  background: white;
+  border: 1px solid rgba(13,13,15,.08);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  z-index: 9999;
+  overflow: hidden;
+  max-height: 340px;
+  overflow-y: auto;
+}
+.search-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  transition: background var(--transition);
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+.search-dropdown-item:hover { background: var(--smoke); }
+.search-dropdown-footer {
+  padding: 0.65rem 1.25rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--rust);
+  border-top: 1px solid rgba(13,13,15,.06);
+  cursor: pointer;
+  text-decoration: none;
+  display: block;
+}
+.search-dropdown-footer:hover { background: var(--smoke); }
+
+/* ── No results state ───────────────────────────────────────── */
+.no-results {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+.no-results-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+.no-results h3 {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+.no-results p {
+  font-size: 0.9rem;
+  color: rgba(13,13,15,.45);
+  margin-bottom: 1.5rem;
+}
+
+/* ── Toast notification ─────────────────────────────────────── */
+#lh-toast {
+  font-family: var(--font-body);
+  max-width: 360px;
+}
+
+/* ── Modal ──────────────────────────────────────────────────── */
+#lh-modal h3 {
+  font-family: var(--font-display);
+}
+
+/* ── Tooltips ───────────────────────────────────────────────── */
+.lh-tooltip {
+  pointer-events: none;
+  user-select: none;
+  font-family: var(--font-body);
+}
+
+/* ── Active filter chips (course list) ──────────────────────── */
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--ink);
+  color: var(--cream);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.filter-chip:hover { background: var(--rust); }
+.filter-chip-x { font-size: 0.9rem; line-height: 1; margin-left: 0.1rem; }
+
+/* ── Pagination ─────────────────────────────────────────────── */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 2rem 0;
+}
+.pg-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(13,13,15,.5);
+  border: 1.5px solid rgba(13,13,15,.1);
+  transition: var(--transition);
+  cursor: pointer;
+  background: white;
+}
+.pg-btn:hover { background: var(--smoke); color: var(--ink); border-color: rgba(13,13,15,.2); }
+.pg-btn.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+.pg-btn.disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+
+/* ── Breadcrumb ─────────────────────────────────────────────── */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  color: rgba(13,13,15,.45);
+  flex-wrap: wrap;
+}
+.breadcrumb a:hover { color: var(--ink); }
+.breadcrumb-sep { opacity: 0.4; }
+
+/* ── Empty state ────────────────────────────────────────────── */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(13,13,15,.06);
+}
+.empty-state-icon { font-size: 3.5rem; margin-bottom: 1rem; }
+.empty-state-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.empty-state-sub {
+  font-size: 0.9rem;
+  color: rgba(13,13,15,.45);
+  margin-bottom: 1.75rem;
+  max-width: 360px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ── Section eyebrow label ──────────────────────────────────── */
+.eyebrow {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--rust);
+  margin-bottom: 0.5rem;
+}
+
+/* ── Rating bar rows (course details / analytics) ───────────── */
+.rating-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.78rem;
+  color: rgba(13,13,15,.5);
+}
+.rating-bar-wrap {
+  flex: 1;
+  height: 6px;
+  background: rgba(13,13,15,.08);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+.rating-bar-fill {
+  height: 6px;
+  background: var(--gold);
+  border-radius: var(--radius-pill);
+}
+
+/* ── Course progress card (dashboard) ───────────────────────── */
+.course-progress-card {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.25rem;
+  border: 1px solid rgba(13,13,15,.06);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  text-decoration: none;
+  color: inherit;
+}
+.course-progress-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  border-color: rgba(13,13,15,.1);
+}
+.course-progress-card .course-thumb {
+  width: 56px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+.course-progress-card .course-info { flex: 1; min-width: 0; }
+.course-progress-card .course-category {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--rust);
+  margin-bottom: 0.2rem;
+}
+.course-progress-card .course-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 0.4rem;
+}
+.course-progress-card .progress-wrap {
+  height: 4px;
+  background: rgba(13,13,15,.08);
+  border-radius: 100px;
+  overflow: hidden;
+  margin-bottom: 0.25rem;
+}
+.course-progress-card .progress-bar { background: var(--moss); }
+.course-progress-card .progress-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: rgba(13,13,15,.4);
+}
+
+/* ── View toggle (grid / list) ──────────────────────────────── */
+.view-toggle {
+  display: flex;
+  gap: 0.25rem;
+  background: var(--smoke);
+  border-radius: var(--radius-sm);
+  padding: 0.2rem;
+}
+.view-toggle-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(13,13,15,.4);
+  transition: var(--transition);
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+.view-toggle-btn.active,
+.view-toggle-btn:hover {
+  background: white;
+  color: var(--ink);
+  box-shadow: var(--shadow-xs);
+}
+
+/* ── Print receipt ──────────────────────────────────────────── */
+@media print {
+  .receipt-card { box-shadow: none; border: 1px solid #ddd; }
+  .btn-download-receipt { display: none; }
+}

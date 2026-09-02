@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Review Course — GITAcademy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--ink:#0d0d0f;--cream:#f5f0e8;--gold:#e8c547;--moss:#2d4a3e;--rust:#c4522a;--paper:#faf8f3;--smoke:#f0ece4;--error:#e05555;--success:#2d7a4f;--font-display:'Fraunces',Georgia,serif;--font-body:'DM Sans',system-ui,sans-serif;--nav-h:64px;--radius-sm:8px;--radius-md:12px;--radius-lg:18px;--radius-xl:24px;--shadow-sm:0 2px 8px rgba(13,13,15,.06);--shadow-md:0 4px 20px rgba(13,13,15,.1);--shadow-lg:0 12px 40px rgba(13,13,15,.14)}
+    html{scroll-behavior:smooth}
+    body{font-family:var(--font-body);background:var(--smoke);color:var(--ink);min-height:100vh}
+    a{text-decoration:none;color:inherit}
+    button{cursor:pointer;font-family:inherit;border:none;background:none}
+
+    .navbar{position:sticky;top:0;z-index:500;height:var(--nav-h);background:var(--cream);border-bottom:1px solid rgba(13,13,15,.08);display:flex;align-items:center;padding:0 2rem;gap:1rem}
+    .nav-logo{font-family:var(--font-display);font-size:1.35rem;font-weight:900;color:var(--ink);letter-spacing:-.03em}
+    .nav-logo span{color:var(--rust)}
+    .nav-right{margin-left:auto;display:flex;align-items:center;gap:.75rem}
+    .btn-back{display:flex;align-items:center;gap:.4rem;font-size:.85rem;font-weight:500;color:rgba(13,13,15,.5);padding:.4rem .85rem;border-radius:100px;border:1.5px solid rgba(13,13,15,.12);transition:.2s}
+    .btn-back:hover{color:var(--ink);border-color:var(--ink)}
+
+    .page-body{max-width:680px;margin:0 auto;padding:3rem 2rem 5rem}
+
+    /* COURSE PREVIEW */
+    .course-preview{display:flex;align-items:center;gap:1.25rem;background:white;border-radius:var(--radius-xl);padding:1.25rem 1.5rem;border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);margin-bottom:2rem}
+    .cp-thumb{width:72px;height:60px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0}
+    .cp-info{}
+    .cp-eyebrow{font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--rust);margin-bottom:.2rem}
+    .cp-title{font-size:.95rem;font-weight:700;margin-bottom:.2rem}
+    .cp-instructor{font-size:.78rem;color:rgba(13,13,15,.45)}
+    .cp-badge{background:rgba(45,122,79,.1);color:#166534;font-size:.65rem;font-weight:700;padding:.15rem .55rem;border-radius:100px;margin-left:.5rem}
+
+    /* REVIEW FORM */
+    .review-card{background:white;border-radius:var(--radius-xl);padding:2rem;border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);margin-bottom:1.5rem}
+    .review-section-title{font-family:var(--font-display);font-size:1.5rem;font-weight:900;letter-spacing:-.03em;margin-bottom:.35rem}
+    .review-section-sub{font-size:.875rem;color:rgba(13,13,15,.45);margin-bottom:2rem}
+
+    /* STAR RATING */
+    .star-rating-section{margin-bottom:1.75rem}
+    .star-label{font-size:.82rem;font-weight:700;color:rgba(13,13,15,.6);margin-bottom:.75rem}
+    .stars-input{display:flex;gap:.35rem}
+    .star-btn{font-size:2.2rem;line-height:1;cursor:pointer;transition:.15s;background:none;border:none;padding:.1rem;filter:grayscale(1);opacity:.4}
+    .star-btn:hover,.star-btn.active,.star-btn.hovered{filter:none;opacity:1;transform:scale(1.1)}
+    .star-hint{font-size:.78rem;color:rgba(13,13,15,.4);margin-top:.5rem;min-height:1.2em;transition:.2s}
+
+    /* CATEGORY RATINGS */
+    .category-ratings{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.75rem}
+    .cat-rating{background:var(--smoke);border-radius:var(--radius-md);padding:1rem}
+    .cat-rating-label{font-size:.78rem;font-weight:700;color:rgba(13,13,15,.55);margin-bottom:.5rem}
+    .mini-stars{display:flex;gap:.2rem}
+    .mini-star{font-size:1.1rem;cursor:pointer;filter:grayscale(1);opacity:.35;transition:.15s}
+    .mini-star:hover,.mini-star.active{filter:none;opacity:1}
+
+    /* TEXT REVIEW */
+    .form-group{margin-bottom:1.25rem}
+    .form-label{display:block;font-size:.82rem;font-weight:600;color:rgba(13,13,15,.6);margin-bottom:.45rem}
+    .form-label span{font-weight:400;color:rgba(13,13,15,.35);font-size:.75rem;margin-left:.3rem}
+    .form-input{width:100%;background:var(--smoke);border:1.5px solid transparent;border-radius:var(--radius-md);padding:.8rem 1rem;font-size:.9rem;color:var(--ink);font-family:inherit;outline:none;transition:.2s}
+    .form-input:focus{background:white;border-color:var(--moss);box-shadow:0 0 0 3px rgba(45,74,62,.08)}
+    .form-input::placeholder{color:rgba(13,13,15,.28)}
+    textarea.form-input{resize:vertical;min-height:140px;line-height:1.6}
+    .char-count{font-size:.72rem;color:rgba(13,13,15,.3);text-align:right;margin-top:.3rem}
+
+    /* RECOMMEND */
+    .recommend-row{display:flex;gap:.75rem;margin-bottom:1.75rem}
+    .recommend-btn{flex:1;padding:.75rem;border-radius:var(--radius-md);border:2px solid rgba(13,13,15,.1);background:white;font-size:.875rem;font-weight:600;color:rgba(13,13,15,.5);cursor:pointer;transition:.2s;text-align:center;display:flex;align-items:center;justify-content:center;gap:.45rem}
+    .recommend-btn:hover{border-color:rgba(13,13,15,.25);color:var(--ink)}
+    .recommend-btn.yes.active{border-color:var(--moss);background:rgba(45,74,62,.07);color:var(--moss)}
+    .recommend-btn.no.active{border-color:var(--error);background:rgba(224,85,85,.06);color:var(--error)}
+
+    /* SUBMIT */
+    .btn-submit{width:100%;background:var(--moss);color:white;border:none;padding:1rem;border-radius:var(--radius-md);font-size:.95rem;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:.5rem}
+    .btn-submit:hover{background:#1e3329;transform:translateY(-1px)}
+    .btn-submit:disabled{opacity:.5;cursor:not-allowed;transform:none}
+    .skip-link{display:block;text-align:center;margin-top:.85rem;font-size:.82rem;color:rgba(13,13,15,.4);cursor:pointer}
+    .skip-link:hover{color:var(--ink)}
+
+    /* SUCCESS */
+    .success-state{display:none;text-align:center;padding:3rem 2rem;background:white;border-radius:var(--radius-xl);border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm)}
+    .success-state.show{display:block}
+    .success-icon{font-size:4rem;margin-bottom:1rem}
+    .success-title{font-family:var(--font-display);font-size:2rem;font-weight:900;letter-spacing:-.03em;margin-bottom:.5rem}
+    .success-sub{font-size:.9rem;color:rgba(13,13,15,.45);margin-bottom:2rem}
+    .success-actions{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap}
+    .btn-primary-sm{background:var(--ink);color:var(--cream);border:none;padding:.75rem 1.75rem;border-radius:100px;font-size:.875rem;font-weight:600;cursor:pointer;font-family:inherit;transition:.2s}
+    .btn-primary-sm:hover{background:var(--rust)}
+    .btn-ghost-sm{background:none;border:1.5px solid rgba(13,13,15,.15);color:rgba(13,13,15,.65);padding:.75rem 1.75rem;border-radius:100px;font-size:.875rem;font-weight:500;cursor:pointer;font-family:inherit;transition:.2s}
+    .btn-ghost-sm:hover{border-color:var(--ink);color:var(--ink)}
+
+    @media(max-width:600px){.category-ratings{grid-template-columns:1fr}.page-body{padding:1.5rem 1.25rem}}
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="learnhub_responsive.html" class="nav-logo">GIT<span>Academy</span></a>
+  <div class="nav-right">
+    <a href="course-player.html" class="btn-back">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Back to Course
+    </a>
+  </div>
+</nav>
+
+<div class="page-body">
+
+  <!-- Course Preview -->
+  <div class="course-preview">
+    <div class="cp-thumb" style="background:linear-gradient(135deg,#1a2f3e,#2d4a3e)">🤖</div>
+    <div class="cp-info">
+      <div class="cp-eyebrow">You completed this course!</div>
+      <div class="cp-title">Machine Learning A-Z: Hands-On Python & R <span class="cp-badge">✓ Completed</span></div>
+      <div class="cp-instructor">Prof. ATO SIAW QUARSHIE · 45 hours · 62 lessons</div>
+    </div>
+  </div>
+
+  <!-- Review Form -->
+  <div class="review-card" id="reviewForm">
+    <h2 class="review-section-title">Leave a Review</h2>
+    <p class="review-section-sub">Your honest feedback helps other learners and helps instructors improve.</p>
+
+    <!-- Overall Star Rating -->
+    <div class="star-rating-section">
+      <div class="star-label">Overall Rating <span style="color:var(--rust)">*</span></div>
+      <div class="stars-input" id="starsInput">
+        <button class="star-btn" data-value="1">★</button>
+        <button class="star-btn" data-value="2">★</button>
+        <button class="star-btn" data-value="3">★</button>
+        <button class="star-btn" data-value="4">★</button>
+        <button class="star-btn" data-value="5">★</button>
+      </div>
+      <div class="star-hint" id="starHint">Click to rate this course</div>
+    </div>
+
+    <!-- Category Ratings -->
+    <div class="category-ratings">
+      <div class="cat-rating">
+        <div class="cat-rating-label">Content Quality</div>
+        <div class="mini-stars" data-category="content">
+          <span class="mini-star" data-val="1">★</span><span class="mini-star" data-val="2">★</span><span class="mini-star" data-val="3">★</span><span class="mini-star" data-val="4">★</span><span class="mini-star" data-val="5">★</span>
+        </div>
+      </div>
+      <div class="cat-rating">
+        <div class="cat-rating-label">Instructor Engagement</div>
+        <div class="mini-stars" data-category="instructor">
+          <span class="mini-star" data-val="1">★</span><span class="mini-star" data-val="2">★</span><span class="mini-star" data-val="3">★</span><span class="mini-star" data-val="4">★</span><span class="mini-star" data-val="5">★</span>
+        </div>
+      </div>
+      <div class="cat-rating">
+        <div class="cat-rating-label">Value for Money</div>
+        <div class="mini-stars" data-category="value">
+          <span class="mini-star" data-val="1">★</span><span class="mini-star" data-val="2">★</span><span class="mini-star" data-val="3">★</span><span class="mini-star" data-val="4">★</span><span class="mini-star" data-val="5">★</span>
+        </div>
+      </div>
+      <div class="cat-rating">
+        <div class="cat-rating-label">Course Structure</div>
+        <div class="mini-stars" data-category="structure">
+          <span class="mini-star" data-val="1">★</span><span class="mini-star" data-val="2">★</span><span class="mini-star" data-val="3">★</span><span class="mini-star" data-val="4">★</span><span class="mini-star" data-val="5">★</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Review Title -->
+    <div class="form-group">
+      <label class="form-label" for="reviewTitle">Review Headline <span>Optional</span></label>
+      <input class="form-input" type="text" id="reviewTitle" placeholder="Summarise your experience in one line…" maxlength="100"/>
+    </div>
+
+    <!-- Review Body -->
+    <div class="form-group">
+      <label class="form-label" for="reviewBody">Your Review <span style="color:var(--rust)">*</span></label>
+      <textarea class="form-input" id="reviewBody" placeholder="What did you learn? What did you love? What could be better? Help other learners make an informed decision…" maxlength="2000"></textarea>
+      <div class="char-count"><span id="charCount">0</span> / 2000</div>
+    </div>
+
+    <!-- Would Recommend -->
+    <div class="form-group">
+      <div class="form-label">Would you recommend this course?</div>
+      <div class="recommend-row">
+        <button class="recommend-btn yes" id="yesBtn" onclick="setRecommend(true)">👍 Yes, I recommend it</button>
+        <button class="recommend-btn no" id="noBtn" onclick="setRecommend(false)">👎 No, not really</button>
+      </div>
+    </div>
+
+    <button class="btn-submit" id="submitBtn" onclick="submitReview()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      Submit Review
+    </button>
+    <div class="skip-link" onclick="window.location.href='dashboard.html'">Skip for now →</div>
+  </div>
+
+  <!-- Success State -->
+  <div class="success-state" id="successState">
+    <div class="success-icon">🌟</div>
+    <h2 class="success-title">Thank you!</h2>
+    <p class="success-sub">Your review has been submitted and will appear after moderation. It helps thousands of learners make better decisions.</p>
+    <div class="success-actions">
+      <a href="certificates.html" class="btn-primary-sm">🏆 View Certificate</a>
+      <a href="home.html" class="btn-ghost-sm">Browse More Courses</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let selectedRating = 0;
+  let recommended    = null;
+  const hints = ['Very poor','Poor','Average','Good','Excellent — loved it!'];
+
+  // Overall stars
+  const starBtns = document.querySelectorAll('.star-btn');
+  starBtns.forEach(btn => {
+    btn.addEventListener('mouseenter', () => highlightStars(parseInt(btn.dataset.value), true));
+    btn.addEventListener('mouseleave', () => highlightStars(selectedRating, false));
+    btn.addEventListener('click',      () => { selectedRating = parseInt(btn.dataset.value); highlightStars(selectedRating, false); document.getElementById('starHint').textContent = hints[selectedRating - 1]; });
+  });
+  function highlightStars(upTo, isHover) {
+    starBtns.forEach(b => {
+      const val = parseInt(b.dataset.value);
+      b.classList.toggle('active',   !isHover && val <= upTo);
+      b.classList.toggle('hovered',  isHover  && val <= upTo);
+    });
+  }
+
+  // Mini stars
+  document.querySelectorAll('.mini-stars').forEach(group => {
+    group.querySelectorAll('.mini-star').forEach(star => {
+      star.addEventListener('click', () => {
+        const val = parseInt(star.dataset.val);
+        group.querySelectorAll('.mini-star').forEach(s => s.classList.toggle('active', parseInt(s.dataset.val) <= val));
+      });
+    });
+  });
+
+  // Char count
+  document.getElementById('reviewBody').addEventListener('input', function() {
+    document.getElementById('charCount').textContent = this.value.length;
+  });
+
+  // Recommend
+  function setRecommend(val) {
+    recommended = val;
+    document.getElementById('yesBtn').classList.toggle('active', val === true);
+    document.getElementById('noBtn').classList.toggle('active', val === false);
+  }
+
+  // Submit
+  function submitReview() {
+    if (!selectedRating) { document.getElementById('starHint').style.color = 'var(--error)'; document.getElementById('starHint').textContent = '⚠ Please select a rating'; return; }
+    const body = document.getElementById('reviewBody').value.trim();
+    if (!body || body.length < 30) { document.getElementById('reviewBody').style.borderColor = 'var(--error)'; document.getElementById('reviewBody').focus(); return; }
+    const btn = document.getElementById('submitBtn');
+    btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin .7s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Submitting…';
+    btn.disabled = true;
+    const style = document.createElement('style');
+    style.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
+    document.head.appendChild(style);
+    setTimeout(() => {
+      document.getElementById('reviewForm').style.display = 'none';
+      document.getElementById('successState').classList.add('show');
+    }, 1200);
+  }
+</script>
+</body>
+</html>

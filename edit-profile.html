@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edit Profile — GITAcademy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --ink:#0d0d0f;--cream:#f5f0e8;--gold:#e8c547;--moss:#2d4a3e;
+      --rust:#c4522a;--paper:#faf8f3;--smoke:#f0ece4;--mist:#e8e3db;
+      --error:#e05555;--success:#2d7a4f;
+      --font-display:'Fraunces',Georgia,serif;
+      --font-body:'DM Sans',system-ui,sans-serif;
+      --nav-h:64px;--sidebar-w:260px;
+      --radius-sm:8px;--radius-md:12px;--radius-lg:18px;--radius-xl:24px;
+      --shadow-sm:0 2px 8px rgba(13,13,15,.06);
+      --shadow-md:0 4px 20px rgba(13,13,15,.1);
+      --shadow-lg:0 12px 40px rgba(13,13,15,.14);
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:var(--font-body);background:var(--smoke);color:var(--ink);line-height:1.6;overflow-x:hidden}
+    a{text-decoration:none;color:inherit}
+    button{cursor:pointer;font-family:inherit;border:none;background:none}
+
+    /* ══ NAVBAR ══ */
+    .navbar{position:sticky;top:0;z-index:500;height:var(--nav-h);background:var(--cream);border-bottom:1px solid rgba(13,13,15,.08);display:flex;align-items:center;padding:0 1.5rem;gap:1rem}
+    .nav-logo{font-family:var(--font-display);font-size:1.35rem;font-weight:900;color:var(--ink);letter-spacing:-.03em;flex-shrink:0}
+    .nav-logo span{color:var(--rust)}
+    .nav-search{flex:1;max-width:380px;position:relative;margin-left:.5rem}
+    .nav-search input{width:100%;background:var(--smoke);border:1.5px solid transparent;border-radius:100px;padding:.5rem 1rem .5rem 2.4rem;font-size:.875rem;color:var(--ink);outline:none;transition:.2s;font-family:var(--font-body)}
+    .nav-search input:focus{background:white;border-color:var(--moss);box-shadow:0 0 0 3px rgba(45,74,62,.08)}
+    .nav-search input::placeholder{color:rgba(13,13,15,.4)}
+    .nav-search-icon{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);color:rgba(13,13,15,.4);pointer-events:none}
+    .nav-right{display:flex;align-items:center;gap:.75rem;margin-left:auto}
+    .nav-icon-btn{width:38px;height:38px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;color:rgba(13,13,15,.6);transition:.2s;position:relative}
+    .nav-icon-btn:hover{background:var(--smoke);color:var(--ink)}
+    .nav-badge{position:absolute;top:5px;right:5px;width:8px;height:8px;background:var(--rust);border-radius:50%;border:2px solid var(--cream)}
+    .nav-user{display:flex;align-items:center;gap:.5rem;padding:.3rem .5rem .3rem .85rem;border-radius:100px;border:1.5px solid rgba(13,13,15,.1);cursor:pointer;transition:.2s;background:none}
+    .nav-user:hover{border-color:var(--ink);background:var(--smoke)}
+    .nav-user-name{font-size:.85rem;font-weight:500;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--moss),var(--rust));display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:var(--cream);flex-shrink:0}
+    .nav-user-wrap{position:relative}
+    .user-dropdown{position:absolute;top:calc(100% + 8px);right:0;background:white;border:1px solid rgba(13,13,15,.08);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:.5rem;min-width:200px;opacity:0;pointer-events:none;transform:translateY(-8px);transition:.2s;z-index:600}
+    .user-dropdown.open{opacity:1;pointer-events:all;transform:translateY(0)}
+    .dropdown-item{display:flex;align-items:center;gap:.6rem;padding:.6rem .75rem;border-radius:var(--radius-sm);font-size:.875rem;font-weight:500;color:rgba(13,13,15,.7);transition:.15s;cursor:pointer}
+    .dropdown-item:hover{background:var(--smoke);color:var(--ink)}
+    .dropdown-item.danger{color:var(--error)}
+    .dropdown-item.danger:hover{background:rgba(224,85,85,.08)}
+    .dropdown-sep{height:1px;background:rgba(13,13,15,.06);margin:.4rem 0}
+    .hamburger{display:none;flex-direction:column;gap:5px;padding:4px;cursor:pointer}
+    .hamburger span{display:block;width:22px;height:2px;background:var(--ink);border-radius:2px;transition:.3s}
+    .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(13,13,15,.5);z-index:400}
+
+    /* ══ LAYOUT ══ */
+    .page-wrap{display:flex;min-height:calc(100vh - var(--nav-h))}
+
+    /* ══ SIDEBAR ══ */
+    .sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--cream);border-right:1px solid rgba(13,13,15,.08);padding:1.5rem 1rem;display:flex;flex-direction:column;gap:.25rem;position:sticky;top:var(--nav-h);height:calc(100vh - var(--nav-h));overflow-y:auto}
+    .sidebar-section{font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(13,13,15,.35);padding:.6rem .75rem .3rem;margin-top:.5rem}
+    .sidebar-link{display:flex;align-items:center;gap:.65rem;padding:.65rem .75rem;border-radius:var(--radius-md);font-size:.875rem;font-weight:500;color:rgba(13,13,15,.6);transition:.15s;text-decoration:none}
+    .sidebar-link:hover{background:var(--smoke);color:var(--ink)}
+    .sidebar-link.active{background:var(--ink);color:var(--cream)}
+    .sidebar-count{margin-left:auto;background:var(--rust);color:white;font-size:.65rem;font-weight:700;padding:.15rem .45rem;border-radius:100px}
+
+    /* ══ MAIN ══ */
+    .main{flex:1;padding:2rem;max-width:800px}
+
+    /* ── Page header ── */
+    .page-header{margin-bottom:2rem}
+    .breadcrumb{display:flex;align-items:center;gap:.5rem;font-size:.8rem;color:rgba(13,13,15,.4);margin-bottom:.75rem}
+    .breadcrumb a{color:rgba(13,13,15,.4);transition:.2s}
+    .breadcrumb a:hover{color:var(--rust)}
+    .breadcrumb-sep{opacity:.4}
+    .page-title{font-family:var(--font-display);font-size:2rem;font-weight:900;letter-spacing:-.03em;margin-bottom:.3rem}
+    .page-sub{font-size:.9rem;color:rgba(13,13,15,.5);font-weight:300}
+
+    /* ── Section cards ── */
+    .edit-section{background:white;border-radius:var(--radius-xl);border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);margin-bottom:1.5rem;overflow:hidden}
+    .edit-section-header{padding:1.4rem 1.8rem;border-bottom:1px solid rgba(13,13,15,.06);display:flex;align-items:center;justify-content:space-between}
+    .edit-section-title{font-family:var(--font-display);font-size:1.1rem;font-weight:700;letter-spacing:-.02em;display:flex;align-items:center;gap:.6rem}
+    .edit-section-icon{font-size:1.1rem}
+    .edit-section-body{padding:1.8rem}
+
+    /* ── Avatar editor ── */
+    .avatar-editor{display:flex;align-items:center;gap:2rem}
+    .avatar-preview{
+      width:100px;height:100px;border-radius:50%;
+      background:linear-gradient(135deg,var(--moss),var(--rust));
+      display:flex;align-items:center;justify-content:center;
+      font-family:var(--font-display);font-size:2.2rem;font-weight:900;color:var(--cream);
+      flex-shrink:0;position:relative;cursor:pointer;overflow:hidden
+    }
+    .avatar-overlay{
+      position:absolute;inset:0;background:rgba(13,13,15,.5);
+      display:flex;align-items:center;justify-content:center;
+      opacity:0;transition:.2s;border-radius:50%
+    }
+    .avatar-preview:hover .avatar-overlay{opacity:1}
+    .avatar-overlay svg{color:white}
+    .avatar-actions{display:flex;flex-direction:column;gap:.6rem}
+    .avatar-hint{font-size:.78rem;color:rgba(13,13,15,.4);margin-top:.25rem}
+
+    /* ── Form grid ── */
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+    .form-group{display:flex;flex-direction:column;gap:.4rem}
+    .form-group.full{grid-column:1/-1}
+    .form-label{font-size:.8rem;font-weight:500;color:rgba(13,13,15,.65)}
+    .form-label span{color:var(--rust);margin-left:2px}
+    .form-input{background:var(--smoke);border:1.5px solid transparent;border-radius:var(--radius-md);padding:.8rem 1rem;font-size:16px;color:var(--ink);outline:none;transition:.2s;width:100%;font-family:var(--font-body)}
+    .form-input:focus{background:white;border-color:var(--moss);box-shadow:0 0 0 3px rgba(45,74,62,.08)}
+    .form-input::placeholder{color:rgba(13,13,15,.3)}
+    .form-input.error{border-color:var(--error);background:white}
+    .form-hint{font-size:.72rem;color:rgba(13,13,15,.4);margin-top:.2rem}
+    .form-hint.error{color:var(--error)}
+    textarea.form-input{resize:vertical;min-height:110px;line-height:1.6}
+    select.form-input{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center;padding-right:2.5rem}
+
+    /* ── Password fields ── */
+    .password-wrap{position:relative}
+    .password-wrap .form-input{padding-right:3rem}
+    .toggle-pw{position:absolute;right:.75rem;top:50%;transform:translateY(-50%);color:rgba(13,13,15,.35);display:flex;align-items:center;justify-content:center;padding:6px;min-width:38px;min-height:38px;transition:.2s}
+    .toggle-pw:hover{color:var(--ink)}
+
+    /* ── Notification toggles ── */
+    .notif-list{display:flex;flex-direction:column;gap:0}
+    .notif-item{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid rgba(13,13,15,.05)}
+    .notif-item:last-child{border-bottom:none;padding-bottom:0}
+    .notif-info strong{display:block;font-size:.875rem;font-weight:600;margin-bottom:.15rem}
+    .notif-info span{font-size:.78rem;color:rgba(13,13,15,.45)}
+    .toggle-switch{position:relative;width:44px;height:24px;flex-shrink:0}
+    .toggle-switch input{opacity:0;width:0;height:0;position:absolute}
+    .toggle-track{
+      position:absolute;inset:0;border-radius:100px;
+      background:rgba(13,13,15,.12);cursor:pointer;transition:.25s
+    }
+    .toggle-track::after{
+      content:'';position:absolute;width:18px;height:18px;border-radius:50%;
+      background:white;top:3px;left:3px;transition:.25s;
+      box-shadow:0 1px 4px rgba(13,13,15,.2)
+    }
+    .toggle-switch input:checked + .toggle-track{background:var(--moss)}
+    .toggle-switch input:checked + .toggle-track::after{left:23px}
+
+    /* ── Danger zone ── */
+    .danger-zone{border-color:rgba(224,85,85,.2)}
+    .danger-zone .edit-section-header{background:rgba(224,85,85,.04)}
+    .danger-zone .edit-section-title{color:var(--error)}
+    .danger-list{display:flex;flex-direction:column;gap:1rem}
+    .danger-item{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem;background:var(--smoke);border-radius:var(--radius-md)}
+    .danger-item-info strong{display:block;font-size:.875rem;font-weight:600;margin-bottom:.15rem}
+    .danger-item-info span{font-size:.78rem;color:rgba(13,13,15,.5)}
+    .btn-danger{background:transparent;color:var(--error);border:1.5px solid rgba(224,85,85,.3);padding:.55rem 1.2rem;border-radius:100px;font-size:.82rem;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit;white-space:nowrap}
+    .btn-danger:hover{background:var(--error);color:white;border-color:var(--error)}
+
+    /* ── Form actions ── */
+    .form-actions{display:flex;align-items:center;justify-content:space-between;padding:1.2rem 1.8rem;border-top:1px solid rgba(13,13,15,.06);background:var(--smoke);gap:1rem;flex-wrap:wrap}
+    .btn-save{background:var(--ink);color:var(--cream);border:none;padding:.75rem 2rem;border-radius:100px;font-size:.9rem;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit;display:inline-flex;align-items:center;gap:.5rem}
+    .btn-save:hover{background:var(--rust);transform:translateY(-1px);box-shadow:0 8px 22px rgba(196,82,42,.22)}
+    .btn-cancel{background:transparent;color:rgba(13,13,15,.5);border:none;padding:.75rem 1.4rem;border-radius:100px;font-size:.9rem;font-weight:500;cursor:pointer;transition:.2s;font-family:inherit;text-decoration:none}
+    .btn-cancel:hover{color:var(--ink);background:var(--mist)}
+
+    /* ── Toast ── */
+    .toast{
+      position:fixed;bottom:2rem;right:2rem;background:var(--ink);color:var(--cream);
+      padding:.85rem 1.4rem;border-radius:var(--radius-md);font-size:.875rem;font-weight:500;
+      box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:.6rem;
+      transform:translateY(100px);opacity:0;transition:.35s;z-index:999
+    }
+    .toast.show{transform:translateY(0);opacity:1}
+    .toast.success{background:var(--success)}
+
+    /* ── Fade ── */
+    .fade{animation:fadeUp .6s ease both}
+    .d1{animation-delay:.05s}.d2{animation-delay:.15s}.d3{animation-delay:.25s}.d4{animation-delay:.35s}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+    /* ══ RESPONSIVE ══ */
+    @media(max-width:768px){
+      .sidebar{position:fixed;left:-100%;top:var(--nav-h);z-index:450;transition:.3s;height:calc(100vh - var(--nav-h))}
+      .sidebar.open{left:0}
+      .sidebar-overlay.open{display:block}
+      .hamburger{display:flex}
+      .nav-search{display:none}
+      .nav-user-name{display:none}
+      .main{padding:1.25rem}
+      .form-grid{grid-template-columns:1fr}
+      .form-group.full{grid-column:1}
+      .avatar-editor{flex-direction:column;align-items:flex-start;gap:1rem}
+      .edit-section-body{padding:1.25rem}
+      .form-actions{padding:1rem 1.25rem}
+      .btn-save,.btn-cancel{flex:1;justify-content:center;text-align:center}
+      .danger-item{flex-direction:column;align-items:flex-start}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ NAVBAR ══ -->
+<nav class="navbar">
+  <button class="hamburger" id="hamburgerBtn" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <a href="learnhub_responsive.html" class="nav-logo">GIT<span>Academy</span></a>
+  <div class="nav-search">
+    <svg class="nav-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" placeholder="Search courses…"/>
+  </div>
+  <div class="nav-right">
+    <button class="nav-icon-btn" title="Notifications">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <span class="nav-badge"></span>
+    </button>
+    <div class="nav-user-wrap">
+      <button class="nav-user" id="userMenuBtn">
+        <span class="nav-user-name">Justice Elorm</span>
+        <div class="avatar">JE</div>
+      </button>
+      <div class="user-dropdown" id="userDropdown">
+        <a href="dashboard.html" class="dropdown-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Dashboard
+        </a>
+        <a href="profile.html" class="dropdown-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          My Profile
+        </a>
+        <a href="edit-profile.html" class="dropdown-item active" style="background:var(--smoke);color:var(--ink)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Edit Profile
+        </a>
+        <div class="dropdown-sep"></div>
+        <a href="login.html" class="dropdown-item danger">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Log Out
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="page-wrap">
+  <!-- ══ SIDEBAR ══ -->
+  <aside class="sidebar" id="sidebar">
+    <a href="dashboard.html" class="sidebar-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </a>
+    <div class="sidebar-section">Learning</div>
+    <a href="course-list.html" class="sidebar-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      My Courses
+      <span class="sidebar-count">4</span>
+    </a>
+    <a href="course-list.html#bookmarks" class="sidebar-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+      Saved
+      <span class="sidebar-count">7</span>
+    </a>
+    <a href="profile.html#certificates" class="sidebar-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+      Certificates
+    </a>
+    <div class="sidebar-section">Explore</div>
+    <a href="home.html" class="sidebar-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Browse Courses
+    </a>
+    <a href="category-list.html" class="sidebar-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h7"/></svg>
+      Categories
+    </a>
+    <a href="cart.html" class="sidebar-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      Cart
+      <span class="sidebar-count">2</span>
+    </a>
+    <div class="sidebar-section">Account</div>
+    <a href="profile.html" class="sidebar-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Profile
+    </a>
+    <a href="edit-profile.html" class="sidebar-link active">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Settings
+    </a>
+    <a href="login.html" class="sidebar-link" style="margin-top:auto;color:var(--error)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Log Out
+    </a>
+  </aside>
+
+  <!-- ══ MAIN ══ -->
+  <main class="main">
+
+    <!-- Page Header -->
+    <div class="page-header fade d1">
+      <div class="breadcrumb">
+        <a href="dashboard.html">Dashboard</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="profile.html">Profile</a>
+        <span class="breadcrumb-sep">›</span>
+        <span>Edit Profile</span>
+      </div>
+      <h1 class="page-title">Edit Profile</h1>
+      <p class="page-sub">Update your personal information, preferences, and account settings.</p>
+    </div>
+
+    <!-- ── Avatar Section ── -->
+    <div class="edit-section fade d1">
+      <div class="edit-section-header">
+        <div class="edit-section-title"><span class="edit-section-icon">🖼</span> Profile Photo</div>
+      </div>
+      <div class="edit-section-body">
+        <div class="avatar-editor">
+          <div class="avatar-preview" id="avatarPreview" title="Click to change photo">
+            JE
+            <div class="avatar-overlay">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </div>
+          </div>
+          <div class="avatar-actions">
+            <button class="btn-save" style="padding:.6rem 1.3rem;font-size:.82rem" onclick="document.getElementById('avatarInput').click()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Upload Photo
+            </button>
+            <input type="file" id="avatarInput" accept="image/*" style="display:none"/>
+            <button class="btn-cancel" style="padding:.5rem 1rem;font-size:.82rem">Remove Photo</button>
+            <p class="avatar-hint">JPG, PNG or GIF · Max 2MB · Min 200×200px</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Personal Info ── -->
+    <div class="edit-section fade d2">
+      <div class="edit-section-header">
+        <div class="edit-section-title"><span class="edit-section-icon">👤</span> Personal Information</div>
+      </div>
+      <div class="edit-section-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label" for="firstName">First Name <span>*</span></label>
+            <input class="form-input" id="firstName" type="text" value="Justice" placeholder="First name"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="lastName">Last Name <span>*</span></label>
+            <input class="form-input" id="lastName" type="text" value="Elorm" placeholder="Last name"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="username">Username <span>*</span></label>
+            <input class="form-input" id="username" type="text" value="justiceelorm" placeholder="username"/>
+            <p class="form-hint">gitacademy.com/u/justiceelorm</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="email">Email Address <span>*</span></label>
+            <input class="form-input" id="email" type="email" value="justiceelorm@example.com" placeholder="email@example.com"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="phone">Phone Number</label>
+            <input class="form-input" id="phone" type="tel" value="+233 24 567 8901" placeholder="+1 000 000 0000"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="dob">Date of Birth</label>
+            <input class="form-input" id="dob" type="date" value="2000-04-15"/>
+          </div>
+          <div class="form-group full">
+            <label class="form-label" for="tagline">Tagline</label>
+            <input class="form-input" id="tagline" type="text" value="Frontend Developer in training · Accra, Ghana" placeholder="Short description about yourself"/>
+            <p class="form-hint">Shown under your name on your profile. Max 100 characters.</p>
+          </div>
+          <div class="form-group full">
+            <label class="form-label" for="bio">Bio</label>
+            <textarea class="form-input" id="bio" placeholder="Tell the world about yourself…">Hi! I'm Elorm, a self-taught developer from Accra, Ghana. I started learning programming two years ago on GIT Academy and have since built several small projects. I'm passionate about UI/UX design and data science.</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="location">Location</label>
+            <input class="form-input" id="location" type="text" value="Accra, Ghana" placeholder="City, Country"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="website">Website</label>
+            <input class="form-input" id="website" type="url" value="https://justiceelorm.dev" placeholder="https://yourwebsite.com"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="language">Preferred Language</label>
+            <select class="form-input" id="language">
+              <option value="en" selected>English</option>
+              <option value="fr">French</option>
+              <option value="es">Spanish</option>
+              <option value="pt">Portuguese</option>
+              <option value="ar">Arabic</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="timezone">Timezone</label>
+            <select class="form-input" id="timezone">
+              <option value="Africa/Accra" selected>Africa/Accra (GMT+0)</option>
+              <option value="Africa/Lagos">Africa/Lagos (GMT+1)</option>
+              <option value="Europe/London">Europe/London (GMT+0/+1)</option>
+              <option value="America/New_York">America/New_York (GMT-5)</option>
+              <option value="Asia/Dubai">Asia/Dubai (GMT+4)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="form-actions">
+        <a href="profile.html" class="btn-cancel">Cancel</a>
+        <button class="btn-save" id="savePersonalBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Save Changes
+        </button>
+      </div>
+    </div>
+
+    <!-- ── Social Links ── -->
+    <div class="edit-section fade d2">
+      <div class="edit-section-header">
+        <div class="edit-section-title"><span class="edit-section-icon">🔗</span> Social Links</div>
+      </div>
+      <div class="edit-section-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label" for="twitter">𝕏 / Twitter</label>
+            <input class="form-input" id="twitter" type="text" value="@justiceelorm_dev" placeholder="@username"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="linkedin">LinkedIn</label>
+            <input class="form-input" id="linkedin" type="url" value="https://linkedin.com/in/justiceelorm" placeholder="https://linkedin.com/in/…"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="github">GitHub</label>
+            <input class="form-input" id="github" type="text" value="justiceelorm" placeholder="username"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="youtube">YouTube</label>
+            <input class="form-input" id="youtube" type="url" value="" placeholder="https://youtube.com/@…"/>
+          </div>
+        </div>
+      </div>
+      <div class="form-actions">
+        <a href="profile.html" class="btn-cancel">Cancel</a>
+        <button class="btn-save">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Save Links
+        </button>
+      </div>
+    </div>
+
+    <!-- ── Change Password ── -->
+    <div class="edit-section fade d3">
+      <div class="edit-section-header">
+        <div class="edit-section-title"><span class="edit-section-icon">🔒</span> Change Password</div>
+      </div>
+      <div class="edit-section-body">
+        <div class="form-grid">
+          <div class="form-group full">
+            <label class="form-label" for="currentPw">Current Password <span>*</span></label>
+            <div class="password-wrap">
+              <input class="form-input" id="currentPw" type="password" placeholder="Enter current password"/>
+              <button class="toggle-pw" type="button" data-target="currentPw" aria-label="Toggle">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <p class="form-hint"><a href="forgot-password.html" style="color:var(--rust)">Forgot your password?</a></p>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="newPw">New Password <span>*</span></label>
+            <div class="password-wrap">
+              <input class="form-input" id="newPw" type="password" placeholder="Create new password"/>
+              <button class="toggle-pw" type="button" data-target="newPw" aria-label="Toggle">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="confirmPw">Confirm New Password <span>*</span></label>
+            <div class="password-wrap">
+              <input class="form-input" id="confirmPw" type="password" placeholder="Re-enter new password"/>
+              <button class="toggle-pw" type="button" data-target="confirmPw" aria-label="Toggle">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <p class="form-hint" id="pwMatchHint"></p>
+          </div>
+        </div>
+      </div>
+      <div class="form-actions">
+        <span style="font-size:.78rem;color:rgba(13,13,15,.4)">Use 8+ characters with a mix of letters, numbers and symbols</span>
+        <button class="btn-save">Update Password</button>
+      </div>
+    </div>
+
+    <!-- ── Notifications ── -->
+    <div class="edit-section fade d3">
+      <div class="edit-section-header">
+        <div class="edit-section-title"><span class="edit-section-icon">🔔</span> Notification Preferences</div>
+      </div>
+      <div class="edit-section-body">
+        <div class="notif-list">
+          <div class="notif-item">
+            <div class="notif-info">
+              <strong>Course Updates</strong>
+              <span>Get notified when new lessons are added to your enrolled courses</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" checked/>
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+          <div class="notif-item">
+            <div class="notif-info">
+              <strong>Promotions & Deals</strong>
+              <span>Receive special offers and discount codes via email</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" checked/>
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+          <div class="notif-item">
+            <div class="notif-info">
+              <strong>Instructor Messages</strong>
+              <span>Direct messages and announcements from your instructors</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" checked/>
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+          <div class="notif-item">
+            <div class="notif-info">
+              <strong>Weekly Progress Report</strong>
+              <span>A summary of your learning activity sent every Monday</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox"/>
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+          <div class="notif-item">
+            <div class="notif-info">
+              <strong>New Course Recommendations</strong>
+              <span>Personalised course suggestions based on your interests</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" checked/>
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="form-actions">
+        <span></span>
+        <button class="btn-save">Save Preferences</button>
+      </div>
+    </div>
+
+    <!-- ── Danger Zone ── -->
+    <div class="edit-section danger-zone fade d4">
+      <div class="edit-section-header">
+        <div class="edit-section-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Danger Zone
+        </div>
+      </div>
+      <div class="edit-section-body">
+        <div class="danger-list">
+          <div class="danger-item">
+            <div class="danger-item-info">
+              <strong>Deactivate Account</strong>
+              <span>Temporarily disable your account. You can reactivate it later by logging in.</span>
+            </div>
+            <button class="btn-danger">Deactivate</button>
+          </div>
+          <div class="danger-item">
+            <div class="danger-item-info">
+              <strong>Delete Account</strong>
+              <span>Permanently delete your account and all associated data. This cannot be undone.</span>
+            </div>
+            <button class="btn-danger" id="deleteBtn">Delete Account</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+  <span id="toastMsg">Changes saved!</span>
+</div>
+
+<script>
+  // Hamburger
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  hamburgerBtn.addEventListener('click', () => { sidebar.classList.toggle('open'); overlay.classList.toggle('open'); });
+  overlay.addEventListener('click', () => { sidebar.classList.remove('open'); overlay.classList.remove('open'); });
+
+  // User dropdown
+  const userMenuBtn = document.getElementById('userMenuBtn');
+  const userDropdown = document.getElementById('userDropdown');
+  userMenuBtn.addEventListener('click', e => { e.stopPropagation(); userDropdown.classList.toggle('open'); });
+  document.addEventListener('click', () => userDropdown.classList.remove('open'));
+
+  // Password toggles
+  document.querySelectorAll('.toggle-pw').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const input = document.getElementById(btn.dataset.target);
+      input.type = input.type === 'password' ? 'text' : 'password';
+    });
+  });
+
+  // Confirm password match
+  const newPw = document.getElementById('newPw');
+  const confirmPw = document.getElementById('confirmPw');
+  const pwMatchHint = document.getElementById('pwMatchHint');
+  confirmPw.addEventListener('input', () => {
+    if (!confirmPw.value) { pwMatchHint.textContent = ''; return; }
+    if (confirmPw.value === newPw.value) {
+      pwMatchHint.textContent = 'Passwords match ✓';
+      pwMatchHint.style.color = 'var(--success)';
+      confirmPw.classList.remove('error');
+    } else {
+      pwMatchHint.textContent = 'Passwords do not match';
+      pwMatchHint.style.color = 'var(--error)';
+      confirmPw.classList.add('error');
+    }
+  });
+
+  // Toast helper
+  function showToast(msg, type = 'success') {
+    const toast = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    toast.className = 'toast ' + type;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+  }
+
+  // Save personal info
+  document.getElementById('savePersonalBtn').addEventListener('click', () => {
+    showToast('Profile updated successfully!', 'success');
+  });
+
+  // All other save buttons
+  document.querySelectorAll('.btn-save').forEach(btn => {
+    if (btn.id === 'savePersonalBtn') return;
+    btn.addEventListener('click', () => showToast('Changes saved!', 'success'));
+  });
+
+  // Avatar upload preview
+  document.getElementById('avatarInput').addEventListener('change', function() {
+    if (this.files && this.files[0]) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const preview = document.getElementById('avatarPreview');
+        preview.style.backgroundImage = `url(${e.target.result})`;
+        preview.style.backgroundSize = 'cover';
+        preview.style.backgroundPosition = 'center';
+        preview.textContent = '';
+        preview.appendChild(Object.assign(document.createElement('div'), {className:'avatar-overlay', innerHTML:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>'}));
+      };
+      reader.readAsDataURL(this.files[0]);
+    }
+  });
+
+  // Delete confirmation
+  document.getElementById('deleteBtn').addEventListener('click', () => {
+    if (confirm('Are you absolutely sure? This will permanently delete your account and all data. This cannot be undone.')) {
+      alert('Account deletion request submitted. You will receive a confirmation email.');
+    }
+  });
+</script>
+</body>
+</html>
