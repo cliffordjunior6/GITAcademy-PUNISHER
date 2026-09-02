@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Machine Learning A-Z — GITAcademy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --ink:#0d0d0f;--cream:#f5f0e8;--gold:#e8c547;--moss:#2d4a3e;
+      --rust:#c4522a;--paper:#faf8f3;--smoke:#f0ece4;--mist:#e8e3db;
+      --font-display:'Fraunces',Georgia,serif;--font-body:'DM Sans',system-ui,sans-serif;
+      --nav-h:64px;--shadow-sm:0 2px 8px rgba(13,13,15,.06);
+      --shadow-md:0 4px 20px rgba(13,13,15,.1);--shadow-lg:0 12px 40px rgba(13,13,15,.14);
+      --radius-sm:8px;--radius-md:12px;--radius-lg:18px;--radius-xl:24px;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:var(--font-body);background:var(--smoke);color:var(--ink);overflow-x:hidden}
+    a{text-decoration:none;color:inherit}
+    button{cursor:pointer;font-family:inherit;border:none;background:none}
+    ul{list-style:none}
+
+    /* ══ NAVBAR ══ */
+    .navbar{position:sticky;top:0;z-index:500;height:var(--nav-h);background:var(--cream);border-bottom:1px solid rgba(13,13,15,.08);display:flex;align-items:center;padding:0 2rem;gap:1.5rem}
+    .nav-logo{font-family:var(--font-display);font-size:1.4rem;font-weight:900;color:var(--ink);letter-spacing:-.03em;flex-shrink:0}
+    .nav-logo span{color:var(--rust)}
+    .nav-links{display:flex;align-items:center;gap:.25rem}
+    .nav-link{font-size:.875rem;font-weight:500;color:rgba(13,13,15,.55);padding:.4rem .8rem;border-radius:var(--radius-md);transition:.15s}
+    .nav-link:hover{color:var(--ink);background:var(--smoke)}
+    .nav-search{flex:1;max-width:380px;position:relative;margin:0 auto}
+    .nav-search input{width:100%;background:var(--smoke);border:1.5px solid transparent;border-radius:100px;padding:.5rem 1rem .5rem 2.5rem;font-size:.875rem;color:var(--ink);outline:none;transition:.2s;font-family:var(--font-body)}
+    .nav-search input:focus{background:white;border-color:var(--moss)}
+    .nav-search input::placeholder{color:rgba(13,13,15,.4)}
+    .nav-search-icon{position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:rgba(13,13,15,.4);pointer-events:none}
+    .nav-actions{display:flex;align-items:center;gap:.75rem;margin-left:auto;flex-shrink:0}
+    .btn-ghost{background:none;border:1.5px solid rgba(13,13,15,.18);padding:.5rem 1.2rem;border-radius:100px;font-size:.85rem;font-weight:500;color:var(--ink);transition:.2s;font-family:inherit;display:inline-flex;align-items:center}
+    .btn-ghost:hover{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+    .btn-nav-primary{background:var(--ink);color:var(--cream);border:none;padding:.5rem 1.4rem;border-radius:100px;font-size:.85rem;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit;display:inline-flex;align-items:center}
+    .btn-nav-primary:hover{background:var(--rust)}
+    .nav-icon-btn{width:38px;height:38px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;color:rgba(13,13,15,.6);transition:.2s;position:relative}
+    .nav-icon-btn:hover{background:var(--smoke);color:var(--ink)}
+    .nav-badge{position:absolute;top:5px;right:5px;width:8px;height:8px;background:var(--rust);border-radius:50%;border:2px solid var(--cream)}
+    .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--moss),var(--rust));display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:var(--cream);flex-shrink:0}
+    .nav-user{display:flex;align-items:center;gap:.5rem;padding:.3rem .5rem .3rem .85rem;border-radius:100px;border:1.5px solid rgba(13,13,15,.1);cursor:pointer;transition:.2s;background:none}
+    .nav-user:hover{border-color:var(--ink);background:var(--smoke)}
+    .nav-user-name{font-size:.82rem;font-weight:500;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .nav-user-wrap{position:relative}
+    .user-dropdown{position:absolute;top:calc(100% + 8px);right:0;background:white;border:1px solid rgba(13,13,15,.08);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:.5rem;min-width:200px;opacity:0;pointer-events:none;transform:translateY(-8px);transition:.2s;z-index:600}
+    .user-dropdown.open{opacity:1;pointer-events:all;transform:translateY(0)}
+    .dropdown-item{display:flex;align-items:center;gap:.6rem;padding:.6rem .75rem;border-radius:var(--radius-sm);font-size:.875rem;font-weight:500;color:rgba(13,13,15,.7);transition:.15s}
+    .dropdown-item:hover{background:var(--smoke);color:var(--ink)}
+    .dropdown-item.danger{color:#e05555}
+    .dropdown-sep{height:1px;background:rgba(13,13,15,.06);margin:.4rem 0}
+    .hamburger{display:none;flex-direction:column;gap:5px;padding:4px}
+    .hamburger span{display:block;width:22px;height:2px;background:var(--ink);border-radius:2px}
+
+    /* ══ COURSE HERO ══ */
+    .course-hero{background:var(--ink);padding:3rem 2rem;position:relative;overflow:hidden}
+    .course-hero-blob{position:absolute;border-radius:50%;pointer-events:none}
+    .course-hero-blob-1{width:500px;height:500px;background:radial-gradient(circle,rgba(45,74,62,.45),transparent 70%);top:-200px;right:-100px}
+    .course-hero-blob-2{width:350px;height:350px;background:radial-gradient(circle,rgba(232,197,71,.1),transparent 70%);bottom:-100px;left:30%}
+    .course-hero-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 360px;gap:3rem;align-items:start;position:relative;z-index:1}
+    .breadcrumb{display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:rgba(245,240,232,.4);margin-bottom:1.2rem;flex-wrap:wrap}
+    .breadcrumb a{color:rgba(245,240,232,.4);transition:.2s}
+    .breadcrumb a:hover{color:rgba(245,240,232,.8)}
+    .breadcrumb-sep{opacity:.4}
+    .course-category-tag{display:inline-flex;align-items:center;gap:.4rem;background:rgba(232,197,71,.15);border:1px solid rgba(232,197,71,.25);color:var(--gold);font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:.3rem .8rem;border-radius:100px;margin-bottom:1rem}
+    .course-title{font-family:var(--font-display);font-size:clamp(1.8rem,3.5vw,3rem);font-weight:900;color:var(--cream);line-height:1.05;letter-spacing:-.03em;margin-bottom:1rem}
+    .course-subtitle{font-size:1rem;color:rgba(245,240,232,.6);font-weight:300;line-height:1.65;margin-bottom:1.5rem;max-width:600px}
+    .course-meta-row{display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap;margin-bottom:1.2rem}
+    .course-rating-big{display:flex;align-items:center;gap:.4rem}
+    .rating-num{font-family:var(--font-display);font-size:1.1rem;font-weight:700;color:var(--gold)}
+    .rating-stars{color:var(--gold);font-size:.9rem;letter-spacing:1px}
+    .rating-count{font-size:.82rem;color:rgba(245,240,232,.4)}
+    .course-students{font-size:.82rem;color:rgba(245,240,232,.5);display:flex;align-items:center;gap:.3rem}
+    .course-instructor-row{display:flex;align-items:center;gap:.6rem;margin-bottom:1.5rem}
+    .instructor-mini-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#c4522a,#e8c547);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:var(--ink);flex-shrink:0}
+    .instructor-mini-name{font-size:.85rem;color:rgba(245,240,232,.7);font-weight:500}
+    .instructor-mini-name a{color:rgba(232,197,71,.8);font-weight:600;transition:.15s}
+    .instructor-mini-name a:hover{color:var(--gold)}
+    .course-tags{display:flex;flex-wrap:wrap;gap:.5rem}
+    .course-tag{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:rgba(245,240,232,.6);font-size:.75rem;padding:.3rem .7rem;border-radius:100px;font-weight:500}
+    .course-last-updated{font-size:.75rem;color:rgba(245,240,232,.35);margin-top:.75rem;display:flex;align-items:center;gap:.4rem}
+
+    /* ── Enroll Card (sticky) ── */
+    .enroll-card{background:white;border-radius:var(--radius-xl);box-shadow:var(--shadow-lg);overflow:hidden;position:sticky;top:calc(var(--nav-h) + 1rem)}
+    .enroll-preview{height:200px;background:var(--smoke);display:flex;align-items:center;justify-content:center;font-size:5rem;position:relative;overflow:hidden;cursor:pointer}
+    .enroll-preview-overlay{position:absolute;inset:0;background:rgba(13,13,15,.4);display:flex;align-items:center;justify-content:center;opacity:0;transition:.2s}
+    .enroll-preview:hover .enroll-preview-overlay{opacity:1}
+    .play-btn{width:60px;height:60px;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(13,13,15,.25)}
+    .play-btn svg{color:var(--ink);margin-left:3px}
+    .enroll-body{padding:1.5rem}
+    .enroll-price-row{display:flex;align-items:baseline;gap:.5rem;margin-bottom:1rem}
+    .enroll-price{font-family:var(--font-display);font-size:2rem;font-weight:900;letter-spacing:-.03em}
+    .enroll-price-old{font-size:.95rem;color:rgba(13,13,15,.35);text-decoration:line-through}
+    .enroll-discount{font-size:.78rem;font-weight:700;color:var(--rust);background:rgba(196,82,42,.1);padding:.2rem .5rem;border-radius:100px}
+    .enroll-timer{background:rgba(232,197,71,.12);border:1px solid rgba(232,197,71,.2);border-radius:var(--radius-md);padding:.7rem 1rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:.6rem;font-size:.82rem;font-weight:500}
+    .enroll-timer-icon{font-size:1rem}
+    .btn-enroll-big{width:100%;background:var(--rust);color:white;border:none;padding:1rem;border-radius:var(--radius-md);font-size:1rem;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit;margin-bottom:.75rem;display:flex;align-items:center;justify-content:center;gap:.5rem}
+    .btn-enroll-big:hover{background:#b04424;transform:translateY(-1px);box-shadow:0 8px 24px rgba(196,82,42,.3)}
+    .btn-wishlist-big{width:100%;background:transparent;color:var(--ink);border:1.5px solid rgba(13,13,15,.15);padding:.85rem;border-radius:var(--radius-md);font-size:.9rem;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit;margin-bottom:1.2rem;display:flex;align-items:center;justify-content:center;gap:.5rem}
+    .btn-wishlist-big:hover{background:var(--smoke)}
+    .enroll-guarantee{text-align:center;font-size:.75rem;color:rgba(13,13,15,.4);margin-bottom:1.2rem}
+    .enroll-includes{display:flex;flex-direction:column;gap:.6rem}
+    .enroll-include-item{display:flex;align-items:center;gap:.6rem;font-size:.82rem;color:rgba(13,13,15,.65)}
+    .enroll-include-icon{font-size:.9rem;flex-shrink:0}
+
+    /* ══ MAIN BODY ══ */
+    .course-body{max-width:1200px;margin:0 auto;padding:2.5rem 2rem;display:grid;grid-template-columns:1fr 360px;gap:3rem;align-items:start}
+    .course-main{}
+
+    /* ── What you'll learn ── */
+    .section-block{background:white;border-radius:var(--radius-xl);border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);padding:2rem;margin-bottom:1.5rem}
+    .block-title{font-family:var(--font-display);font-size:1.3rem;font-weight:900;letter-spacing:-.02em;margin-bottom:1.25rem}
+    .learn-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+    .learn-item{display:flex;align-items:flex-start;gap:.6rem;font-size:.875rem;line-height:1.5}
+    .learn-check{color:var(--moss);font-size:1rem;flex-shrink:0;margin-top:.05rem}
+
+    /* ── Requirements ── */
+    .req-list{display:flex;flex-direction:column;gap:.5rem}
+    .req-item{display:flex;align-items:flex-start;gap:.6rem;font-size:.875rem;line-height:1.5;color:rgba(13,13,15,.7)}
+    .req-dot{width:6px;height:6px;border-radius:50%;background:var(--ink);flex-shrink:0;margin-top:.45rem}
+
+    /* ── Curriculum ── */
+    .curriculum-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;flex-wrap:wrap;gap:.5rem}
+    .curriculum-stats{font-size:.82rem;color:rgba(13,13,15,.45)}
+    .expand-all-btn{font-size:.82rem;font-weight:600;color:var(--rust);cursor:pointer;background:none;border:none;font-family:inherit;transition:.2s}
+    .expand-all-btn:hover{opacity:.7}
+    .section-list{display:flex;flex-direction:column;gap:.5rem}
+    .curriculum-section{border:1px solid rgba(13,13,15,.08);border-radius:var(--radius-md);overflow:hidden}
+    .section-header{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.1rem;background:var(--smoke);cursor:pointer;transition:.15s;gap:1rem}
+    .section-header:hover{background:var(--mist)}
+    .section-header-left{display:flex;align-items:center;gap:.75rem;flex:1;min-width:0}
+    .section-chevron{font-size:.75rem;transition:.2s;flex-shrink:0;color:rgba(13,13,15,.5)}
+    .curriculum-section.open .section-chevron{transform:rotate(90deg)}
+    .section-name{font-size:.875rem;font-weight:600;flex:1}
+    .section-meta{font-size:.75rem;color:rgba(13,13,15,.4);white-space:nowrap;flex-shrink:0}
+    .lesson-list{display:none;flex-direction:column}
+    .curriculum-section.open .lesson-list{display:flex}
+    .lesson-item{display:flex;align-items:center;gap:.75rem;padding:.75rem 1.1rem;border-top:1px solid rgba(13,13,15,.05);transition:.15s;cursor:pointer}
+    .lesson-item:hover{background:rgba(13,13,15,.02)}
+    .lesson-icon{width:28px;height:28px;border-radius:50%;background:var(--smoke);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.7rem;color:rgba(13,13,15,.5)}
+    .lesson-icon.free{background:rgba(45,74,62,.1);color:var(--moss)}
+    .lesson-name{flex:1;font-size:.85rem;color:rgba(13,13,15,.75)}
+    .lesson-preview{font-size:.72rem;font-weight:600;color:var(--moss);background:rgba(45,74,62,.1);padding:.15rem .5rem;border-radius:100px;flex-shrink:0}
+    .lesson-duration{font-size:.75rem;color:rgba(13,13,15,.4);flex-shrink:0}
+    .show-more-btn{font-size:.85rem;font-weight:600;color:var(--rust);text-align:center;padding:.85rem;border-top:1px solid rgba(13,13,15,.05);cursor:pointer;transition:.2s;background:none;border:none;width:100%;font-family:inherit}
+    .show-more-btn:hover{background:var(--smoke)}
+
+    /* ── Instructor ── */
+    .instructor-card{display:flex;gap:1.25rem;align-items:flex-start}
+    .instructor-avatar-big{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#c4522a,#e8c547);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:1.6rem;font-weight:700;color:var(--ink);flex-shrink:0}
+    .instructor-details{}
+    .instructor-name-big{font-family:var(--font-display);font-size:1.2rem;font-weight:700;letter-spacing:-.02em;margin-bottom:.2rem}
+    .instructor-role{font-size:.85rem;color:rgba(13,13,15,.5);margin-bottom:.6rem}
+    .instructor-stats-row{display:flex;gap:1.2rem;flex-wrap:wrap;margin-bottom:.75rem}
+    .instructor-stat{display:flex;align-items:center;gap:.3rem;font-size:.8rem;color:rgba(13,13,15,.55)}
+    .instructor-bio{font-size:.875rem;line-height:1.7;color:rgba(13,13,15,.65)}
+
+    /* ── Reviews ── */
+    .reviews-summary{display:flex;gap:2rem;align-items:center;margin-bottom:2rem;padding:1.5rem;background:var(--smoke);border-radius:var(--radius-lg)}
+    .rating-big-num{font-family:var(--font-display);font-size:4rem;font-weight:900;line-height:1;color:var(--ink)}
+    .rating-stars-big{color:var(--gold);font-size:1.2rem;letter-spacing:2px;margin-bottom:.3rem}
+    .rating-label{font-size:.78rem;color:rgba(13,13,15,.45)}
+    .rating-bars{flex:1;display:flex;flex-direction:column;gap:.4rem}
+    .rating-bar-row{display:flex;align-items:center;gap:.75rem;font-size:.78rem;color:rgba(13,13,15,.5)}
+    .rating-bar-wrap{flex:1;height:6px;background:rgba(13,13,15,.1);border-radius:100px;overflow:hidden}
+    .rating-bar-fill{height:6px;background:var(--gold);border-radius:100px}
+    .rating-bar-pct{width:30px;text-align:right;font-size:.75rem}
+    .reviews-list{display:flex;flex-direction:column;gap:1.25rem}
+    .review-item{padding:1.25rem 0;border-bottom:1px solid rgba(13,13,15,.06)}
+    .review-item:last-child{border-bottom:none}
+    .review-header{display:flex;align-items:center;gap:.75rem;margin-bottom:.6rem}
+    .reviewer-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--moss),var(--rust));display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:var(--cream);flex-shrink:0}
+    .reviewer-info{}
+    .reviewer-name{font-size:.875rem;font-weight:600;margin-bottom:.1rem}
+    .review-stars-date{display:flex;align-items:center;gap:.5rem;font-size:.75rem;color:rgba(13,13,15,.4)}
+    .review-stars-small{color:var(--gold);font-size:.75rem}
+    .review-text{font-size:.875rem;line-height:1.7;color:rgba(13,13,15,.7)}
+
+    /* ══ SIDEBAR (desktop enroll card hidden on mobile) ══ */
+    .course-sidebar{}
+
+    /* ══ RELATED COURSES ══ */
+    .related-section{max-width:1200px;margin:0 auto;padding:0 2rem 3rem}
+    .related-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;margin-top:1.5rem}
+    .mini-course-card{background:white;border-radius:var(--radius-lg);border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);overflow:hidden;transition:.2s;display:flex;flex-direction:column}
+    .mini-course-card:hover{box-shadow:var(--shadow-md);transform:translateY(-3px)}
+    .mini-thumb{height:110px;background:var(--smoke);display:flex;align-items:center;justify-content:center;font-size:2.5rem}
+    .mini-body{padding:.85rem}
+    .mini-title{font-size:.82rem;font-weight:600;line-height:1.35;margin-bottom:.4rem}
+    .mini-meta{font-size:.72rem;color:rgba(13,13,15,.45);display:flex;justify-content:space-between}
+    .mini-price{font-weight:700;color:var(--ink)}
+
+    /* ══ MOBILE ENROLL BAR ══ */
+    .mobile-enroll-bar{display:none;position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid rgba(13,13,15,.1);padding:.85rem 1.25rem;z-index:400;align-items:center;justify-content:space-between;gap:1rem;box-shadow:0 -4px 20px rgba(13,13,15,.1)}
+    .mobile-price{font-family:var(--font-display);font-size:1.5rem;font-weight:900}
+    .mobile-price-old{font-size:.82rem;color:rgba(13,13,15,.35);text-decoration:line-through}
+    .btn-mobile-enroll{background:var(--rust);color:white;border:none;padding:.85rem 2rem;border-radius:100px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:inherit;transition:.2s;white-space:nowrap}
+    .btn-mobile-enroll:hover{background:#b04424}
+
+    /* ══ FADE ══ */
+    .fade{animation:fadeUp .6s ease both}
+    .d1{animation-delay:.05s}.d2{animation-delay:.15s}.d3{animation-delay:.25s}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+    /* ══ RESPONSIVE ══ */
+    @media(max-width:1100px){
+      .course-hero-inner,.course-body{grid-template-columns:1fr;gap:2rem}
+      .enroll-card{position:static}
+      .course-sidebar{display:none}
+      .mobile-enroll-bar{display:flex}
+      .related-grid{grid-template-columns:repeat(3,1fr)}
+      body{padding-bottom:80px}
+    }
+    @media(max-width:768px){
+      .nav-links,.nav-search{display:none}.hamburger{display:flex}
+      .nav-actions .btn-ghost,.nav-actions .btn-nav-primary{display:none}
+      .nav-user-name{display:none}
+      .course-hero{padding:2rem 1.25rem}
+      .course-body{padding:1.5rem 1.25rem}
+      .learn-grid{grid-template-columns:1fr}
+      .reviews-summary{flex-direction:column;align-items:flex-start}
+      .related-section{padding:0 1.25rem 5rem}
+      .related-grid{grid-template-columns:repeat(2,1fr)}
+      .instructor-card{flex-direction:column}
+    }
+    @media(max-width:480px){.related-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <button class="hamburger" id="hamburgerBtn"><span></span><span></span><span></span></button>
+  <a href="learnhub_responsive.html" class="nav-logo">GIT<span>Academy</span></a>
+  <ul class="nav-links">
+    <li><a href="home.html" class="nav-link">Browse</a></li>
+    <li><a href="category-list.html" class="nav-link">Categories</a></li>
+  </ul>
+  <div class="nav-search">
+    <svg class="nav-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" placeholder="Search courses…"/>
+  </div>
+  <div class="nav-actions">
+    <a href="cart.html" class="nav-icon-btn" title="Cart"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span class="nav-badge"></span></a>
+    <a href="login.html" class="btn-ghost">Log in</a>
+    <a href="register.html" class="btn-nav-primary">Sign up</a>
+    <div class="nav-user-wrap">
+      <button class="nav-user" id="userMenuBtn"><span class="nav-user-name">Justice Elorm</span><div class="avatar">JE</div></button>
+      <div class="user-dropdown" id="userDropdown">
+        <a href="dashboard.html" class="dropdown-item"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</a>
+        <a href="profile.html" class="dropdown-item"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profile</a>
+        <a href="cart.html" class="dropdown-item"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>My Cart</a>
+        <div class="dropdown-sep"></div>
+        <a href="login.html" class="dropdown-item danger"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Log Out</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ══ COURSE HERO ══ -->
+<div class="course-hero">
+  <div class="course-hero-blob course-hero-blob-1"></div>
+  <div class="course-hero-blob course-hero-blob-2"></div>
+  <div class="course-hero-inner">
+    <div class="fade d1">
+      <div class="breadcrumb">
+        <a href="home.html">Browse</a><span class="breadcrumb-sep">›</span>
+        <a href="category-list.html">Categories</a><span class="breadcrumb-sep">›</span>
+        <a href="course-list.html?cat=data">Data Science</a><span class="breadcrumb-sep">›</span>
+        <span>Machine Learning A-Z</span>
+      </div>
+      <div class="course-category-tag">🤖 Machine Learning</div>
+      <h1 class="course-title">Machine Learning A-Z:<br>Hands-On Python & R</h1>
+      <p class="course-subtitle">Learn to create Machine Learning algorithms in Python and R. From Data Pre-processing to Deep Learning, NLP and Dimensionality Reduction — this is your complete roadmap.</p>
+      <div class="course-meta-row">
+        <div class="course-rating-big">
+          <span class="rating-num">4.8</span>
+          <span class="rating-stars">★★★★★</span>
+          <span class="rating-count">(12,400 ratings)</span>
+        </div>
+        <div class="course-students">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          48,200 students
+        </div>
+      </div>
+      <div class="course-instructor-row">
+        <div class="instructor-mini-avatar">ASQ</div>
+        <div class="instructor-mini-name">Created by <a href="#">Prof. ATO SIAW QUARSHIE</a></div>
+      </div>
+      <div class="course-tags">
+        <span class="course-tag">45 hours of video</span>
+        <span class="course-tag">Beginner to Advanced</span>
+        <span class="course-tag">Certificate included</span>
+        <span class="course-tag">English</span>
+        <span class="course-tag">Lifetime access</span>
+      </div>
+      <div class="course-last-updated">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Last updated March 2026
+      </div>
+    </div>
+
+    <!-- Enroll Card -->
+    <div class="enroll-card fade d2">
+      <div class="enroll-preview" onclick="window.location='course-player.html'">
+        🤖
+        <div class="enroll-preview-overlay">
+          <div class="play-btn">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="enroll-body">
+        <div class="enroll-price-row">
+          <span class="enroll-price">$49</span>
+          <span class="enroll-price-old">$129</span>
+          <span class="enroll-discount">62% off</span>
+        </div>
+        <div class="enroll-timer">
+          <span class="enroll-timer-icon">⏰</span>
+          <span><strong>2 days</strong> left at this price!</span>
+        </div>
+        <button class="btn-enroll-big" onclick="window.location='cart.html'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          Add to Cart
+        </button>
+        <button class="btn-enroll-big" style="background:var(--ink);margin-bottom:.75rem" onclick="window.location='checkout.html'">Buy Now</button>
+        <button class="btn-wishlist-big" id="wishlistBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          Add to Wishlist
+        </button>
+        <p class="enroll-guarantee">30-Day Money-Back Guarantee</p>
+        <div class="enroll-includes">
+          <div class="enroll-include-item"><span class="enroll-include-icon">📹</span>45 hours on-demand video</div>
+          <div class="enroll-include-item"><span class="enroll-include-icon">📝</span>25 coding exercises</div>
+          <div class="enroll-include-item"><span class="enroll-include-icon">📱</span>Access on mobile & desktop</div>
+          <div class="enroll-include-item"><span class="enroll-include-icon">⏱</span>Full lifetime access</div>
+          <div class="enroll-include-item"><span class="enroll-include-icon">🏆</span>Certificate of completion</div>
+          <div class="enroll-include-item"><span class="enroll-include-icon">🔁</span>Free updates forever</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MAIN BODY ══ -->
+<div class="course-body">
+  <div class="course-main">
+
+    <!-- What you'll learn -->
+    <div class="section-block fade d1">
+      <div class="block-title">What you'll learn</div>
+      <div class="learn-grid">
+        <div class="learn-item"><span class="learn-check">✓</span>Master Machine Learning in Python & R</div>
+        <div class="learn-item"><span class="learn-check">✓</span>Build a complete ML portfolio of projects</div>
+        <div class="learn-item"><span class="learn-check">✓</span>Handle specific topics like Reinforcement Learning</div>
+        <div class="learn-item"><span class="learn-check">✓</span>Use advanced techniques like XGBoost and more</div>
+        <div class="learn-item"><span class="learn-check">✓</span>Build powerful models with sci-kit learn</div>
+        <div class="learn-item"><span class="learn-check">✓</span>Know intuitively how most ML models work</div>
+        <div class="learn-item"><span class="learn-check">✓</span>Make accurate predictions with regression</div>
+        <div class="learn-item"><span class="learn-check">✓</span>Apply NLP for sentiment analysis</div>
+        <div class="learn-item"><span class="learn-check">✓</span>Build and train neural networks with TensorFlow</div>
+        <div class="learn-item"><span class="learn-check">✓</span>Implement deep learning with CNNs & RNNs</div>
+      </div>
+    </div>
+
+    <!-- Requirements -->
+    <div class="section-block">
+      <div class="block-title">Requirements</div>
+      <div class="req-list">
+        <div class="req-item"><span class="req-dot"></span>Just some high school mathematics level</div>
+        <div class="req-item"><span class="req-dot"></span>No prior Python or R knowledge required — we teach you from scratch</div>
+        <div class="req-item"><span class="req-dot"></span>A computer with internet access (Windows, Mac or Linux)</div>
+        <div class="req-item"><span class="req-dot"></span>Enthusiasm to learn one of the most powerful skills in tech</div>
+      </div>
+    </div>
+
+    <!-- Curriculum -->
+    <div class="section-block">
+      <div class="block-title">Course Content</div>
+      <div class="curriculum-header">
+        <span class="curriculum-stats">12 sections • 230 lectures • 45h total</span>
+        <button class="expand-all-btn" id="expandAllBtn">Expand All</button>
+      </div>
+      <div class="section-list" id="sectionList">
+
+        <div class="curriculum-section open">
+          <div class="section-header" onclick="toggleSection(this)">
+            <div class="section-header-left">
+              <span class="section-chevron">›</span>
+              <span class="section-name">Part 1 — Data Preprocessing</span>
+            </div>
+            <span class="section-meta">5 lectures · 1h 20m</span>
+          </div>
+          <div class="lesson-list">
+            <div class="lesson-item">
+              <div class="lesson-icon free"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+              <span class="lesson-name">Welcome to the course!</span>
+              <span class="lesson-preview">Preview</span>
+              <span class="lesson-duration">5:00</span>
+            </div>
+            <div class="lesson-item">
+              <div class="lesson-icon free"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+              <span class="lesson-name">Data Preprocessing in Python</span>
+              <span class="lesson-preview">Preview</span>
+              <span class="lesson-duration">18:30</span>
+            </div>
+            <div class="lesson-item">
+              <div class="lesson-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+              <span class="lesson-name">Data Preprocessing in R</span>
+              <span class="lesson-duration">16:00</span>
+            </div>
+            <div class="lesson-item">
+              <div class="lesson-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+              <span class="lesson-name">Handling Missing Data</span>
+              <span class="lesson-duration">14:20</span>
+            </div>
+            <div class="lesson-item">
+              <div class="lesson-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+              <span class="lesson-name">Feature Scaling</span>
+              <span class="lesson-duration">12:10</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="curriculum-section">
+          <div class="section-header" onclick="toggleSection(this)">
+            <div class="section-header-left">
+              <span class="section-chevron">›</span>
+              <span class="section-name">Part 2 — Regression</span>
+            </div>
+            <span class="section-meta">8 lectures · 3h 40m</span>
+          </div>
+          <div class="lesson-list">
+            <div class="lesson-item"><div class="lesson-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span class="lesson-name">Simple Linear Regression</span><span class="lesson-duration">22:00</span></div>
+            <div class="lesson-item"><div class="lesson-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><span class="lesson-name">Multiple Linear Regression</span><span class="lesson-duration">28:00</span></div>
+          </div>
+        </div>
+
+        <div class="curriculum-section">
+          <div class="section-header" onclick="toggleSection(this)">
+            <div class="section-header-left">
+              <span class="section-chevron">›</span>
+              <span class="section-name">Part 3 — Classification</span>
+            </div>
+            <span class="section-meta">10 lectures · 4h 15m</span>
+          </div>
+          <div class="lesson-list"></div>
+        </div>
+
+        <div class="curriculum-section">
+          <div class="section-header" onclick="toggleSection(this)">
+            <div class="section-header-left">
+              <span class="section-chevron">›</span>
+              <span class="section-name">Part 4 — Clustering</span>
+            </div>
+            <span class="section-meta">6 lectures · 2h 30m</span>
+          </div>
+          <div class="lesson-list"></div>
+        </div>
+
+      </div>
+      <button class="show-more-btn">Show 8 more sections ↓</button>
+    </div>
+
+    <!-- Instructor -->
+    <div class="section-block">
+      <div class="block-title">Your Instructor</div>
+      <div class="instructor-card">
+        <div class="instructor-avatar-big">ASQ</div>
+        <div class="instructor-details">
+          <div class="instructor-name-big">Prof. ATO SIAW QUARSHIE</div>
+          <div class="instructor-role">Machine Learning Researcher & Educator</div>
+          <div class="instructor-stats-row">
+            <span class="instructor-stat">⭐ 4.9 Rating</span>
+            <span class="instructor-stat">👥 48,200 Students</span>
+            <span class="instructor-stat">📚 12 Courses</span>
+          </div>
+          <p class="instructor-bio">Prof. ATO SIAW QUARSHIE holds a PhD in Computer Science from MIT and has 15+ years of experience in machine learning research and industry applications. He has worked at Google Brain and co-authored 3 papers in NeurIPS. His teaching approach combines rigorous theory with hands-on projects that mirror real-world ML workflows.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reviews -->
+    <div class="section-block">
+      <div class="block-title">Student Reviews</div>
+      <div class="reviews-summary">
+        <div style="text-align:center">
+          <div class="rating-big-num">4.8</div>
+          <div class="rating-stars-big">★★★★★</div>
+          <div class="rating-label">Course Rating</div>
+        </div>
+        <div class="rating-bars">
+          <div class="rating-bar-row"><span>5 ★</span><div class="rating-bar-wrap"><div class="rating-bar-fill" style="width:72%"></div></div><span class="rating-bar-pct">72%</span></div>
+          <div class="rating-bar-row"><span>4 ★</span><div class="rating-bar-wrap"><div class="rating-bar-fill" style="width:20%"></div></div><span class="rating-bar-pct">20%</span></div>
+          <div class="rating-bar-row"><span>3 ★</span><div class="rating-bar-wrap"><div class="rating-bar-fill" style="width:5%"></div></div><span class="rating-bar-pct">5%</span></div>
+          <div class="rating-bar-row"><span>2 ★</span><div class="rating-bar-wrap"><div class="rating-bar-fill" style="width:2%"></div></div><span class="rating-bar-pct">2%</span></div>
+          <div class="rating-bar-row"><span>1 ★</span><div class="rating-bar-wrap"><div class="rating-bar-fill" style="width:1%"></div></div><span class="rating-bar-pct">1%</span></div>
+        </div>
+      </div>
+      <div class="reviews-list">
+        <div class="review-item">
+          <div class="review-header">
+            <div class="reviewer-avatar">JE</div>
+            <div class="reviewer-info">
+              <div class="reviewer-name">Justice Elorm</div>
+              <div class="review-stars-date"><span class="review-stars-small">★★★★★</span><span>March 2026</span></div>
+            </div>
+          </div>
+          <p class="review-text">Absolutely incredible course. Prof. ATO SIAW QUARSHIE explains even the most complex algorithms with clarity. After completing this, I built my first end-to-end ML project and got hired. Worth every penny!</p>
+        </div>
+        <div class="review-item">
+          <div class="review-header">
+            <div class="reviewer-avatar" style="background:linear-gradient(135deg,#1a237e,#7c4dff)">EM</div>
+            <div class="reviewer-info">
+              <div class="reviewer-name">Emeka Faith</div>
+              <div class="review-stars-date"><span class="review-stars-small">★★★★★</span><span>February 2026</span></div>
+            </div>
+          </div>
+          <p class="review-text">Best ML course I've taken. I've tried Coursera, edX and others — nothing comes close. The projects are real and the explanations are intuitive. My Python skills improved enormously.</p>
+        </div>
+        <div class="review-item">
+          <div class="review-header">
+            <div class="reviewer-avatar" style="background:linear-gradient(135deg,#880e4f,#e91e63)">FO</div>
+            <div class="reviewer-info">
+              <div class="reviewer-name">Fatima North</div>
+              <div class="review-stars-date"><span class="review-stars-small">★★★★☆</span><span>January 2025</span></div>
+            </div>
+          </div>
+          <p class="review-text">Very comprehensive and well-structured. The R sections could use some updating for newer packages, but the Python content is flawless. Highly recommended for anyone starting in ML.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="course-sidebar"><!-- desktop card already in hero --></div>
+</div>
+
+<!-- RELATED COURSES -->
+<div class="related-section">
+  <div style="font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--rust);margin-bottom:.35rem">More Like This</div>
+  <div style="font-family:var(--font-display);font-size:1.6rem;font-weight:900;letter-spacing:-.03em">Students Also Bought</div>
+  <div class="related-grid">
+    <a href="course-details.html" class="mini-course-card"><div class="mini-thumb" style="background:#fce4ec">🐍</div><div class="mini-body"><div class="mini-title">Python for Data Science & ML</div><div class="mini-meta"><span>⭐ 4.9</span><span class="mini-price">$39</span></div></div></a>
+    <a href="course-details.html" class="mini-course-card"><div class="mini-thumb" style="background:#e8eaf6">🧠</div><div class="mini-body"><div class="mini-title">Deep Learning with TensorFlow 2</div><div class="mini-meta"><span>⭐ 4.8</span><span class="mini-price">$54</span></div></div></a>
+    <a href="course-details.html" class="mini-course-card"><div class="mini-thumb" style="background:#e0f2f1">📊</div><div class="mini-body"><div class="mini-title">Data Analysis with Pandas</div><div class="mini-meta"><span>⭐ 4.8</span><span class="mini-price">$34</span></div></div></a>
+    <a href="course-details.html" class="mini-course-card"><div class="mini-thumb" style="background:#fff8e1">🔐</div><div class="mini-body"><div class="mini-title">Natural Language Processing A-Z</div><div class="mini-meta"><span>⭐ 4.7</span><span class="mini-price">$44</span></div></div></a>
+  </div>
+</div>
+
+<!-- MOBILE ENROLL BAR -->
+<div class="mobile-enroll-bar">
+  <div><div class="mobile-price">$49 <span class="mobile-price-old">$129</span></div></div>
+  <button class="btn-mobile-enroll" onclick="window.location='cart.html'">Add to Cart</button>
+</div>
+
+<script>
+  // Navbar
+  document.getElementById('hamburgerBtn').addEventListener('click', () => {});
+  const userMenuBtn = document.getElementById('userMenuBtn');
+  const userDropdown = document.getElementById('userDropdown');
+  userMenuBtn.addEventListener('click', e => { e.stopPropagation(); userDropdown.classList.toggle('open'); });
+  document.addEventListener('click', () => userDropdown.classList.remove('open'));
+
+  // Accordion
+  function toggleSection(header) {
+    header.parentElement.classList.toggle('open');
+  }
+
+  // Expand all
+  document.getElementById('expandAllBtn').addEventListener('click', function() {
+    const sections = document.querySelectorAll('.curriculum-section');
+    const allOpen = [...sections].every(s => s.classList.contains('open'));
+    sections.forEach(s => allOpen ? s.classList.remove('open') : s.classList.add('open'));
+    this.textContent = allOpen ? 'Expand All' : 'Collapse All';
+  });
+
+  // Wishlist
+  document.getElementById('wishlistBtn').addEventListener('click', function() {
+    this.innerHTML = this.textContent.includes('Add') ?
+      '<svg width="16" height="16" viewBox="0 0 24 24" fill="var(--rust)" stroke="var(--rust)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> Saved to Wishlist' :
+      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> Add to Wishlist';
+  });
+</script>
+</body>
+</html>

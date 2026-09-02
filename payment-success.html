@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Payment Successful — GITAcademy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --ink:#0d0d0f;--cream:#f5f0e8;--gold:#e8c547;--moss:#2d4a3e;
+      --rust:#c4522a;--paper:#faf8f3;--smoke:#f0ece4;
+      --success:#2d7a4f;
+      --font-display:'Fraunces',Georgia,serif;--font-body:'DM Sans',system-ui,sans-serif;
+      --nav-h:64px;--shadow-sm:0 2px 8px rgba(13,13,15,.06);--shadow-md:0 4px 20px rgba(13,13,15,.1);--shadow-lg:0 12px 40px rgba(13,13,15,.14);
+      --radius-sm:8px;--radius-md:12px;--radius-lg:18px;--radius-xl:24px;
+    }
+    body{font-family:var(--font-body);background:var(--smoke);color:var(--ink);min-height:100vh}
+    a{text-decoration:none;color:inherit}
+    button{cursor:pointer;font-family:inherit;border:none;background:none}
+
+    /* NAVBAR */
+    .navbar{height:var(--nav-h);background:var(--cream);border-bottom:1px solid rgba(13,13,15,.08);display:flex;align-items:center;padding:0 2rem;justify-content:space-between}
+    .nav-logo{font-family:var(--font-display);font-size:1.4rem;font-weight:900;color:var(--ink);letter-spacing:-.03em}
+    .nav-logo span{color:var(--rust)}
+
+    /* PAGE */
+    .page{max-width:760px;margin:0 auto;padding:3rem 2rem 5rem}
+
+    /* SUCCESS HERO */
+    .success-hero{text-align:center;padding:3rem 2rem;background:white;border-radius:var(--radius-xl);border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-md);margin-bottom:2rem;position:relative;overflow:hidden}
+    .success-blob{position:absolute;border-radius:50%;pointer-events:none}
+    .success-blob-1{width:400px;height:400px;background:radial-gradient(circle,rgba(45,122,79,.08),transparent 70%);top:-150px;left:-100px}
+    .success-blob-2{width:300px;height:300px;background:radial-gradient(circle,rgba(232,197,71,.08),transparent 70%);bottom:-100px;right:-80px}
+    .success-icon-wrap{position:relative;z-index:1;width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--success),#34a85a);display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;box-shadow:0 8px 30px rgba(45,122,79,.3);animation:popIn .6s cubic-bezier(.34,1.56,.64,1) both}
+    @keyframes popIn{from{opacity:0;transform:scale(0)}to{opacity:1;transform:scale(1)}}
+    .success-check{font-size:2.8rem}
+    .success-eyebrow{font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--success);margin-bottom:.75rem;position:relative;z-index:1}
+    .success-title{font-family:var(--font-display);font-size:clamp(2rem,5vw,3rem);font-weight:900;letter-spacing:-.03em;margin-bottom:.75rem;line-height:1;position:relative;z-index:1}
+    .success-title em{font-style:italic;font-weight:300;color:var(--success)}
+    .success-sub{font-size:.95rem;color:rgba(13,13,15,.55);max-width:460px;margin:0 auto 2rem;line-height:1.7;position:relative;z-index:1}
+    .order-ref{display:inline-flex;align-items:center;gap:.5rem;background:var(--smoke);border:1px solid rgba(13,13,15,.09);border-radius:100px;padding:.4rem 1rem;font-size:.78rem;font-weight:600;color:rgba(13,13,15,.55);position:relative;z-index:1}
+    .order-ref-num{color:var(--ink);font-weight:700}
+
+    /* CTA buttons */
+    .success-actions{display:flex;align-items:center;justify-content:center;gap:1rem;margin-top:2rem;flex-wrap:wrap;position:relative;z-index:1}
+    .btn-start{background:var(--moss);color:var(--cream);border:none;padding:1rem 2.2rem;border-radius:100px;font-size:.95rem;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit;display:inline-flex;align-items:center;gap:.5rem}
+    .btn-start:hover{background:#1e3329;transform:translateY(-2px);box-shadow:0 10px 28px rgba(45,74,62,.25)}
+    .btn-dashboard{background:transparent;color:var(--ink);border:1.5px solid rgba(13,13,15,.15);padding:1rem 2rem;border-radius:100px;font-size:.95rem;font-weight:500;cursor:pointer;transition:.2s;font-family:inherit;display:inline-flex;align-items:center;gap:.5rem}
+    .btn-dashboard:hover{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+
+    /* PURCHASED COURSES */
+    .section-title{font-family:var(--font-display);font-size:1.3rem;font-weight:900;letter-spacing:-.02em;margin-bottom:1.1rem}
+    .purchased-list{display:flex;flex-direction:column;gap:.85rem;margin-bottom:2rem}
+    .purchased-item{background:white;border-radius:var(--radius-lg);border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);padding:1.1rem 1.3rem;display:flex;align-items:center;gap:1rem;transition:.2s}
+    .purchased-item:hover{box-shadow:var(--shadow-md)}
+    .purchased-thumb{width:64px;height:50px;border-radius:var(--radius-sm);background:var(--smoke);display:flex;align-items:center;justify-content:center;font-size:1.8rem;flex-shrink:0}
+    .purchased-info{flex:1}
+    .purchased-title{font-size:.9rem;font-weight:700;margin-bottom:.2rem}
+    .purchased-meta{font-size:.75rem;color:rgba(13,13,15,.45)}
+    .purchased-badge{background:rgba(45,122,79,.1);color:var(--success);font-size:.65rem;font-weight:700;padding:.2rem .6rem;border-radius:100px;text-transform:uppercase;flex-shrink:0}
+    .btn-start-course{background:var(--ink);color:var(--cream);border:none;padding:.5rem 1.1rem;border-radius:100px;font-size:.78rem;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit;white-space:nowrap;display:flex;align-items:center;gap:.3rem}
+    .btn-start-course:hover{background:var(--rust)}
+
+    /* RECEIPT */
+    .receipt-card{background:white;border-radius:var(--radius-xl);border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:2rem}
+    .receipt-hdr{padding:1.2rem 1.5rem;border-bottom:1px solid rgba(13,13,15,.06);display:flex;align-items:center;justify-content:space-between}
+    .receipt-hdr-title{font-family:var(--font-display);font-size:1rem;font-weight:700;letter-spacing:-.02em}
+    .btn-download-receipt{display:flex;align-items:center;gap:.4rem;font-size:.78rem;font-weight:600;color:var(--rust);background:none;border:none;cursor:pointer;font-family:inherit;transition:.2s}
+    .btn-download-receipt:hover{opacity:.7}
+    .receipt-body{padding:1.25rem 1.5rem}
+    .receipt-row{display:flex;justify-content:space-between;font-size:.875rem;padding:.45rem 0;border-bottom:1px solid rgba(13,13,15,.04)}
+    .receipt-row:last-child{border-bottom:none}
+    .receipt-label{color:rgba(13,13,15,.5)}
+    .receipt-val{font-weight:600;color:var(--ink)}
+    .receipt-total-row{display:flex;justify-content:space-between;font-size:1rem;font-weight:700;padding:.75rem 0;border-top:2px solid rgba(13,13,15,.08);margin-top:.25rem}
+    .receipt-total-val{font-family:var(--font-display);font-size:1.3rem;font-weight:900}
+
+    /* NEXT STEPS */
+    .next-steps{background:var(--ink);border-radius:var(--radius-xl);padding:2rem;margin-bottom:2rem}
+    .ns-title{font-family:var(--font-display);font-size:1.1rem;font-weight:700;color:var(--cream);margin-bottom:1.25rem}
+    .ns-list{display:flex;flex-direction:column;gap:.85rem}
+    .ns-item{display:flex;align-items:flex-start;gap:.85rem}
+    .ns-num{width:28px;height:28px;border-radius:50%;background:rgba(232,197,71,.15);border:1px solid rgba(232,197,71,.25);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:var(--gold);flex-shrink:0}
+    .ns-text strong{display:block;font-size:.875rem;font-weight:600;color:var(--cream);margin-bottom:.1rem}
+    .ns-text span{font-size:.78rem;color:rgba(245,240,232,.4);line-height:1.5}
+
+    /* EMAIL NOTE */
+    .email-note{text-align:center;font-size:.82rem;color:rgba(13,13,15,.45);padding:1rem}
+
+    /* Confetti animation */
+    .confetti-wrap{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden}
+    .confetti-piece{position:absolute;top:-20px;width:10px;height:10px;animation:confettiFall linear forwards}
+    @keyframes confettiFall{
+      to{transform:translateY(110vh) rotate(720deg);opacity:0}
+    }
+
+    @media(max-width:600px){
+      .page{padding:2rem 1.25rem 4rem}
+      .success-actions{flex-direction:column}
+      .btn-start,.btn-dashboard{width:100%;justify-content:center}
+      .purchased-item{flex-wrap:wrap}
+    }
+  </style>
+</head>
+<body>
+
+<!-- Confetti -->
+<div class="confetti-wrap" id="confettiWrap"></div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a href="learnhub_responsive.html" class="nav-logo">GIT<span>Academy</span></a>
+  <a href="dashboard.html" style="font-size:.82rem;color:rgba(13,13,15,.5);font-weight:500">Go to Dashboard →</a>
+</nav>
+
+<div class="page">
+
+  <!-- SUCCESS HERO -->
+  <div class="success-hero">
+    <div class="success-blob success-blob-1"></div>
+    <div class="success-blob success-blob-2"></div>
+    <div class="success-icon-wrap"><span class="success-check">✓</span></div>
+    <p class="success-eyebrow">Payment Successful</p>
+    <h1 class="success-title">You're all set,<br><em>Elorm!</em></h1>
+    <p class="success-sub">Your payment was processed successfully. You now have full lifetime access to your purchased courses. Happy learning! 🎉</p>
+    <div class="order-ref">Order <span class="order-ref-num">#LH-2024-00847</span> · March 27, 2026</div>
+    <div class="success-actions">
+      <a href="course-player.html" class="btn-start">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Start Learning Now
+      </a>
+      <a href="dashboard.html" class="btn-dashboard">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Go to Dashboard
+      </a>
+    </div>
+  </div>
+
+  <!-- PURCHASED COURSES -->
+  <div class="section-title">Your New Courses</div>
+  <div class="purchased-list">
+    <div class="purchased-item">
+      <div class="purchased-thumb" style="background:#e8f5e9">🤖</div>
+      <div class="purchased-info">
+        <div class="purchased-title">Machine Learning A-Z: Hands-On Python & R</div>
+        <div class="purchased-meta">Prof. ATO SIAW QUARSHIE · 45h · 230 lessons · Certificate included</div>
+      </div>
+      <span class="purchased-badge">Enrolled ✓</span>
+      <a href="course-player.html" class="btn-start-course">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Start
+      </a>
+    </div>
+    <div class="purchased-item">
+      <div class="purchased-thumb" style="background:#e8eaf6">🎨</div>
+      <div class="purchased-info">
+        <div class="purchased-title">UI/UX Design Bootcamp: Figma to Prototype</div>
+        <div class="purchased-meta">JOSEPH GADASU Design Studio · 32h · 180 lessons · Certificate included</div>
+      </div>
+      <span class="purchased-badge">Enrolled ✓</span>
+      <a href="course-player.html" class="btn-start-course">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Start
+      </a>
+    </div>
+  </div>
+
+  <!-- RECEIPT -->
+  <div class="receipt-card">
+    <div class="receipt-hdr">
+      <div class="receipt-hdr-title">Payment Receipt</div>
+      <button class="btn-download-receipt">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download PDF
+      </button>
+    </div>
+    <div class="receipt-body">
+      <div class="receipt-row"><span class="receipt-label">Order Number</span><span class="receipt-val">#LH-2026-00847</span></div>
+      <div class="receipt-row"><span class="receipt-label">Date</span><span class="receipt-val">March 27, 2026</span></div>
+      <div class="receipt-row"><span class="receipt-label">Payment Method</span><span class="receipt-val">Visa •••• 4242</span></div>
+      <div class="receipt-row"><span class="receipt-label">Machine Learning A-Z</span><span class="receipt-val">$49.00</span></div>
+      <div class="receipt-row"><span class="receipt-label">UI/UX Design Bootcamp</span><span class="receipt-val">$44.00</span></div>
+      <div class="receipt-row"><span class="receipt-label">Discount</span><span class="receipt-val" style="color:var(--success)">−$145.00</span></div>
+      <div class="receipt-row"><span class="receipt-label">Tax</span><span class="receipt-val">$0.00</span></div>
+      <div class="receipt-total-row"><span>Total Paid</span><span class="receipt-total-val">$93.00</span></div>
+    </div>
+  </div>
+
+  <!-- NEXT STEPS -->
+  <div class="next-steps">
+    <div class="ns-title">What happens next?</div>
+    <div class="ns-list">
+      <div class="ns-item">
+        <div class="ns-num">1</div>
+        <div class="ns-text">
+          <strong>Check your email</strong>
+          <span>A receipt and course access confirmation has been sent to justiceelorm@example.com</span>
+        </div>
+      </div>
+      <div class="ns-item">
+        <div class="ns-num">2</div>
+        <div class="ns-text">
+          <strong>Start learning immediately</strong>
+          <span>Your courses are ready. Click "Start Learning Now" to jump straight in.</span>
+        </div>
+      </div>
+      <div class="ns-item">
+        <div class="ns-num">3</div>
+        <div class="ns-text">
+          <strong>Track your progress on your dashboard</strong>
+          <span>View completion stats, take notes and earn your certificate when you're done.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="email-note">
+    📧 A receipt has been sent to <strong>justiceelorm@example.com</strong> · Need help? <a href="help.html" style="color:var(--rust)">Contact support</a>
+  </p>
+
+</div>
+
+<script>
+  // Confetti burst on load
+  function spawnConfetti() {
+    const wrap = document.getElementById('confettiWrap');
+    const colors = ['#e8c547','#2d4a3e','#c4522a','#faf8f3','#4a9eff'];
+    for (let i = 0; i < 80; i++) {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const size = Math.random() * 10 + 6;
+      el.style.cssText = `
+        left:${Math.random() * 100}%;
+        width:${size}px;height:${size}px;
+        background:${color};
+        border-radius:${Math.random() > .5 ? '50%' : '2px'};
+        animation-duration:${Math.random() * 2 + 1.5}s;
+        animation-delay:${Math.random() * .8}s;
+      `;
+      wrap.appendChild(el);
+    }
+    setTimeout(() => wrap.remove(), 4000);
+  }
+  spawnConfetti();
+</script>
+</body>
+</html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edit Course — GITAcademy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --ink:#0d0d0f;--cream:#f5f0e8;--gold:#e8c547;--moss:#2d4a3e;
+      --rust:#c4522a;--paper:#faf8f3;--smoke:#f0ece4;--mist:#e8e3db;
+      --error:#e05555;--success:#2d7a4f;
+      --font-display:'Fraunces',Georgia,serif;--font-body:'DM Sans',system-ui,sans-serif;
+      --nav-h:64px;--sidebar-w:240px;
+      --shadow-sm:0 2px 8px rgba(13,13,15,.06);--shadow-md:0 4px 20px rgba(13,13,15,.1);
+      --radius-sm:8px;--radius-md:12px;--radius-lg:18px;--radius-xl:24px;
+    }
+    body{font-family:var(--font-body);background:var(--smoke);color:var(--ink);min-height:100vh}
+    a{text-decoration:none;color:inherit}
+    button{cursor:pointer;font-family:inherit;border:none;background:none}
+
+    /* NAVBAR */
+    .navbar{position:sticky;top:0;z-index:500;height:var(--nav-h);background:var(--ink);border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;padding:0 1.5rem;gap:1rem}
+    .nav-logo{font-family:var(--font-display);font-size:1.3rem;font-weight:900;color:var(--cream);letter-spacing:-.03em}
+    .nav-logo span{color:var(--rust)}
+    .nav-badge{background:rgba(232,197,71,.15);border:1px solid rgba(232,197,71,.25);color:var(--gold);font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.25rem .65rem;border-radius:100px}
+    .nav-course-name{flex:1;font-size:.85rem;color:rgba(245,240,232,.45);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 1rem}
+    .nav-right{display:flex;align-items:center;gap:.75rem;margin-left:auto}
+    .btn-status{background:rgba(45,74,62,.2);color:rgba(45,180,100,.85);border:1px solid rgba(45,74,62,.3);padding:.4rem 1rem;border-radius:100px;font-size:.75rem;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit}
+    .btn-save{background:var(--gold);color:var(--ink);border:none;padding:.5rem 1.3rem;border-radius:100px;font-size:.82rem;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit}
+    .btn-save:hover{background:#f0d258}
+    .avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--moss),var(--rust));display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:var(--cream)}
+
+    /* LAYOUT */
+    .page-wrap{display:flex;min-height:calc(100vh - var(--nav-h))}
+
+    /* LEFT NAV */
+    .left-nav{width:220px;flex-shrink:0;background:var(--cream);border-right:1px solid rgba(13,13,15,.08);padding:1.25rem .75rem;position:sticky;top:var(--nav-h);height:calc(100vh - var(--nav-h));overflow-y:auto}
+    .lnav-link{display:flex;align-items:center;gap:.6rem;padding:.6rem .75rem;border-radius:var(--radius-md);font-size:.85rem;font-weight:500;color:rgba(13,13,15,.55);transition:.15s;cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:inherit}
+    .lnav-link:hover{background:var(--smoke);color:var(--ink)}
+    .lnav-link.active{background:var(--ink);color:var(--cream)}
+    .lnav-sep{height:1px;background:rgba(13,13,15,.07);margin:.5rem 0}
+
+    /* MAIN */
+    .main{flex:1;padding:2rem;max-width:760px}
+
+    /* FORM */
+    .edit-section{background:white;border-radius:var(--radius-xl);border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);margin-bottom:1.5rem;overflow:hidden}
+    .edit-hdr{padding:1.3rem 1.75rem;border-bottom:1px solid rgba(13,13,15,.06);display:flex;align-items:center;gap:.6rem}
+    .edit-hdr-title{font-family:var(--font-display);font-size:1.05rem;font-weight:700;letter-spacing:-.02em}
+    .edit-body{padding:1.75rem;display:flex;flex-direction:column;gap:1.1rem}
+    .form-group{display:flex;flex-direction:column;gap:.4rem}
+    .form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
+    .form-label{font-size:.8rem;font-weight:600;color:rgba(13,13,15,.65)}
+    .form-input{background:var(--smoke);border:1.5px solid transparent;border-radius:var(--radius-md);padding:.8rem 1rem;font-size:15px;color:var(--ink);font-family:inherit;outline:none;transition:.2s;width:100%}
+    .form-input:focus{background:white;border-color:var(--moss);box-shadow:0 0 0 3px rgba(45,74,62,.08)}
+    .form-input::placeholder{color:rgba(13,13,15,.3)}
+    textarea.form-input{resize:vertical;min-height:110px;line-height:1.6}
+    select.form-input{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center;padding-right:2.5rem}
+
+    /* Thumbnail area */
+    .thumb-current{width:100%;max-width:300px;height:170px;background:var(--smoke);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;font-size:5rem;margin-bottom:.85rem;border:1px solid rgba(13,13,15,.07)}
+    .thumb-actions{display:flex;gap:.6rem}
+    .btn-sm-action{background:var(--smoke);color:var(--ink);border:1.5px solid rgba(13,13,15,.1);padding:.45rem 1rem;border-radius:100px;font-size:.78rem;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit}
+    .btn-sm-action:hover{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+    .btn-sm-danger{background:transparent;color:var(--error);border:1.5px solid rgba(224,85,85,.2);padding:.45rem 1rem;border-radius:100px;font-size:.78rem;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit}
+    .btn-sm-danger:hover{background:var(--error);color:white;border-color:var(--error)}
+
+    /* Section actions bar */
+    .section-actions{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.75rem;background:var(--smoke);border-top:1px solid rgba(13,13,15,.06)}
+    .btn-primary-action{background:var(--ink);color:var(--cream);border:none;padding:.65rem 1.4rem;border-radius:100px;font-size:.875rem;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit;display:flex;align-items:center;gap:.4rem}
+    .btn-primary-action:hover{background:var(--rust)}
+    .btn-secondary-action{background:transparent;color:rgba(13,13,15,.5);border:1.5px solid rgba(13,13,15,.12);padding:.65rem 1.2rem;border-radius:100px;font-size:.875rem;font-weight:500;cursor:pointer;transition:.2s;font-family:inherit}
+    .btn-secondary-action:hover{color:var(--ink);border-color:var(--ink)}
+
+    /* Toast */
+    .toast{position:fixed;bottom:2rem;right:2rem;background:var(--success);color:white;padding:.85rem 1.4rem;border-radius:var(--radius-md);font-size:.875rem;font-weight:600;box-shadow:0 8px 24px rgba(45,122,79,.3);display:flex;align-items:center;gap:.5rem;transform:translateY(100px);opacity:0;transition:.3s;z-index:999}
+    .toast.show{transform:translateY(0);opacity:1}
+
+    @media(max-width:768px){
+      .left-nav{display:none}
+      .main{padding:1.25rem}
+      .form-grid-2{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="learnhub_responsive.html" class="nav-logo">GIT<span>Academy</span></a>
+  <span class="nav-badge">Instructor</span>
+  <div class="nav-course-name">Machine Learning A-Z: Hands-On Python & R</div>
+  <div class="nav-right">
+    <span class="btn-status">● Published</span>
+    <button class="btn-save" id="saveBtn">Save Changes</button>
+    <a href="instructor-dashboard.html" style="color:rgba(245,240,232,.4);font-size:.8rem">← Dashboard</a>
+    <div class="avatar">ASQ</div>
+  </div>
+</nav>
+
+<div class="page-wrap">
+
+  <!-- LEFT NAV -->
+  <nav class="left-nav">
+    <button class="lnav-link active" onclick="showSection('basic')">📝 Basic Info</button>
+    <button class="lnav-link" onclick="showSection('curriculum')">📚 Curriculum</button>
+    <button class="lnav-link" onclick="showSection('media')">🖼 Media</button>
+    <button class="lnav-link" onclick="showSection('pricing')">💰 Pricing</button>
+    <button class="lnav-link" onclick="showSection('seo')">🔍 SEO</button>
+    <div class="lnav-sep"></div>
+    <a href="upload-video.html" class="lnav-link">📹 Upload Video</a>
+    <a href="course-analytics.html" class="lnav-link">📊 Analytics</a>
+    <a href="course-details.html" class="lnav-link" target="_blank">👁 Preview</a>
+  </nav>
+
+  <main class="main">
+
+    <!-- BASIC INFO -->
+    <div class="edit-section" id="section-basic">
+      <div class="edit-hdr"><span>📝</span><div class="edit-hdr-title">Basic Information</div></div>
+      <div class="edit-body">
+        <div class="form-group">
+          <label class="form-label">Course Title</label>
+          <input class="form-input" type="text" value="Machine Learning A-Z: Hands-On Python & R"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Course Subtitle</label>
+          <input class="form-input" type="text" value="Learn to create ML algorithms in Python and R — Data Preprocessing to Deep Learning"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-input">Machine Learning A-Z is the most comprehensive and complete course on ML available on LearnHub. This course covers Data Pre-processing, Regression, Classification, Clustering, Association Rule Learning, Reinforcement Learning, Natural Language Processing, Deep Learning, Dimensionality Reduction, and Model Selection & Boosting.</textarea>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <select class="form-input"><option selected>Data Science</option><option>Development</option><option>Design</option></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Sub-Category</label>
+            <select class="form-input"><option selected>Machine Learning</option><option>Deep Learning</option></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Level</label>
+            <select class="form-input"><option selected>All Levels</option><option>Beginner</option><option>Advanced</option></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Language</label>
+            <select class="form-input"><option selected>English</option><option>French</option></select>
+          </div>
+        </div>
+      </div>
+      <div class="section-actions">
+        <button class="btn-secondary-action">Discard</button>
+        <button class="btn-primary-action" onclick="saveSection()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Save Changes
+        </button>
+      </div>
+    </div>
+
+    <!-- MEDIA (hidden by default) -->
+    <div class="edit-section" id="section-media" style="display:none">
+      <div class="edit-hdr"><span>🖼</span><div class="edit-hdr-title">Course Media</div></div>
+      <div class="edit-body">
+        <div class="form-group">
+          <label class="form-label">Course Thumbnail</label>
+          <div class="thumb-current">🤖</div>
+          <div class="thumb-actions">
+            <button class="btn-sm-action">Change Image</button>
+            <button class="btn-sm-danger">Remove</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Promotional Video</label>
+          <div style="display:flex;align-items:center;gap:.85rem;padding:1rem;background:var(--smoke);border-radius:var(--radius-md);border:1px solid rgba(13,13,15,.07)">
+            <span style="font-size:1.5rem">📹</span>
+            <div style="flex:1"><div style="font-size:.875rem;font-weight:600">promo_ml_az.mp4</div><div style="font-size:.75rem;color:rgba(13,13,15,.4)">4:32 · 124 MB · Uploaded</div></div>
+            <button class="btn-sm-danger">Remove</button>
+          </div>
+          <button class="btn-sm-action" style="margin-top:.6rem;width:fit-content" onclick="window.location='upload-video.html'">Upload New Video</button>
+        </div>
+      </div>
+      <div class="section-actions">
+        <button class="btn-secondary-action">Discard</button>
+        <button class="btn-primary-action" onclick="saveSection()">Save Changes</button>
+      </div>
+    </div>
+
+    <!-- PRICING (hidden) -->
+    <div class="edit-section" id="section-pricing" style="display:none">
+      <div class="edit-hdr"><span>💰</span><div class="edit-hdr-title">Pricing</div></div>
+      <div class="edit-body">
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label">Price (USD)</label>
+            <input class="form-input" type="number" value="49"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Original Price (crossed out)</label>
+            <input class="form-input" type="number" value="129"/>
+          </div>
+        </div>
+      </div>
+      <div class="section-actions">
+        <button class="btn-secondary-action">Discard</button>
+        <button class="btn-primary-action" onclick="saveSection()">Save Changes</button>
+      </div>
+    </div>
+
+    <!-- SEO (hidden) -->
+    <div class="edit-section" id="section-seo" style="display:none">
+      <div class="edit-hdr"><span>🔍</span><div class="edit-hdr-title">SEO & Discoverability</div></div>
+      <div class="edit-body">
+        <div class="form-group">
+          <label class="form-label">SEO Title</label>
+          <input class="form-input" type="text" value="Machine Learning A-Z — Hands-On Python & R | LearnHub"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Meta Description</label>
+          <textarea class="form-input" style="min-height:80px">Learn Machine Learning step by step. Build and train ML models in Python & R — regression, classification, deep learning, NLP and more. Certificate included.</textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tags (comma-separated)</label>
+          <input class="form-input" type="text" value="machine learning, python, data science, AI, deep learning, scikit-learn, tensorflow"/>
+        </div>
+      </div>
+      <div class="section-actions">
+        <button class="btn-secondary-action">Discard</button>
+        <button class="btn-primary-action" onclick="saveSection()">Save Changes</button>
+      </div>
+    </div>
+
+    <!-- CURRICULUM placeholder (hidden) -->
+    <div class="edit-section" id="section-curriculum" style="display:none">
+      <div class="edit-hdr"><span>📚</span><div class="edit-hdr-title">Curriculum</div></div>
+      <div class="edit-body">
+        <p style="font-size:.9rem;color:rgba(13,13,15,.55);margin-bottom:1rem">Edit your course curriculum below. Drag to reorder sections and lessons.</p>
+        <a href="create-course.html" style="display:inline-flex;align-items:center;gap:.5rem;background:var(--ink);color:var(--cream);padding:.75rem 1.5rem;border-radius:100px;font-size:.875rem;font-weight:600;transition:.2s">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Open Full Curriculum Editor
+        </a>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+  Changes saved successfully!
+</div>
+
+<script>
+  function showSection(name) {
+    document.querySelectorAll('[id^="section-"]').forEach(s => s.style.display = 'none');
+    document.getElementById('section-' + name).style.display = 'block';
+    document.querySelectorAll('.lnav-link').forEach(l => l.classList.remove('active'));
+    event.target.classList.add('active');
+  }
+
+  function saveSection() {
+    const toast = document.getElementById('toast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2800);
+  }
+
+  document.getElementById('saveBtn').addEventListener('click', saveSection);
+</script>
+</body>
+</html>

@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Profile — GITAcademy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --ink:#0d0d0f;--cream:#f5f0e8;--gold:#e8c547;--moss:#2d4a3e;
+      --rust:#c4522a;--paper:#faf8f3;--smoke:#f0ece4;--mist:#e8e3db;
+      --error:#e05555;--success:#2d7a4f;
+      --font-display:'Fraunces',Georgia,serif;
+      --font-body:'DM Sans',system-ui,sans-serif;
+      --nav-h:64px;--sidebar-w:260px;
+      --radius-sm:8px;--radius-md:12px;--radius-lg:18px;--radius-xl:24px;
+      --shadow-sm:0 2px 8px rgba(13,13,15,.06);
+      --shadow-md:0 4px 20px rgba(13,13,15,.1);
+      --shadow-lg:0 12px 40px rgba(13,13,15,.14);
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:var(--font-body);background:var(--smoke);color:var(--ink);line-height:1.6;overflow-x:hidden}
+    a{text-decoration:none;color:inherit}
+    img{max-width:100%;display:block}
+    button{cursor:pointer;font-family:inherit;border:none;background:none}
+
+    /* ══ NAVBAR (same as dashboard) ══ */
+    .navbar{position:sticky;top:0;z-index:500;height:var(--nav-h);background:var(--cream);border-bottom:1px solid rgba(13,13,15,.08);display:flex;align-items:center;padding:0 1.5rem;gap:1rem}
+    .nav-logo{font-family:var(--font-display);font-size:1.35rem;font-weight:900;color:var(--ink);letter-spacing:-.03em;flex-shrink:0}
+    .nav-logo span{color:var(--rust)}
+    .nav-search{flex:1;max-width:380px;position:relative;margin-left:.5rem}
+    .nav-search input{width:100%;background:var(--smoke);border:1.5px solid transparent;border-radius:100px;padding:.5rem 1rem .5rem 2.4rem;font-size:.875rem;color:var(--ink);outline:none;transition:.2s;font-family:var(--font-body)}
+    .nav-search input:focus{background:white;border-color:var(--moss);box-shadow:0 0 0 3px rgba(45,74,62,.08)}
+    .nav-search input::placeholder{color:rgba(13,13,15,.4)}
+    .nav-search-icon{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);color:rgba(13,13,15,.4);pointer-events:none}
+    .nav-right{display:flex;align-items:center;gap:.75rem;margin-left:auto}
+    .nav-icon-btn{width:38px;height:38px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;color:rgba(13,13,15,.6);transition:.2s;position:relative}
+    .nav-icon-btn:hover{background:var(--smoke);color:var(--ink)}
+    .nav-badge{position:absolute;top:5px;right:5px;width:8px;height:8px;background:var(--rust);border-radius:50%;border:2px solid var(--cream)}
+    .nav-user{display:flex;align-items:center;gap:.5rem;padding:.3rem .5rem .3rem .85rem;border-radius:100px;border:1.5px solid rgba(13,13,15,.1);cursor:pointer;transition:.2s;background:none}
+    .nav-user:hover{border-color:var(--ink);background:var(--smoke)}
+    .nav-user-name{font-size:.85rem;font-weight:500;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--moss),var(--rust));display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:var(--cream);flex-shrink:0}
+    .nav-user-wrap{position:relative}
+    .user-dropdown{position:absolute;top:calc(100% + 8px);right:0;background:white;border:1px solid rgba(13,13,15,.08);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:.5rem;min-width:200px;opacity:0;pointer-events:none;transform:translateY(-8px);transition:.2s;z-index:600}
+    .user-dropdown.open{opacity:1;pointer-events:all;transform:translateY(0)}
+    .dropdown-item{display:flex;align-items:center;gap:.6rem;padding:.6rem .75rem;border-radius:var(--radius-sm);font-size:.875rem;font-weight:500;color:rgba(13,13,15,.7);transition:.15s;cursor:pointer}
+    .dropdown-item:hover{background:var(--smoke);color:var(--ink)}
+    .dropdown-item.danger{color:var(--error)}
+    .dropdown-item.danger:hover{background:rgba(224,85,85,.08)}
+    .dropdown-sep{height:1px;background:rgba(13,13,15,.06);margin:.4rem 0}
+
+    /* ══ LAYOUT ══ */
+    .page-wrap{display:flex;min-height:calc(100vh - var(--nav-h))}
+
+    /* ══ SIDEBAR ══ */
+    .sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--cream);border-right:1px solid rgba(13,13,15,.08);padding:1.5rem 1rem;display:flex;flex-direction:column;gap:.25rem;position:sticky;top:var(--nav-h);height:calc(100vh - var(--nav-h));overflow-y:auto}
+    .sidebar-section{font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(13,13,15,.35);padding:.6rem .75rem .3rem;margin-top:.5rem}
+    .sidebar-link{display:flex;align-items:center;gap:.65rem;padding:.65rem .75rem;border-radius:var(--radius-md);font-size:.875rem;font-weight:500;color:rgba(13,13,15,.6);transition:.15s;cursor:pointer;text-decoration:none}
+    .sidebar-link:hover{background:var(--smoke);color:var(--ink)}
+    .sidebar-link.active{background:var(--ink);color:var(--cream)}
+    .sidebar-count{margin-left:auto;background:var(--rust);color:white;font-size:.65rem;font-weight:700;padding:.15rem .45rem;border-radius:100px}
+    .sidebar-link.active .sidebar-count{background:var(--gold);color:var(--ink)}
+    .hamburger{display:none;flex-direction:column;gap:5px;padding:4px;background:none;border:none;cursor:pointer}
+    .hamburger span{display:block;width:22px;height:2px;background:var(--ink);border-radius:2px;transition:.3s}
+    .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(13,13,15,.5);z-index:400}
+
+    /* ══ MAIN ══ */
+    .main{flex:1;padding:2rem;overflow-x:hidden;max-width:900px}
+
+    /* ── Profile Hero ── */
+    .profile-hero{
+      background:white;border-radius:var(--radius-xl);overflow:hidden;
+      border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);margin-bottom:1.5rem
+    }
+    .profile-cover{
+      height:160px;background:var(--ink);position:relative;overflow:hidden
+    }
+    .cover-blob{position:absolute;border-radius:50%;pointer-events:none}
+    .cover-blob-1{width:400px;height:400px;background:radial-gradient(circle,rgba(232,197,71,.15),transparent 70%);top:-150px;right:-80px}
+    .cover-blob-2{width:300px;height:300px;background:radial-gradient(circle,rgba(196,82,42,.12),transparent 70%);bottom:-100px;left:10%}
+    .cover-pattern{
+      position:absolute;inset:0;
+      background-image:radial-gradient(rgba(255,255,255,.04) 1px,transparent 1px);
+      background-size:24px 24px
+    }
+    .profile-info-bar{
+      padding:0 2rem 1.5rem;display:flex;align-items:flex-end;gap:1.5rem;
+      position:relative
+    }
+    .profile-avatar-wrap{
+      width:96px;height:96px;border-radius:50%;margin-top:-48px;
+      border:4px solid white;flex-shrink:0;overflow:hidden;
+      background:linear-gradient(135deg,var(--moss),var(--rust));
+      display:flex;align-items:center;justify-content:center;
+      font-family:var(--font-display);font-size:2rem;font-weight:900;color:var(--cream)
+    }
+    .profile-meta{flex:1;padding-top:1.2rem}
+    .profile-name{font-family:var(--font-display);font-size:1.7rem;font-weight:900;letter-spacing:-.03em;margin-bottom:.2rem}
+    .profile-tagline{font-size:.875rem;color:rgba(13,13,15,.5);font-weight:300}
+    .profile-tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.6rem}
+    .profile-tag{
+      background:var(--smoke);border-radius:100px;padding:.25rem .75rem;
+      font-size:.75rem;font-weight:500;color:rgba(13,13,15,.65)
+    }
+    .profile-actions{display:flex;gap:.75rem;flex-shrink:0;padding-top:1.2rem}
+    .btn-primary{background:var(--ink);color:var(--cream);border:none;padding:.65rem 1.4rem;border-radius:100px;font-size:.875rem;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit;display:inline-flex;align-items:center;gap:.4rem;text-decoration:none}
+    .btn-primary:hover{background:var(--rust);transform:translateY(-1px)}
+    .btn-secondary{background:transparent;color:var(--ink);border:1.5px solid rgba(13,13,15,.15);padding:.65rem 1.4rem;border-radius:100px;font-size:.875rem;font-weight:500;cursor:pointer;transition:.2s;font-family:inherit;display:inline-flex;align-items:center;gap:.4rem;text-decoration:none}
+    .btn-secondary:hover{border-color:var(--ink);background:var(--smoke)}
+
+    /* ── Profile Stats Strip ── */
+    .profile-stats-strip{
+      display:grid;grid-template-columns:repeat(4,1fr);
+      border-top:1px solid rgba(13,13,15,.06);
+    }
+    .pstat{
+      padding:1.1rem 1.5rem;text-align:center;
+      border-right:1px solid rgba(13,13,15,.06)
+    }
+    .pstat:last-child{border-right:none}
+    .pstat-num{font-family:var(--font-display);font-size:1.5rem;font-weight:700;line-height:1;margin-bottom:.2rem}
+    .pstat-label{font-size:.75rem;color:rgba(13,13,15,.45)}
+
+    /* ── Tabs ── */
+    .tabs{display:flex;gap:0;border-bottom:2px solid rgba(13,13,15,.08);margin-bottom:1.5rem;overflow-x:auto}
+    .tab-btn{
+      padding:.75rem 1.25rem;font-size:.875rem;font-weight:500;color:rgba(13,13,15,.5);
+      cursor:pointer;border:none;background:none;font-family:inherit;
+      border-bottom:2px solid transparent;margin-bottom:-2px;transition:.15s;white-space:nowrap
+    }
+    .tab-btn:hover{color:var(--ink)}
+    .tab-btn.active{color:var(--ink);border-bottom-color:var(--ink);font-weight:600}
+
+    /* ── Tab panels ── */
+    .tab-panel{display:none}
+    .tab-panel.active{display:block}
+
+    /* ── About panel ── */
+    .about-grid{display:grid;grid-template-columns:1fr 280px;gap:1.5rem}
+    .card{background:white;border-radius:var(--radius-lg);padding:1.5rem;border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm)}
+    .card-title{font-family:var(--font-display);font-size:1rem;font-weight:700;letter-spacing:-.02em;margin-bottom:1rem}
+    .bio-text{font-size:.9rem;line-height:1.75;color:rgba(13,13,15,.7)}
+    .info-list{display:flex;flex-direction:column;gap:.75rem}
+    .info-row{display:flex;align-items:center;gap:.75rem;font-size:.875rem}
+    .info-icon{width:32px;height:32px;border-radius:var(--radius-sm);background:var(--smoke);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.85rem}
+    .info-label{color:rgba(13,13,15,.45);font-size:.75rem}
+    .info-value{font-weight:500}
+    .social-links{display:flex;flex-direction:column;gap:.5rem;margin-top:1rem}
+    .social-link{display:flex;align-items:center;gap:.65rem;padding:.55rem .75rem;border-radius:var(--radius-md);font-size:.85rem;font-weight:500;color:rgba(13,13,15,.65);transition:.15s;background:var(--smoke)}
+    .social-link:hover{background:var(--mist);color:var(--ink)}
+
+    /* ── Courses panel ── */
+    .enrolled-list{display:flex;flex-direction:column;gap:1rem}
+    .enrolled-item{
+      background:white;border-radius:var(--radius-lg);padding:1.1rem 1.3rem;
+      border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);
+      display:flex;align-items:center;gap:1rem;transition:.2s;text-decoration:none;color:inherit
+    }
+    .enrolled-item:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+    .enrolled-thumb{width:60px;height:50px;border-radius:var(--radius-sm);background:var(--smoke);display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0}
+    .enrolled-info{flex:1;min-width:0}
+    .enrolled-title{font-size:.9rem;font-weight:600;margin-bottom:.4rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .enrolled-meta{font-size:.75rem;color:rgba(13,13,15,.45);display:flex;gap:1rem}
+    .progress-mini{background:rgba(13,13,15,.08);border-radius:100px;height:4px;margin-top:.5rem;overflow:hidden}
+    .progress-mini-bar{height:4px;border-radius:100px;background:var(--moss)}
+    .enrolled-badge{
+      padding:.3rem .8rem;border-radius:100px;font-size:.72rem;font-weight:600;
+      flex-shrink:0;white-space:nowrap
+    }
+    .badge-progress{background:rgba(45,74,62,.1);color:var(--moss)}
+    .badge-done{background:rgba(45,122,79,.1);color:var(--success)}
+
+    /* ── Certificates ── */
+    .cert-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+    .cert-card{
+      background:white;border-radius:var(--radius-lg);padding:1.5rem;
+      border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);
+      display:flex;flex-direction:column;gap:.75rem;transition:.2s
+    }
+    .cert-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+    .cert-icon{font-size:2rem}
+    .cert-name{font-family:var(--font-display);font-size:1rem;font-weight:700;letter-spacing:-.02em}
+    .cert-meta{font-size:.78rem;color:rgba(13,13,15,.45)}
+    .cert-actions{display:flex;gap:.5rem;margin-top:.25rem}
+    .btn-sm{padding:.45rem 1rem;border-radius:100px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit;transition:.2s;display:inline-flex;align-items:center;gap:.35rem;text-decoration:none}
+    .btn-sm-primary{background:var(--ink);color:var(--cream);border:none}
+    .btn-sm-primary:hover{background:var(--rust)}
+    .btn-sm-ghost{background:transparent;color:var(--ink);border:1.5px solid rgba(13,13,15,.15)}
+    .btn-sm-ghost:hover{background:var(--smoke)}
+
+    /* ── Achievements panel ── */
+    .achievements-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+    .achievement-card{
+      background:white;border-radius:var(--radius-lg);padding:1.25rem;
+      border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);
+      text-align:center;transition:.2s
+    }
+    .achievement-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+    .achievement-card.locked{opacity:.45;filter:grayscale(1)}
+    .ach-icon{font-size:2.2rem;margin-bottom:.6rem}
+    .ach-name{font-size:.875rem;font-weight:600;margin-bottom:.2rem}
+    .ach-desc{font-size:.75rem;color:rgba(13,13,15,.45);line-height:1.4}
+    .ach-new{display:inline-block;background:var(--rust);color:white;font-size:.6rem;font-weight:700;padding:.2rem .5rem;border-radius:100px;margin-top:.4rem}
+
+    /* ── Reviews panel ── */
+    .reviews-list{display:flex;flex-direction:column;gap:1rem}
+    .review-card{background:white;border-radius:var(--radius-lg);padding:1.25rem 1.5rem;border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm)}
+    .review-header{display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem}
+    .review-course-thumb{width:48px;height:38px;border-radius:var(--radius-sm);background:var(--smoke);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+    .review-meta{flex:1}
+    .review-course-name{font-size:.875rem;font-weight:600;margin-bottom:.2rem}
+    .review-stars{color:var(--gold);font-size:.8rem;letter-spacing:1px}
+    .review-date{font-size:.72rem;color:rgba(13,13,15,.35)}
+    .review-text{font-size:.875rem;line-height:1.65;color:rgba(13,13,15,.7)}
+
+    /* ── Fade ── */
+    .fade{animation:fadeUp .6s ease both}
+    .d1{animation-delay:.05s}.d2{animation-delay:.15s}.d3{animation-delay:.25s}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+    /* ══ RESPONSIVE ══ */
+    @media(max-width:900px){
+      .about-grid{grid-template-columns:1fr}
+      .cert-grid{grid-template-columns:1fr}
+      .achievements-grid{grid-template-columns:repeat(2,1fr)}
+    }
+    @media(max-width:768px){
+      .sidebar{position:fixed;left:-100%;top:var(--nav-h);z-index:450;transition:.3s;height:calc(100vh - var(--nav-h))}
+      .sidebar.open{left:0}
+      .sidebar-overlay.open{display:block}
+      .hamburger{display:flex}
+      .nav-search{display:none}
+      .main{padding:1.25rem}
+      .profile-info-bar{flex-wrap:wrap;padding:0 1.25rem 1.25rem}
+      .profile-actions{width:100%}
+      .btn-primary,.btn-secondary{flex:1;justify-content:center}
+      .profile-stats-strip{grid-template-columns:repeat(2,1fr)}
+      .pstat:nth-child(2){border-right:none}
+      .pstat:nth-child(3){border-top:1px solid rgba(13,13,15,.06)}
+      .nav-user-name{display:none}
+      .achievements-grid{grid-template-columns:repeat(2,1fr)}
+    }
+    @media(max-width:480px){
+      .profile-stats-strip{grid-template-columns:1fr 1fr}
+      .achievements-grid{grid-template-columns:1fr 1fr}
+      .profile-name{font-size:1.4rem}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ NAVBAR ══ -->
+<nav class="navbar">
+  <button class="hamburger" id="hamburgerBtn" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <a href="learnhub_responsive.html" class="nav-logo">GIT<span>Academy</span></a>
+  <div class="nav-search">
+    <svg class="nav-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" placeholder="Search courses…"/>
+  </div>
+  <div class="nav-right">
+    <button class="nav-icon-btn" title="Notifications">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <span class="nav-badge"></span>
+    </button>
+    <div class="nav-user-wrap">
+      <button class="nav-user" id="userMenuBtn">
+        <span class="nav-user-name">Justice Elorm</span>
+        <div class="avatar">JE</div>
+      </button>
+      <div class="user-dropdown" id="userDropdown">
+        <a href="dashboard.html" class="dropdown-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Dashboard
+        </a>
+        <a href="profile.html" class="dropdown-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          My Profile
+        </a>
+        <a href="edit-profile.html" class="dropdown-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Edit Profile
+        </a>
+        <div class="dropdown-sep"></div>
+        <a href="login.html" class="dropdown-item danger">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Log Out
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="page-wrap">
+  <!-- ══ SIDEBAR ══ -->
+  <aside class="sidebar" id="sidebar">
+    <a href="dashboard.html" class="sidebar-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </a>
+    <div class="sidebar-section">Learning</div>
+    <a href="course-list.html" class="sidebar-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      My Courses
+      <span class="sidebar-count">4</span>
+    </a>
+    <a href="course-list.html#bookmarks" class="sidebar-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+      Saved
+      <span class="sidebar-count">7</span>
+    </a>
+    <a href="profile.html#certificates" class="sidebar-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+      Certificates
+    </a>
+    <div class="sidebar-section">Explore</div>
+    <a href="home.html" class="sidebar-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Browse Courses
+    </a>
+    <a href="category-list.html" class="sidebar-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h7"/></svg>
+      Categories
+    </a>
+    <a href="cart.html" class="sidebar-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      Cart
+      <span class="sidebar-count">2</span>
+    </a>
+    <div class="sidebar-section">Account</div>
+    <a href="profile.html" class="sidebar-link active">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Profile
+    </a>
+    <a href="edit-profile.html" class="sidebar-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Settings
+    </a>
+    <a href="login.html" class="sidebar-link" style="margin-top:auto;color:var(--error)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Log Out
+    </a>
+  </aside>
+
+  <!-- ══ MAIN ══ -->
+  <main class="main">
+
+    <!-- Profile Hero -->
+    <div class="profile-hero fade d1">
+      <div class="profile-cover">
+        <div class="cover-blob cover-blob-1"></div>
+        <div class="cover-blob cover-blob-2"></div>
+        <div class="cover-pattern"></div>
+      </div>
+      <div class="profile-info-bar">
+        <div class="profile-avatar-wrap">JE</div>
+        <div class="profile-meta">
+          <div class="profile-name">Justice Elorm</div>
+          <div class="profile-tagline">Frontend Developer in training · Accra, Ghana 🇬🇭</div>
+          <div class="profile-tags">
+            <span class="profile-tag">Python</span>
+            <span class="profile-tag">UI/UX</span>
+            <span class="profile-tag">Data Science</span>
+            <span class="profile-tag">Web Dev</span>
+          </div>
+        </div>
+        <div class="profile-actions">
+          <a href="edit-profile.html" class="btn-primary">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Edit Profile
+          </a>
+          <button class="btn-secondary">Share</button>
+        </div>
+      </div>
+      <!-- Stats strip -->
+      <div class="profile-stats-strip">
+        <div class="pstat">
+          <div class="pstat-num">4</div>
+          <div class="pstat-label">Courses Enrolled</div>
+        </div>
+        <div class="pstat">
+          <div class="pstat-num">2</div>
+          <div class="pstat-label">Certificates</div>
+        </div>
+        <div class="pstat">
+          <div class="pstat-num">42h</div>
+          <div class="pstat-label">Hours Learned</div>
+        </div>
+        <div class="pstat">
+          <div class="pstat-num">5🔥</div>
+          <div class="pstat-label">Day Streak</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs fade d2">
+      <button class="tab-btn active" data-tab="about">About</button>
+      <button class="tab-btn" data-tab="courses">My Courses</button>
+      <button class="tab-btn" data-tab="certificates">Certificates</button>
+      <button class="tab-btn" data-tab="achievements">Achievements</button>
+      <button class="tab-btn" data-tab="reviews">Reviews</button>
+    </div>
+
+    <!-- ABOUT -->
+    <div class="tab-panel active fade d3" id="tab-about">
+      <div class="about-grid">
+        <div class="card">
+          <div class="card-title">About Me</div>
+          <p class="bio-text">
+            Hi! I'm Elorm, a self-taught developer from Accra, Ghana. I started learning programming two years ago and have since built several small projects. I'm passionate about UI/UX design and data science, and I'm working towards landing my first full-time tech job. LearnHub has been an incredible resource on this journey!
+          </p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:1rem">
+          <div class="card">
+            <div class="card-title">Info</div>
+            <div class="info-list">
+              <div class="info-row">
+                <div class="info-icon">📍</div>
+                <div><div class="info-label">Location</div><div class="info-value">Accra, Ghana</div></div>
+              </div>
+              <div class="info-row">
+                <div class="info-icon">📅</div>
+                <div><div class="info-label">Member since</div><div class="info-value">January 2025</div></div>
+              </div>
+              <div class="info-row">
+                <div class="info-icon">🎯</div>
+                <div><div class="info-label">Goal</div><div class="info-value">Frontend Developer</div></div>
+              </div>
+              <div class="info-row">
+                <div class="info-icon">🌐</div>
+                <div><div class="info-label">Website</div><div class="info-value" style="color:var(--rust)">amakofi.dev</div></div>
+              </div>
+            </div>
+            <div class="social-links">
+              <a href="#" class="social-link">🐦 @justiceelorm_dev</a>
+              <a href="#" class="social-link">💼 linkedin.com/in/justiceelorm</a>
+              <a href="#" class="social-link">🐙 github.com/justiceelorm</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COURSES -->
+    <div class="tab-panel" id="tab-courses">
+      <div class="enrolled-list">
+        <a href="course-player.html" class="enrolled-item">
+          <div class="enrolled-thumb">🐍</div>
+          <div class="enrolled-info">
+            <div class="enrolled-title">Python Fundamentals for Beginners</div>
+            <div class="enrolled-meta"><span>25 lessons</span><span>Lesson 17 of 25</span></div>
+            <div class="progress-mini"><div class="progress-mini-bar" style="width:68%"></div></div>
+          </div>
+          <span class="enrolled-badge badge-progress">In Progress · 68%</span>
+        </a>
+        <a href="course-player.html" class="enrolled-item">
+          <div class="enrolled-thumb">🎨</div>
+          <div class="enrolled-info">
+            <div class="enrolled-title">UI/UX Design Masterclass</div>
+            <div class="enrolled-meta"><span>25 lessons</span><span>Lesson 8 of 25</span></div>
+            <div class="progress-mini"><div class="progress-mini-bar" style="width:32%"></div></div>
+          </div>
+          <span class="enrolled-badge badge-progress">In Progress · 32%</span>
+        </a>
+        <a href="course-player.html" class="enrolled-item">
+          <div class="enrolled-thumb">⚡</div>
+          <div class="enrolled-info">
+            <div class="enrolled-title">JavaScript Basics</div>
+            <div class="enrolled-meta"><span>20 lessons</span><span>Completed</span></div>
+            <div class="progress-mini"><div class="progress-mini-bar" style="width:100%;background:var(--success)"></div></div>
+          </div>
+          <span class="enrolled-badge badge-done">Completed ✓</span>
+        </a>
+        <a href="course-player.html" class="enrolled-item">
+          <div class="enrolled-thumb">📊</div>
+          <div class="enrolled-info">
+            <div class="enrolled-title">Data Analysis with Pandas</div>
+            <div class="enrolled-meta"><span>20 lessons</span><span>Lesson 3 of 20</span></div>
+            <div class="progress-mini"><div class="progress-mini-bar" style="width:15%"></div></div>
+          </div>
+          <span class="enrolled-badge badge-progress">In Progress · 15%</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- CERTIFICATES -->
+    <div class="tab-panel" id="tab-certificates">
+      <div class="cert-grid">
+        <div class="cert-card">
+          <div class="cert-icon">🏆</div>
+          <div class="cert-name">JavaScript Basics</div>
+          <div class="cert-meta">Issued March 2025 · GITAcademy</div>
+          <div class="cert-actions">
+            <a href="#" class="btn-sm btn-sm-primary">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download
+            </a>
+            <a href="#" class="btn-sm btn-sm-ghost">Share</a>
+          </div>
+        </div>
+        <div class="cert-card">
+          <div class="cert-icon">🎓</div>
+          <div class="cert-name">HTML & CSS Fundamentals</div>
+          <div class="cert-meta">Issued January 2026 · GITAcademy</div>
+          <div class="cert-actions">
+            <a href="#" class="btn-sm btn-sm-primary">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download
+            </a>
+            <a href="#" class="btn-sm btn-sm-ghost">Share</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACHIEVEMENTS -->
+    <div class="tab-panel" id="tab-achievements">
+      <div class="achievements-grid">
+        <div class="achievement-card">
+          <div class="ach-icon">🔥</div>
+          <div class="ach-name">5-Day Streak</div>
+          <div class="ach-desc">Logged in 5 days in a row</div>
+          <span class="ach-new">NEW</span>
+        </div>
+        <div class="achievement-card">
+          <div class="ach-icon">🎓</div>
+          <div class="ach-name">First Certificate</div>
+          <div class="ach-desc">Completed your first course</div>
+        </div>
+        <div class="achievement-card">
+          <div class="ach-icon">⚡</div>
+          <div class="ach-name">Fast Learner</div>
+          <div class="ach-desc">Completed 3 lessons in one day</div>
+        </div>
+        <div class="achievement-card">
+          <div class="ach-icon">📚</div>
+          <div class="ach-name">Bookworm</div>
+          <div class="ach-desc">Saved 5 courses to your library</div>
+        </div>
+        <div class="achievement-card locked">
+          <div class="ach-icon">🌟</div>
+          <div class="ach-name">Top Student</div>
+          <div class="ach-desc">Score 100% on any quiz</div>
+        </div>
+        <div class="achievement-card locked">
+          <div class="ach-icon">🚀</div>
+          <div class="ach-name">30-Day Streak</div>
+          <div class="ach-desc">Log in 30 days in a row</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVIEWS -->
+    <div class="tab-panel" id="tab-reviews">
+      <div class="reviews-list">
+        <div class="review-card">
+          <div class="review-header">
+            <div class="review-course-thumb">⚡</div>
+            <div class="review-meta">
+              <div class="review-course-name">JavaScript Basics</div>
+              <div class="review-stars">★★★★★</div>
+            </div>
+            <div class="review-date">March 10, 2025</div>
+          </div>
+          <p class="review-text">Excellent course! The instructor explains concepts very clearly and the exercises are practical. I went from knowing nothing about JavaScript to building small apps. Highly recommend!</p>
+        </div>
+        <div class="review-card">
+          <div class="review-header">
+            <div class="review-course-thumb">🎨</div>
+            <div class="review-meta">
+              <div class="review-course-name">UI/UX Design Masterclass</div>
+              <div class="review-stars">★★★★☆</div>
+            </div>
+            <div class="review-date">February 22, 2026</div>
+          </div>
+          <p class="review-text">Great content overall. The design theory sections are fantastic. I'd love to see more real-world project walkthroughs but the fundamentals are solid.</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // Hamburger
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  hamburgerBtn.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('open');
+  });
+  overlay.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('open');
+  });
+
+  // User dropdown
+  const userMenuBtn = document.getElementById('userMenuBtn');
+  const userDropdown = document.getElementById('userDropdown');
+  userMenuBtn.addEventListener('click', e => { e.stopPropagation(); userDropdown.classList.toggle('open'); });
+  document.addEventListener('click', () => userDropdown.classList.remove('open'));
+
+  // Tabs
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const tabPanels = document.querySelectorAll('.tab-panel');
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabBtns.forEach(b => b.classList.remove('active'));
+      tabPanels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // Hash-based tab (e.g. profile.html#certificates)
+  if (window.location.hash) {
+    const hash = window.location.hash.replace('#','');
+    const target = document.querySelector(`[data-tab="${hash}"]`);
+    if (target) target.click();
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Log In — GITAcademy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --ink:#0d0d0f;--cream:#f5f0e8;--gold:#e8c547;--moss:#2d4a3e;
+      --rust:#c4522a;--paper:#faf8f3;--smoke:#f0ece4;
+      --error:#e05555;--success:#2d7a4f;--purple:#7c3aed;
+      --font-display:'Fraunces',Georgia,serif;
+      --font-body:'DM Sans',system-ui,sans-serif;
+      --radius-sm:8px;--radius-md:12px;--radius-lg:18px;--radius-xl:24px;
+      --shadow-sm:0 2px 8px rgba(13,13,15,.06);
+      --shadow-md:0 4px 20px rgba(13,13,15,.1);
+      --shadow-lg:0 12px 40px rgba(13,13,15,.14);
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:var(--font-body);background:var(--cream);color:var(--ink);min-height:100vh;overflow-x:hidden}
+    a{text-decoration:none;color:inherit}
+    button{cursor:pointer;font-family:inherit;border:none;background:none}
+
+    /* NAV */
+    .navbar{display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;background:var(--cream);border-bottom:1px solid rgba(13,13,15,.07);position:sticky;top:0;z-index:200}
+    .nav-logo{font-family:var(--font-display);font-size:1.4rem;font-weight:900;color:var(--ink);letter-spacing:-.03em}
+    .nav-logo span{color:var(--rust)}
+    .nav-links{display:flex;align-items:center;gap:.75rem}
+    .nav-hint{font-size:.85rem;color:rgba(13,13,15,.45)}
+    .btn-nav{background:var(--ink);color:var(--cream);padding:.5rem 1.3rem;border-radius:100px;font-size:.85rem;font-weight:600;transition:.2s;display:inline-block}
+    .btn-nav:hover{background:var(--rust)}
+
+    /* SPLIT LAYOUT */
+    .auth-wrap{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 65px)}
+
+    /* LEFT PANEL */
+    .auth-left{background:var(--ink);padding:3.5rem;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+    .al-blob{position:absolute;border-radius:50%;pointer-events:none}
+    .al-blob-1{width:500px;height:500px;background:radial-gradient(circle,rgba(45,74,62,.5),transparent 70%);top:-180px;right:-100px}
+    .al-blob-2{width:350px;height:350px;background:radial-gradient(circle,rgba(196,82,42,.18),transparent 70%);bottom:-100px;left:-60px}
+    .al-blob-3{width:220px;height:220px;background:radial-gradient(circle,rgba(232,197,71,.07),transparent 70%);top:45%;left:18%}
+    .al-top{position:relative;z-index:1}
+    .al-eyebrow{font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(245,240,232,.3);margin-bottom:1.25rem}
+    .al-title{font-family:var(--font-display);font-size:clamp(2.2rem,3.2vw,3.2rem);font-weight:900;color:var(--cream);line-height:1;letter-spacing:-.03em;margin-bottom:1rem}
+    .al-title em{font-style:italic;font-weight:300;color:var(--gold)}
+    .al-subtitle{font-size:.925rem;color:rgba(245,240,232,.45);font-weight:300;line-height:1.75;max-width:340px}
+
+    /* Role showcase cards */
+    .role-showcase{display:flex;flex-direction:column;gap:.65rem;margin-top:2.5rem}
+    .rc{display:flex;align-items:center;gap:.85rem;padding:.85rem 1rem;border-radius:var(--radius-md);border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);transition:.25s}
+    .rc.active-rc{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.16)}
+    .rc-icon{width:38px;height:38px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+    .rc-icon.s{background:rgba(45,74,62,.3)}
+    .rc-icon.i{background:rgba(124,58,237,.25)}
+    .rc-icon.a{background:rgba(196,82,42,.25)}
+    .rc-name{font-size:.85rem;font-weight:700;color:rgba(245,240,232,.8);line-height:1;margin-bottom:.1rem}
+    .rc-desc{font-size:.71rem;color:rgba(245,240,232,.3)}
+
+    .al-bottom{position:relative;z-index:1}
+    .al-stats{display:flex;gap:2.5rem;flex-wrap:wrap}
+    .al-stat-num{font-family:var(--font-display);font-size:1.6rem;font-weight:700;color:var(--cream);line-height:1}
+    .al-stat-label{font-size:.7rem;color:rgba(245,240,232,.3);margin-top:.15rem}
+
+    /* RIGHT PANEL */
+    .auth-right{display:flex;align-items:center;justify-content:center;padding:2.5rem;background:var(--paper)}
+    .form-wrap{width:100%;max-width:430px}
+
+    /* Form header */
+    .f-eyebrow{font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--rust);margin-bottom:.5rem}
+    .f-title{font-family:var(--font-display);font-size:2rem;font-weight:900;letter-spacing:-.03em;margin-bottom:.3rem;line-height:1}
+    .f-subtitle{font-size:.875rem;color:rgba(13,13,15,.4);line-height:1.5;margin-bottom:2rem}
+
+    /* ROLE SELECTOR */
+    .role-selector{margin-bottom:1.75rem}
+    .rs-label{display:block;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:rgba(13,13,15,.45);margin-bottom:.6rem}
+    .role-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:.35rem;background:var(--smoke);border-radius:var(--radius-md);padding:.28rem}
+    .rt{display:flex;flex-direction:column;align-items:center;gap:.28rem;padding:.65rem .35rem;border-radius:var(--radius-sm);cursor:pointer;transition:.2s;border:2px solid transparent;background:none;font-family:inherit;width:100%}
+    .rt:hover{background:rgba(13,13,15,.04)}
+    .rt.active{background:white;box-shadow:0 2px 10px rgba(13,13,15,.09)}
+    .rt.active.rt-s{border-color:var(--moss)}
+    .rt.active.rt-i{border-color:var(--purple)}
+    .rt.active.rt-a{border-color:var(--rust)}
+    .rt-icon{font-size:1.25rem;line-height:1}
+    .rt-label{font-size:.72rem;font-weight:700;color:rgba(13,13,15,.45);transition:.2s}
+    .rt.active .rt-label{color:var(--ink)}
+    .rt.active.rt-s .rt-label{color:var(--moss)}
+    .rt.active.rt-i .rt-label{color:var(--purple)}
+    .rt.active.rt-a .rt-label{color:var(--rust)}
+
+    /* Role hint */
+    .role-hint{margin-top:.5rem;display:flex;align-items:center;gap:.45rem;padding:.45rem .8rem;background:var(--smoke);border-radius:var(--radius-sm);font-size:.75rem;color:rgba(13,13,15,.45);transition:.25s;min-height:36px}
+    .rh-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;transition:.25s}
+    .rh-dot.s{background:var(--moss)}
+    .rh-dot.i{background:var(--purple)}
+    .rh-dot.a{background:var(--rust)}
+
+    /* Social */
+    .social-btns{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1.4rem}
+    .btn-social{display:flex;align-items:center;justify-content:center;gap:.55rem;padding:.72rem;border-radius:var(--radius-md);border:1.5px solid rgba(13,13,15,.1);background:white;font-size:.85rem;font-weight:600;color:var(--ink);transition:.2s;cursor:pointer;font-family:inherit}
+    .btn-social:hover{border-color:rgba(13,13,15,.25);background:var(--smoke)}
+    .social-icon{font-size:1rem}
+
+    /* Divider */
+    .divider{display:flex;align-items:center;gap:.65rem;margin-bottom:1.4rem}
+    .div-line{flex:1;height:1px;background:rgba(13,13,15,.09)}
+    .div-text{font-size:.73rem;color:rgba(13,13,15,.32);font-weight:500;white-space:nowrap}
+
+    /* Form fields */
+    .form-group{margin-bottom:1.1rem}
+    .form-label{display:block;font-size:.78rem;font-weight:600;color:rgba(13,13,15,.6);margin-bottom:.4rem}
+    .input-wrap{position:relative}
+    .form-input{width:100%;background:var(--smoke);border:1.5px solid transparent;border-radius:var(--radius-md);padding:.82rem 2.8rem .82rem 1rem;font-size:.9rem;color:var(--ink);font-family:inherit;outline:none;transition:.2s}
+    .form-input:focus{background:white;border-color:var(--moss);box-shadow:0 0 0 3px rgba(45,74,62,.08)}
+    .form-input.err{border-color:var(--error);background:rgba(224,85,85,.03)}
+    .form-input::placeholder{color:rgba(13,13,15,.28)}
+    .input-btn{position:absolute;right:.85rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:rgba(13,13,15,.35);display:flex;align-items:center;transition:.2s;padding:0}
+    .input-btn:hover{color:var(--ink)}
+
+    /* Admin code (hidden by default) */
+    .admin-field{display:none}
+    .admin-field.show{display:block;animation:slideDown .2s ease}
+    @keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+
+    /* Options row */
+    .form-options{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.4rem;flex-wrap:wrap;gap:.5rem}
+    .check-label{display:flex;align-items:center;gap:.45rem;font-size:.82rem;color:rgba(13,13,15,.55);cursor:pointer;user-select:none}
+    .check-label input{width:15px;height:15px;accent-color:var(--moss);cursor:pointer}
+    .forgot-link{font-size:.82rem;font-weight:600;color:var(--rust)}
+    .forgot-link:hover{opacity:.7}
+
+    /* Error */
+    .err-msg{display:none;align-items:center;gap:.5rem;background:rgba(224,85,85,.07);border:1px solid rgba(224,85,85,.18);border-radius:var(--radius-md);padding:.7rem .9rem;font-size:.82rem;color:var(--error);margin-bottom:1rem}
+    .err-msg.show{display:flex}
+
+    /* Submit */
+    .btn-submit{width:100%;border:none;padding:1rem;border-radius:var(--radius-md);font-size:.95rem;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:.5rem;margin-bottom:1.25rem;color:white}
+    .btn-submit:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(13,13,15,.2)}
+    .btn-submit:disabled{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none}
+    .btn-s{background:var(--moss)}
+    .btn-s:hover{background:#1e3329}
+    .btn-i{background:var(--purple)}
+    .btn-i:hover{background:#6d28d9}
+    .btn-a{background:var(--rust)}
+    .btn-a:hover{background:#b04424}
+
+    .f-footer{text-align:center;font-size:.85rem;color:rgba(13,13,15,.42)}
+    .f-footer a{color:var(--rust);font-weight:600}
+    .f-footer a:hover{opacity:.7}
+
+    /* Spinner */
+    .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;display:none;flex-shrink:0}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* Responsive */
+    @media(max-width:900px){.auth-wrap{grid-template-columns:1fr}.auth-left{display:none}}
+    @media(max-width:480px){.auth-right{padding:1.5rem 1.25rem}.navbar{padding:.85rem 1.25rem}.social-btns{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="learnhub_responsive.html" class="nav-logo">GIT<span>Academy</span></a>
+  <div class="nav-links">
+    <span class="nav-hint">New to GITAcademy?</span>
+    <a href="register.html" class="btn-nav">Create account</a>
+  </div>
+</nav>
+
+<div class="auth-wrap">
+
+  <!-- ── LEFT PANEL ── -->
+  <div class="auth-left">
+    <div class="al-blob al-blob-1"></div>
+    <div class="al-blob al-blob-2"></div>
+    <div class="al-blob al-blob-3"></div>
+    <div class="al-top">
+      <div class="al-eyebrow">Welcome back</div>
+      <h1 class="al-title">Good to see you<br>  <em>Again</em><br>on GITAcademy.</h1>
+      <p class="al-subtitle">Pick your role on the right, then sign in to access your personalised experience.</p>
+      <div class="role-showcase">
+        <div class="rc active-rc" id="rc-student">
+          <div class="rc-icon s">🎓</div>
+          <div><div class="rc-name">Student</div><div class="rc-desc">Browse courses, track progress & earn certificates</div></div>
+        </div>
+        <div class="rc" id="rc-instructor">
+          <div class="rc-icon i">🧑‍🏫</div>
+          <div><div class="rc-name">Instructor</div><div class="rc-desc">Create courses, manage students & view analytics</div></div>
+        </div>
+        <div class="rc" id="rc-admin">
+          <div class="rc-icon a">🛡️</div>
+          <div><div class="rc-name">Admin</div><div class="rc-desc">Manage the platform, users and payments</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="al-bottom">
+      <div class="al-stats">
+        <div><div class="al-stat-num">2M+</div><div class="al-stat-label">Learners</div></div>
+        <div><div class="al-stat-num">8,400+</div><div class="al-stat-label">Courses</div></div>
+        <div><div class="al-stat-num">500+</div><div class="al-stat-label">Instructors</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RIGHT PANEL ── -->
+  <div class="auth-right">
+    <div class="form-wrap">
+
+      <div class="f-eyebrow" id="fEyebrow">Student Login</div>
+      <h2 class="f-title">Welcome back!</h2>
+      <p class="f-subtitle">Choose your role and sign in to continue.</p>
+
+      <!-- ROLE SELECTOR -->
+      <div class="role-selector">
+        <span class="rs-label">I am logging in as</span>
+        <div class="role-tabs" role="group">
+          <button class="rt rt-s active" data-role="student" onclick="selectRole('student',this)" type="button">
+            <span class="rt-icon">🎓</span><span class="rt-label">Student</span>
+          </button>
+          <button class="rt rt-i" data-role="instructor" onclick="selectRole('instructor',this)" type="button">
+            <span class="rt-icon">🧑‍🏫</span><span class="rt-label">Instructor</span>
+          </button>
+          <button class="rt rt-a" data-role="admin" onclick="selectRole('admin',this)" type="button">
+            <span class="rt-icon">🛡️</span><span class="rt-label">Admin</span>
+          </button>
+        </div>
+        <div class="role-hint">
+          <span class="rh-dot s" id="rhDot"></span>
+          <span id="rhText">Access your courses, progress and certificates.</span>
+        </div>
+      </div>
+
+      <!-- SOCIAL (hidden for admin) -->
+      <div id="socialWrap">
+        <div class="social-btns">
+          <button class="btn-social" onclick="socialLogin('google')"><span class="social-icon">🌐</span>Google</button>
+          <button class="btn-social" onclick="socialLogin('github')"><span class="social-icon">⚫</span>GitHub</button>
+        </div>
+        <div class="divider"><div class="div-line"></div><span class="div-text">or continue with email</span><div class="div-line"></div></div>
+      </div>
+
+      <!-- ERROR -->
+      <div class="err-msg" id="loginErr">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="loginErrTxt">Invalid email or password.</span>
+      </div>
+
+      <!-- EMAIL -->
+      <div class="form-group">
+        <label class="form-label" for="email">Email Address</label>
+        <div class="input-wrap">
+          <input class="form-input" type="email" id="email" placeholder="you@example.com" autocomplete="email"/>
+        </div>
+      </div>
+
+      <!-- PASSWORD -->
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <div class="input-wrap">
+          <input class="form-input" type="password" id="password" placeholder="Your password" autocomplete="current-password"/>
+          <button class="input-btn" type="button" id="togglePw" title="Toggle visibility">
+            <svg id="eyeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- ADMIN CODE -->
+      <div class="form-group admin-field" id="adminCodeWrap">
+        <label class="form-label" for="adminCode">
+          Admin Access Code
+          <span style="font-weight:400;color:rgba(13,13,15,.35);font-size:.7rem;margin-left:.35rem">Required</span>
+        </label>
+        <div class="input-wrap">
+          <input class="form-input" type="password" id="adminCode" placeholder="Enter admin access code" autocomplete="off"/>
+          <button class="input-btn" type="button" id="toggleAdminPw" title="Toggle visibility">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- OPTIONS -->
+      <div class="form-options">
+        <label class="check-label"><input type="checkbox" id="rememberMe" checked/>Remember me</label>
+        <a href="forgot-password.html" class="forgot-link">Forgot password?</a>
+      </div>
+
+      <!-- SUBMIT -->
+      <button class="btn-submit btn-s" id="loginBtn" onclick="handleLogin()" type="button">
+        <span id="btnTxt">Sign In as Student</span>
+        <div class="spinner" id="loginSpinner"></div>
+      </button>
+
+      <div class="f-footer">
+        Don't have an account? <a href="register.html">Sign up free →</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  const ROLES = {
+    student: {
+      eyebrow:'Student Login', btnText:'Sign In as Student', btnClass:'btn-s',
+      hint:'Access your courses, progress and certificates.',
+      dotClass:'s', showSocial:true, showAdminCode:false,
+      redirect:'dashboard.html', rcId:'rc-student',
+    },
+    instructor: {
+      eyebrow:'Instructor Login', btnText:'Sign In as Instructor', btnClass:'btn-i',
+      hint:'Go to your instructor dashboard, course analytics and students.',
+      dotClass:'i', showSocial:true, showAdminCode:false,
+      redirect:'instructor-dashboard.html', rcId:'rc-instructor',
+    },
+    admin: {
+      eyebrow:'Admin Login', btnText:'Sign In as Admin', btnClass:'btn-a',
+      hint:'Restricted. Enter your credentials and admin access code.',
+      dotClass:'a', showSocial:false, showAdminCode:true,
+      redirect:'admin-dashboard.html', rcId:'rc-admin',
+    },
+  };
+
+  let currentRole = 'student';
+
+  function selectRole(role, tabEl) {
+    currentRole = role;
+    const cfg = ROLES[role];
+
+    // Tabs
+    document.querySelectorAll('.rt').forEach(t => t.classList.remove('active'));
+    tabEl.classList.add('active');
+
+    // Hint
+    document.getElementById('rhText').textContent = cfg.hint;
+    document.getElementById('rhDot').className = 'rh-dot ' + cfg.dotClass;
+
+    // Eyebrow & button
+    document.getElementById('fEyebrow').textContent = cfg.eyebrow;
+    const btn = document.getElementById('loginBtn');
+    btn.className = 'btn-submit ' + cfg.btnClass;
+    document.getElementById('btnTxt').textContent = cfg.btnText;
+
+    // Social login
+    document.getElementById('socialWrap').style.display = cfg.showSocial ? '' : 'none';
+
+    // Admin code
+    document.getElementById('adminCodeWrap').classList.toggle('show', cfg.showAdminCode);
+
+    // Left panel highlight
+    document.querySelectorAll('.rc').forEach(c => c.classList.remove('active-rc'));
+    document.getElementById(cfg.rcId)?.classList.add('active-rc');
+
+    // Clear errors
+    document.getElementById('loginErr').classList.remove('show');
+    document.getElementById('email').classList.remove('err');
+    document.getElementById('password').classList.remove('err');
+  }
+
+  // Password visibility toggles
+  function makeToggle(inputId, btnId) {
+    document.getElementById(btnId)?.addEventListener('click', () => {
+      const inp = document.getElementById(inputId);
+      inp.type = inp.type === 'text' ? 'password' : 'text';
+    });
+  }
+  makeToggle('password', 'togglePw');
+  makeToggle('adminCode', 'toggleAdminPw');
+
+  // Enter key
+  ['email','password','adminCode'].forEach(id => {
+    document.getElementById(id)?.addEventListener('keydown', e => {
+      if (e.key === 'Enter') handleLogin();
+    });
+  });
+
+  function showError(msg) {
+    document.getElementById('loginErrTxt').textContent = msg;
+    document.getElementById('loginErr').classList.add('show');
+  }
+
+  async function handleLogin() {
+    const email     = document.getElementById('email').value.trim();
+    const password  = document.getElementById('password').value;
+    const adminCode = document.getElementById('adminCode').value.trim();
+    const cfg       = ROLES[currentRole];
+    const btn       = document.getElementById('loginBtn');
+    const spinner   = document.getElementById('loginSpinner');
+    const btnTxt    = document.getElementById('btnTxt');
+
+    document.getElementById('loginErr').classList.remove('show');
+    document.getElementById('email').classList.remove('err');
+    document.getElementById('password').classList.remove('err');
+
+    // Validate
+    if (!email) { showError('Please enter your email address.'); document.getElementById('email').classList.add('err'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('Please enter a valid email address.'); document.getElementById('email').classList.add('err'); return; }
+    if (!password) { showError('Please enter your password.'); document.getElementById('password').classList.add('err'); return; }
+    if (currentRole === 'admin' && !adminCode) { showError('Admin access code is required.'); document.getElementById('adminCode').classList.add('err'); return; }
+
+    // Loading state
+    btn.disabled = true;
+    btnTxt.style.opacity = '0';
+    spinner.style.display = 'block';
+
+    try {
+      // ── Laravel Sanctum ──────────────────────────
+      // const res = await fetch('/api/auth/login', {
+      //   method:'POST',
+      //   headers:{'Content-Type':'application/json','Accept':'application/json'},
+      //   body: JSON.stringify({ email, password, role: currentRole, admin_code: adminCode || undefined }),
+      // });
+      // const data = await res.json();
+      // if (!res.ok) throw new Error(data.message || 'Login failed');
+      // localStorage.setItem('lh_token', data.token);
+      // localStorage.setItem('lh_user', JSON.stringify(data.user));
+      // ─────────────────────────────────────────────
+
+      // Demo simulation
+      await new Promise(r => setTimeout(r, 1200));
+      localStorage.setItem('lh_role', currentRole);
+      localStorage.setItem('lh_user', JSON.stringify({ first_name:'Ama', last_name:'Kofi', email, role: currentRole }));
+      window.location.href = cfg.redirect;
+
+    } catch (err) {
+      showError(err.message || 'Invalid credentials. Please try again.');
+      btn.disabled = false;
+      btnTxt.style.opacity = '1';
+      spinner.style.display = 'none';
+    }
+  }
+
+  function socialLogin(provider) {
+    // window.location.href = `/auth/${provider}/redirect?role=${currentRole}`;
+    alert(`${provider} login — role: ${currentRole}`);
+  }
+</script>
+</body>
+</html>

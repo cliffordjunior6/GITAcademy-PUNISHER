@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Create Course — GITAcademy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --ink:#0d0d0f;--cream:#f5f0e8;--gold:#e8c547;--moss:#2d4a3e;
+      --rust:#c4522a;--paper:#faf8f3;--smoke:#f0ece4;--mist:#e8e3db;
+      --error:#e05555;--success:#2d7a4f;
+      --font-display:'Fraunces',Georgia,serif;--font-body:'DM Sans',system-ui,sans-serif;
+      --nav-h:64px;--shadow-sm:0 2px 8px rgba(13,13,15,.06);--shadow-md:0 4px 20px rgba(13,13,15,.1);
+      --radius-sm:8px;--radius-md:12px;--radius-lg:18px;--radius-xl:24px;
+    }
+    body{font-family:var(--font-body);background:var(--smoke);color:var(--ink);min-height:100vh}
+    a{text-decoration:none;color:inherit}
+    button{cursor:pointer;font-family:inherit;border:none;background:none}
+
+    /* NAVBAR */
+    .navbar{position:sticky;top:0;z-index:500;height:var(--nav-h);background:var(--ink);border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;padding:0 2rem;gap:1rem}
+    .nav-logo{font-family:var(--font-display);font-size:1.3rem;font-weight:900;color:var(--cream);letter-spacing:-.03em}
+    .nav-logo span{color:var(--rust)}
+    .nav-badge-instructor{background:rgba(232,197,71,.15);border:1px solid rgba(232,197,71,.25);color:var(--gold);font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.25rem .65rem;border-radius:100px}
+    .nav-course-title{flex:1;font-size:.85rem;color:rgba(245,240,232,.4);padding:0 1rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .nav-right{display:flex;align-items:center;gap:.75rem;margin-left:auto}
+    .btn-save-draft{background:rgba(255,255,255,.08);color:rgba(245,240,232,.7);border:1.5px solid rgba(255,255,255,.12);padding:.5rem 1.2rem;border-radius:100px;font-size:.82rem;font-weight:500;cursor:pointer;transition:.2s;font-family:inherit}
+    .btn-save-draft:hover{background:rgba(255,255,255,.14);color:var(--cream)}
+    .btn-preview{background:var(--gold);color:var(--ink);border:none;padding:.5rem 1.2rem;border-radius:100px;font-size:.82rem;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit}
+    .btn-preview:hover{background:#f0d258}
+    .avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--moss),var(--rust));display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:var(--cream)}
+
+    /* STEPPER */
+    .stepper-bar{background:white;border-bottom:1px solid rgba(13,13,15,.07);padding:0 2rem;display:flex;align-items:center;gap:0;overflow-x:auto}
+    .step-item{display:flex;align-items:center;gap:.6rem;padding:1rem 1.5rem;font-size:.82rem;font-weight:500;color:rgba(13,13,15,.4);cursor:pointer;border-bottom:2px solid transparent;transition:.15s;white-space:nowrap;flex-shrink:0}
+    .step-item:hover{color:rgba(13,13,15,.7)}
+    .step-item.active{color:var(--ink);border-bottom-color:var(--ink);font-weight:600}
+    .step-item.done{color:var(--moss)}
+    .step-item.done .step-num{background:var(--moss);color:white;border-color:var(--moss)}
+    .step-num{width:22px;height:22px;border-radius:50%;border:2px solid rgba(13,13,15,.15);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0;transition:.2s}
+    .step-item.active .step-num{background:var(--ink);color:white;border-color:var(--ink)}
+
+    /* BODY */
+    .page-body{max-width:860px;margin:0 auto;padding:2.5rem 2rem 4rem}
+
+    /* SECTION CARDS */
+    .form-section{background:white;border-radius:var(--radius-xl);border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);margin-bottom:1.5rem;overflow:hidden}
+    .form-section-header{padding:1.4rem 2rem;border-bottom:1px solid rgba(13,13,15,.06);display:flex;align-items:center;gap:.75rem}
+    .form-section-icon{font-size:1.2rem}
+    .form-section-title{font-family:var(--font-display);font-size:1.05rem;font-weight:700;letter-spacing:-.02em}
+    .form-section-sub{font-size:.8rem;color:rgba(13,13,15,.4);margin-left:auto}
+    .form-section-body{padding:2rem}
+
+    /* FORM FIELDS */
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+    .form-group{display:flex;flex-direction:column;gap:.4rem}
+    .form-group.full{grid-column:1/-1}
+    .form-label{font-size:.8rem;font-weight:600;color:rgba(13,13,15,.65)}
+    .form-label span{color:var(--rust)}
+    .form-hint-text{font-size:.72rem;color:rgba(13,13,15,.4);margin-top:.2rem}
+    .form-input{background:var(--smoke);border:1.5px solid transparent;border-radius:var(--radius-md);padding:.8rem 1rem;font-size:15px;color:var(--ink);font-family:inherit;outline:none;transition:.2s;width:100%}
+    .form-input:focus{background:white;border-color:var(--moss);box-shadow:0 0 0 3px rgba(45,74,62,.08)}
+    .form-input::placeholder{color:rgba(13,13,15,.3)}
+    textarea.form-input{resize:vertical;min-height:110px;line-height:1.6}
+    select.form-input{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center;padding-right:2.5rem}
+    .char-count{font-size:.7rem;color:rgba(13,13,15,.35);text-align:right;margin-top:.2rem}
+
+    /* THUMBNAIL UPLOADER */
+    .thumb-uploader{border:2px dashed rgba(13,13,15,.15);border-radius:var(--radius-lg);padding:2.5rem;text-align:center;cursor:pointer;transition:.2s;background:var(--smoke)}
+    .thumb-uploader:hover{border-color:var(--moss);background:rgba(45,74,62,.04)}
+    .thumb-uploader-icon{font-size:2.5rem;margin-bottom:.75rem}
+    .thumb-uploader-title{font-size:.9rem;font-weight:600;margin-bottom:.3rem}
+    .thumb-uploader-sub{font-size:.78rem;color:rgba(13,13,15,.45)}
+    .thumb-uploader-btn{display:inline-block;margin-top:.85rem;background:var(--ink);color:var(--cream);padding:.5rem 1.3rem;border-radius:100px;font-size:.8rem;font-weight:600;transition:.2s}
+    .thumb-uploader-btn:hover{background:var(--rust)}
+
+    /* LEARNING OBJECTIVES */
+    .objectives-list{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1rem}
+    .objective-item{display:flex;align-items:center;gap:.6rem}
+    .objective-input{flex:1;background:var(--smoke);border:1.5px solid transparent;border-radius:var(--radius-md);padding:.7rem 1rem;font-size:.875rem;color:var(--ink);font-family:inherit;outline:none;transition:.2s}
+    .objective-input:focus{background:white;border-color:var(--moss)}
+    .objective-input::placeholder{color:rgba(13,13,15,.3)}
+    .btn-remove-obj{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:rgba(13,13,15,.35);background:var(--smoke);border:none;cursor:pointer;transition:.2s;font-size:1rem;flex-shrink:0}
+    .btn-remove-obj:hover{background:rgba(224,85,85,.12);color:var(--error)}
+    .btn-add-obj{display:flex;align-items:center;gap:.5rem;font-size:.82rem;font-weight:600;color:var(--moss);background:none;border:none;cursor:pointer;font-family:inherit;transition:.2s;padding:.3rem 0}
+    .btn-add-obj:hover{color:#1e3329}
+
+    /* PRICING */
+    .pricing-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem}
+    .pricing-card{border:2px solid rgba(13,13,15,.1);border-radius:var(--radius-lg);padding:1.25rem;cursor:pointer;transition:.2s;position:relative}
+    .pricing-card:hover{border-color:var(--moss)}
+    .pricing-card.selected{border-color:var(--moss);background:rgba(45,74,62,.04)}
+    .pricing-card.selected::after{content:'✓';position:absolute;top:.5rem;right:.6rem;width:20px;height:20px;background:var(--moss);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700}
+    .pricing-card-icon{font-size:1.5rem;margin-bottom:.5rem}
+    .pricing-card-title{font-size:.875rem;font-weight:700;margin-bottom:.2rem}
+    .pricing-card-sub{font-size:.75rem;color:rgba(13,13,15,.45)}
+
+    /* CURRICULUM BUILDER */
+    .curriculum-builder{display:flex;flex-direction:column;gap:.75rem}
+    .section-block{border:1px solid rgba(13,13,15,.08);border-radius:var(--radius-md);overflow:hidden}
+    .section-block-header{display:flex;align-items:center;gap:.75rem;padding:.85rem 1rem;background:var(--smoke);border-bottom:1px solid rgba(13,13,15,.06)}
+    .section-block-handle{color:rgba(13,13,15,.3);cursor:grab;font-size:1rem}
+    .section-input{flex:1;background:transparent;border:none;font-size:.875rem;font-weight:600;color:var(--ink);font-family:inherit;outline:none}
+    .section-input::placeholder{color:rgba(13,13,15,.35)}
+    .btn-section-action{display:flex;align-items:center;gap:.3rem;font-size:.75rem;font-weight:600;color:rgba(13,13,15,.45);background:none;border:none;cursor:pointer;font-family:inherit;padding:.3rem .5rem;border-radius:var(--radius-sm);transition:.15s}
+    .btn-section-action:hover{background:rgba(13,13,15,.06);color:var(--ink)}
+    .section-lessons{padding:.75rem 1rem;display:flex;flex-direction:column;gap:.5rem}
+    .lesson-row{display:flex;align-items:center;gap:.6rem;padding:.5rem .6rem;background:white;border-radius:var(--radius-sm);border:1px solid rgba(13,13,15,.06)}
+    .lesson-handle{color:rgba(13,13,15,.25);cursor:grab;font-size:.85rem}
+    .lesson-type-select{background:none;border:none;font-size:.72rem;font-weight:600;color:var(--moss);font-family:inherit;cursor:pointer;outline:none;padding:.1rem .3rem;border-radius:4px}
+    .lesson-title-input{flex:1;background:none;border:none;font-size:.82rem;color:var(--ink);font-family:inherit;outline:none}
+    .lesson-title-input::placeholder{color:rgba(13,13,15,.3)}
+    .lesson-duration{font-size:.72rem;color:rgba(13,13,15,.35);white-space:nowrap}
+    .btn-remove-lesson{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:rgba(13,13,15,.3);font-size:.85rem;transition:.15s;background:none;border:none;cursor:pointer}
+    .btn-remove-lesson:hover{color:var(--error);background:rgba(224,85,85,.1)}
+    .btn-add-lesson{display:flex;align-items:center;gap:.4rem;font-size:.78rem;font-weight:600;color:rgba(13,13,15,.45);background:none;border:none;cursor:pointer;font-family:inherit;padding:.4rem .6rem;border-radius:var(--radius-sm);transition:.15s;margin-top:.25rem}
+    .btn-add-lesson:hover{background:var(--smoke);color:var(--ink)}
+    .btn-add-section{display:flex;align-items:center;gap:.5rem;font-size:.85rem;font-weight:600;color:var(--moss);background:none;border:2px dashed rgba(45,74,62,.2);cursor:pointer;font-family:inherit;padding:.75rem 1.25rem;border-radius:var(--radius-md);transition:.2s;width:100%;justify-content:center;margin-top:.25rem}
+    .btn-add-section:hover{background:rgba(45,74,62,.05);border-color:var(--moss)}
+
+    /* FORM ACTIONS */
+    .form-actions{display:flex;align-items:center;justify-content:space-between;margin-top:2rem;gap:1rem;flex-wrap:wrap}
+    .btn-back{background:transparent;color:rgba(13,13,15,.5);border:1.5px solid rgba(13,13,15,.15);padding:.8rem 1.6rem;border-radius:100px;font-size:.9rem;font-weight:500;cursor:pointer;transition:.2s;font-family:inherit}
+    .btn-back:hover{color:var(--ink);border-color:var(--ink)}
+    .btn-next{background:var(--ink);color:var(--cream);border:none;padding:.8rem 2rem;border-radius:100px;font-size:.9rem;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit;display:flex;align-items:center;gap:.5rem}
+    .btn-next:hover{background:var(--rust);transform:translateY(-1px)}
+    .btn-publish{background:var(--moss);color:var(--cream);border:none;padding:.8rem 2rem;border-radius:100px;font-size:.9rem;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit;display:flex;align-items:center;gap:.5rem}
+    .btn-publish:hover{background:#1e3329;transform:translateY(-1px);box-shadow:0 8px 24px rgba(45,74,62,.25)}
+
+    /* PROGRESS BAR */
+    .page-progress{background:white;height:4px;position:sticky;top:var(--nav-h);z-index:400}
+    .page-progress-fill{height:4px;background:var(--moss);transition:.4s;width:25%}
+
+    /* STEP PANELS */
+    .step-panel{display:none}
+    .step-panel.active{display:block}
+
+    /* RESPONSIVE */
+    @media(max-width:768px){
+      .form-grid{grid-template-columns:1fr}
+      .form-group.full{grid-column:1}
+      .pricing-cards{grid-template-columns:1fr}
+      .page-body{padding:1.5rem 1.25rem 4rem}
+      .stepper-bar{padding:0 .5rem}
+      .step-item{padding:.85rem .85rem}
+      .nav-course-title{display:none}
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a href="learnhub_responsive.html" class="nav-logo">GIT<span>Academy</span></a>
+  <span class="nav-badge-instructor">Instructor</span>
+  <div class="nav-course-title">New Course — Untitled</div>
+  <div class="nav-right">
+    <button class="btn-save-draft" id="saveDraftBtn">Save Draft</button>
+    <button class="btn-preview">Preview</button>
+    <div class="avatar">ASQ</div>
+  </div>
+</nav>
+
+<!-- PROGRESS BAR -->
+<div class="page-progress"><div class="page-progress-fill" id="progressFill"></div></div>
+
+<!-- STEPPER -->
+<div class="stepper-bar">
+  <div class="step-item done" data-step="1"><div class="step-num">✓</div>Basic Info</div>
+  <div class="step-item active" data-step="2"><div class="step-num">2</div>Curriculum</div>
+  <div class="step-item" data-step="3"><div class="step-num">3</div>Media</div>
+  <div class="step-item" data-step="4"><div class="step-num">4</div>Pricing</div>
+  <div class="step-item" data-step="5"><div class="step-num">5</div>Publish</div>
+</div>
+
+<!-- STEP 1: BASIC INFO -->
+<div class="step-panel" id="panel-1">
+  <div class="page-body">
+
+    <div class="form-section">
+      <div class="form-section-header">
+        <span class="form-section-icon">📝</span>
+        <div class="form-section-title">Basic Information</div>
+      </div>
+      <div class="form-section-body">
+        <div class="form-grid">
+          <div class="form-group full">
+            <label class="form-label">Course Title <span>*</span></label>
+            <input class="form-input" type="text" placeholder="e.g. Machine Learning A-Z: Hands-On Python" id="courseTitleInput"/>
+            <div class="char-count" id="titleCount">0 / 80</div>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Course Subtitle <span>*</span></label>
+            <input class="form-input" type="text" placeholder="A short, attention-grabbing summary of your course"/>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Course Description <span>*</span></label>
+            <textarea class="form-input" style="min-height:160px" placeholder="Describe what students will learn, who this course is for, and what makes it unique…"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Category <span>*</span></label>
+            <select class="form-input">
+              <option value="">Select category</option>
+              <option>Development</option><option>Design</option><option>Data Science</option>
+              <option>Business</option><option>Marketing</option><option>Photography</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Sub-Category</label>
+            <select class="form-input">
+              <option value="">Select sub-category</option>
+              <option>Machine Learning</option><option>Deep Learning</option>
+              <option>Data Analysis</option><option>Web Development</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Level <span>*</span></label>
+            <select class="form-input">
+              <option>All Levels</option><option>Beginner</option>
+              <option>Intermediate</option><option>Advanced</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Language <span>*</span></label>
+            <select class="form-input">
+              <option>English</option><option>French</option><option>Spanish</option>
+              <option>Portuguese</option><option>Arabic</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-header">
+        <span class="form-section-icon">🎯</span>
+        <div class="form-section-title">Learning Objectives</div>
+        <div class="form-section-sub">Min. 4 required</div>
+      </div>
+      <div class="form-section-body">
+        <div class="objectives-list" id="objectivesList">
+          <div class="objective-item"><input class="objective-input" type="text" placeholder="What will students learn from this course?"/><button class="btn-remove-obj">×</button></div>
+          <div class="objective-item"><input class="objective-input" type="text" placeholder="Another learning outcome…"/><button class="btn-remove-obj">×</button></div>
+          <div class="objective-item"><input class="objective-input" type="text" placeholder="Another learning outcome…"/><button class="btn-remove-obj">×</button></div>
+          <div class="objective-item"><input class="objective-input" type="text" placeholder="Another learning outcome…"/><button class="btn-remove-obj">×</button></div>
+        </div>
+        <button class="btn-add-obj" id="addObjectiveBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add another objective
+        </button>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <a href="instructor-dashboard.html" class="btn-back">← Back to Dashboard</a>
+      <button class="btn-next" onclick="goToStep(2)">Next: Curriculum <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 2: CURRICULUM -->
+<div class="step-panel active" id="panel-2">
+  <div class="page-body">
+
+    <div class="form-section">
+      <div class="form-section-header">
+        <span class="form-section-icon">📚</span>
+        <div class="form-section-title">Course Curriculum</div>
+        <div class="form-section-sub">Drag to reorder sections & lessons</div>
+      </div>
+      <div class="form-section-body">
+        <div class="curriculum-builder" id="curriculumBuilder">
+
+          <!-- Section 1 -->
+          <div class="section-block">
+            <div class="section-block-header">
+              <span class="section-block-handle">⠿</span>
+              <input class="section-input" type="text" placeholder="Section title…" value="Section 1: Introduction"/>
+              <button class="btn-section-action">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add Lesson
+              </button>
+              <button class="btn-section-action" style="color:var(--error)">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+              </button>
+            </div>
+            <div class="section-lessons">
+              <div class="lesson-row">
+                <span class="lesson-handle">⠿</span>
+                <select class="lesson-type-select"><option>▶ Video</option><option>📝 Quiz</option><option>📄 Article</option></select>
+                <input class="lesson-title-input" type="text" placeholder="Lesson title…" value="Welcome to the Course"/>
+                <span class="lesson-duration">5:00</span>
+                <button class="btn-remove-lesson">×</button>
+              </div>
+              <div class="lesson-row">
+                <span class="lesson-handle">⠿</span>
+                <select class="lesson-type-select"><option>▶ Video</option><option>📝 Quiz</option><option>📄 Article</option></select>
+                <input class="lesson-title-input" type="text" placeholder="Lesson title…" value="Course Overview & Resources"/>
+                <span class="lesson-duration">8:30</span>
+                <button class="btn-remove-lesson">×</button>
+              </div>
+              <button class="btn-add-lesson">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add lesson
+              </button>
+            </div>
+          </div>
+
+          <!-- Section 2 -->
+          <div class="section-block">
+            <div class="section-block-header">
+              <span class="section-block-handle">⠿</span>
+              <input class="section-input" type="text" placeholder="Section title…" value="Section 2: Data Preprocessing"/>
+              <button class="btn-section-action">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add Lesson
+              </button>
+              <button class="btn-section-action" style="color:var(--error)">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+              </button>
+            </div>
+            <div class="section-lessons">
+              <div class="lesson-row">
+                <span class="lesson-handle">⠿</span>
+                <select class="lesson-type-select"><option>▶ Video</option><option>📝 Quiz</option><option>📄 Article</option></select>
+                <input class="lesson-title-input" type="text" value="Data Preprocessing in Python"/>
+                <span class="lesson-duration">18:30</span>
+                <button class="btn-remove-lesson">×</button>
+              </div>
+              <div class="lesson-row">
+                <span class="lesson-handle">⠿</span>
+                <select class="lesson-type-select"><option value="quiz" selected>📝 Quiz</option><option>▶ Video</option><option>📄 Article</option></select>
+                <input class="lesson-title-input" type="text" value="Section 2 Quiz"/>
+                <span class="lesson-duration">—</span>
+                <button class="btn-remove-lesson">×</button>
+              </div>
+              <button class="btn-add-lesson">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add lesson
+              </button>
+            </div>
+          </div>
+
+          <button class="btn-add-section" id="addSectionBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add New Section
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn-back" onclick="goToStep(1)">← Back</button>
+      <button class="btn-next" onclick="goToStep(3)">Next: Media <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 3: MEDIA -->
+<div class="step-panel" id="panel-3">
+  <div class="page-body">
+    <div class="form-section">
+      <div class="form-section-header"><span class="form-section-icon">🖼</span><div class="form-section-title">Course Thumbnail</div></div>
+      <div class="form-section-body">
+        <div class="thumb-uploader" onclick="document.getElementById('thumbInput').click()">
+          <div class="thumb-uploader-icon">🖼</div>
+          <div class="thumb-uploader-title">Upload Course Thumbnail</div>
+          <div class="thumb-uploader-sub">Recommended: 1280 × 720px · JPG or PNG · Max 2MB</div>
+          <span class="thumb-uploader-btn">Choose Image</span>
+        </div>
+        <input type="file" id="thumbInput" accept="image/*" style="display:none"/>
+      </div>
+    </div>
+    <div class="form-section">
+      <div class="form-section-header"><span class="form-section-icon">🎬</span><div class="form-section-title">Promotional Video</div></div>
+      <div class="form-section-body">
+        <div class="thumb-uploader" style="background:rgba(13,13,15,.04)" onclick="window.location='upload-video.html'">
+          <div class="thumb-uploader-icon">📹</div>
+          <div class="thumb-uploader-title">Upload Promo Video</div>
+          <div class="thumb-uploader-sub">A 2-5 minute preview that shows what your course covers · MP4 · Max 500MB</div>
+          <span class="thumb-uploader-btn" style="background:var(--moss)">Upload Video</span>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-back" onclick="goToStep(2)">← Back</button>
+      <button class="btn-next" onclick="goToStep(4)">Next: Pricing <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 4: PRICING -->
+<div class="step-panel" id="panel-4">
+  <div class="page-body">
+    <div class="form-section">
+      <div class="form-section-header"><span class="form-section-icon">💰</span><div class="form-section-title">Pricing</div></div>
+      <div class="form-section-body">
+        <div class="pricing-cards">
+          <div class="pricing-card" onclick="selectPricing(this)">
+            <div class="pricing-card-icon">🆓</div>
+            <div class="pricing-card-title">Free</div>
+            <div class="pricing-card-sub">No charge to students. Ideal for lead generation.</div>
+          </div>
+          <div class="pricing-card selected" onclick="selectPricing(this)">
+            <div class="pricing-card-icon">💵</div>
+            <div class="pricing-card-title">Paid</div>
+            <div class="pricing-card-sub">Set your own price. You keep 70% of revenue.</div>
+          </div>
+          <div class="pricing-card" onclick="selectPricing(this)">
+            <div class="pricing-card-icon">🔐</div>
+            <div class="pricing-card-title">Subscription</div>
+            <div class="pricing-card-sub">Included in LearnHub Pro plan for subscribers.</div>
+          </div>
+        </div>
+        <div class="form-grid" id="priceFields">
+          <div class="form-group">
+            <label class="form-label">Price (USD) <span>*</span></label>
+            <input class="form-input" type="number" placeholder="e.g. 49" min="0" value="49"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Crossed-Out Price (optional)</label>
+            <input class="form-input" type="number" placeholder="e.g. 129" min="0" value="129"/>
+            <p class="form-hint-text">Shows as strikethrough to indicate a discount</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-back" onclick="goToStep(3)">← Back</button>
+      <button class="btn-next" onclick="goToStep(5)">Next: Publish <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 5: PUBLISH -->
+<div class="step-panel" id="panel-5">
+  <div class="page-body">
+    <div class="form-section">
+      <div class="form-section-header"><span class="form-section-icon">🚀</span><div class="form-section-title">Ready to Publish?</div></div>
+      <div class="form-section-body">
+        <div style="display:flex;flex-direction:column;gap:1rem;margin-bottom:2rem">
+          <div style="display:flex;align-items:center;gap:.85rem;padding:1rem;background:rgba(45,122,79,.07);border-radius:var(--radius-md);border:1px solid rgba(45,122,79,.15)">
+            <span style="font-size:1.2rem">✅</span>
+            <div><strong style="font-size:.875rem">Basic Info</strong> — Title, description, category complete</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:.85rem;padding:1rem;background:rgba(45,122,79,.07);border-radius:var(--radius-md);border:1px solid rgba(45,122,79,.15)">
+            <span style="font-size:1.2rem">✅</span>
+            <div><strong style="font-size:.875rem">Curriculum</strong> — 2 sections, 4 lessons added</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:.85rem;padding:1rem;background:rgba(217,119,6,.07);border-radius:var(--radius-md);border:1px solid rgba(217,119,6,.15)">
+            <span style="font-size:1.2rem">⚠️</span>
+            <div><strong style="font-size:.875rem">Media</strong> — Thumbnail missing. <a href="#" onclick="goToStep(3)" style="color:var(--rust)">Add thumbnail →</a></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:.85rem;padding:1rem;background:rgba(45,122,79,.07);border-radius:var(--radius-md);border:1px solid rgba(45,122,79,.15)">
+            <span style="font-size:1.2rem">✅</span>
+            <div><strong style="font-size:.875rem">Pricing</strong> — $49 (was $129)</div>
+          </div>
+        </div>
+        <div class="form-group" style="max-width:400px">
+          <label class="form-label">Publish immediately or schedule?</label>
+          <select class="form-input">
+            <option>Publish immediately</option>
+            <option>Schedule for later</option>
+            <option>Submit for review first</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-back" onclick="goToStep(4)">← Back</button>
+      <button class="btn-publish" onclick="publishCourse()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Publish Course
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentStep = 2;
+  const progressWidths = { 1:'20%', 2:'40%', 3:'60%', 4:'80%', 5:'100%' };
+
+  function goToStep(step) {
+    document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + step).classList.add('active');
+    document.querySelectorAll('.step-item').forEach((s, i) => {
+      s.classList.remove('active','done');
+      if (i + 1 < step) s.classList.add('done'), s.querySelector('.step-num').textContent = '✓';
+      else if (i + 1 === step) s.classList.add('active');
+    });
+    document.getElementById('progressFill').style.width = progressWidths[step];
+    currentStep = step;
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  // Title char count
+  document.getElementById('courseTitleInput')?.addEventListener('input', function() {
+    document.getElementById('titleCount').textContent = this.value.length + ' / 80';
+  });
+
+  // Add objective
+  document.getElementById('addObjectiveBtn')?.addEventListener('click', () => {
+    const list = document.getElementById('objectivesList');
+    const item = document.createElement('div');
+    item.className = 'objective-item';
+    item.innerHTML = '<input class="objective-input" type="text" placeholder="Another learning outcome…"/><button class="btn-remove-obj">×</button>';
+    list.appendChild(item);
+  });
+
+  // Remove objectives (event delegation)
+  document.getElementById('objectivesList')?.addEventListener('click', e => {
+    if (e.target.classList.contains('btn-remove-obj')) {
+      const items = document.querySelectorAll('.objective-item');
+      if (items.length > 1) e.target.closest('.objective-item').remove();
+    }
+  });
+
+  // Add section
+  document.getElementById('addSectionBtn')?.addEventListener('click', function() {
+    const builder = document.getElementById('curriculumBuilder');
+    const sectionNum = builder.querySelectorAll('.section-block').length + 1;
+    const block = document.createElement('div');
+    block.className = 'section-block';
+    block.innerHTML = `
+      <div class="section-block-header">
+        <span class="section-block-handle">⠿</span>
+        <input class="section-input" type="text" placeholder="Section title…" value="Section ${sectionNum}: New Section"/>
+        <button class="btn-section-action"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Lesson</button>
+        <button class="btn-section-action" style="color:var(--error)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+      </div>
+      <div class="section-lessons">
+        <button class="btn-add-lesson"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add lesson</button>
+      </div>`;
+    builder.insertBefore(block, this);
+  });
+
+  // Pricing selection
+  function selectPricing(card) {
+    document.querySelectorAll('.pricing-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    document.getElementById('priceFields').style.display = card.querySelector('.pricing-card-title').textContent === 'Free' ? 'none' : 'grid';
+  }
+
+  // Save draft
+  document.getElementById('saveDraftBtn').addEventListener('click', function() {
+    this.textContent = 'Saved ✓';
+    this.style.color = 'var(--gold)';
+    setTimeout(() => { this.textContent = 'Save Draft'; this.style.color = ''; }, 2000);
+  });
+
+  // Publish
+  function publishCourse() {
+    alert('🎉 Course submitted for review! You\'ll receive an email within 24 hours.');
+    window.location = 'instructor-dashboard.html';
+  }
+</script>
+</body>
+</html>

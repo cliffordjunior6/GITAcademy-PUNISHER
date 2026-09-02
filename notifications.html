@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Notifications — GITAcademy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --ink:#0d0d0f;--cream:#f5f0e8;--gold:#e8c547;--moss:#2d4a3e;
+      --rust:#c4522a;--paper:#faf8f3;--smoke:#f0ece4;--mist:#e8e3db;
+      --error:#e05555;--success:#2d7a4f;
+      --font-display:'Fraunces',Georgia,serif;
+      --font-body:'DM Sans',system-ui,sans-serif;
+      --nav-h:64px;
+      --shadow-sm:0 2px 8px rgba(13,13,15,.06);
+      --shadow-md:0 4px 20px rgba(13,13,15,.1);
+      --radius-sm:8px;--radius-md:12px;--radius-lg:18px;--radius-xl:24px;
+    }
+    body{font-family:var(--font-body);background:var(--smoke);color:var(--ink);min-height:100vh}
+    a{text-decoration:none;color:inherit}
+    button{cursor:pointer;font-family:inherit;border:none;background:none}
+
+    /* NAV */
+    .navbar{position:sticky;top:0;z-index:500;height:var(--nav-h);background:var(--cream);border-bottom:1px solid rgba(13,13,15,.08);display:flex;align-items:center;padding:0 2rem;gap:1.5rem}
+    .nav-logo{font-family:var(--font-display);font-size:1.4rem;font-weight:900;color:var(--ink);letter-spacing:-.03em}
+    .nav-logo span{color:var(--rust)}
+    .nav-right{display:flex;align-items:center;gap:.75rem;margin-left:auto}
+    .btn-nav-back{display:flex;align-items:center;gap:.4rem;font-size:.85rem;font-weight:500;color:rgba(13,13,15,.5);padding:.4rem .85rem;border-radius:100px;border:1.5px solid rgba(13,13,15,.12);transition:.2s}
+    .btn-nav-back:hover{color:var(--ink);border-color:var(--ink)}
+    .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--moss),var(--rust));display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:var(--cream)}
+
+    /* PAGE */
+    .page-body{max-width:760px;margin:0 auto;padding:2.5rem 2rem 4rem}
+
+    /* PAGE HEADER */
+    .page-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem}
+    .page-hdr-left{}
+    .page-eyebrow{font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--rust);margin-bottom:.35rem}
+    .page-title{font-family:var(--font-display);font-size:2rem;font-weight:900;letter-spacing:-.03em;line-height:1}
+    .page-hdr-actions{display:flex;align-items:center;gap:.65rem}
+    .btn-mark-all{display:flex;align-items:center;gap:.4rem;font-size:.82rem;font-weight:600;color:rgba(13,13,15,.5);padding:.45rem .9rem;border-radius:100px;border:1.5px solid rgba(13,13,15,.1);transition:.2s}
+    .btn-mark-all:hover{color:var(--ink);border-color:var(--ink)}
+    .btn-settings{display:flex;align-items:center;gap:.4rem;font-size:.82rem;font-weight:600;color:rgba(13,13,15,.5);padding:.45rem .9rem;border-radius:100px;border:1.5px solid rgba(13,13,15,.1);transition:.2s}
+    .btn-settings:hover{color:var(--ink);border-color:var(--ink)}
+    .unread-count{background:var(--rust);color:white;font-size:.65rem;font-weight:700;padding:.15rem .5rem;border-radius:100px;margin-left:.25rem}
+
+    /* FILTER TABS */
+    .filter-tabs{display:flex;gap:.35rem;margin-bottom:1.5rem;background:rgba(13,13,15,.05);border-radius:100px;padding:.25rem;width:fit-content}
+    .filter-tab{padding:.4rem .9rem;border-radius:100px;font-size:.82rem;font-weight:600;color:rgba(13,13,15,.45);cursor:pointer;transition:.15s;background:none;border:none;font-family:inherit;display:flex;align-items:center;gap:.35rem}
+    .filter-tab:hover{color:rgba(13,13,15,.8)}
+    .filter-tab.active{background:white;color:var(--ink);box-shadow:var(--shadow-sm)}
+    .tab-badge{background:var(--rust);color:white;font-size:.6rem;font-weight:700;padding:.1rem .38rem;border-radius:100px}
+
+    /* NOTIFICATIONS LIST */
+    .notif-section{margin-bottom:2rem}
+    .notif-section-label{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(13,13,15,.35);margin-bottom:.75rem;padding-left:.25rem}
+
+    .notif-item{display:flex;align-items:flex-start;gap:1rem;padding:1.1rem 1.25rem;background:white;border-radius:var(--radius-lg);border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);margin-bottom:.5rem;transition:.2s;cursor:pointer;position:relative}
+    .notif-item:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+    .notif-item.unread{background:var(--paper);border-left:3px solid var(--rust)}
+    .notif-item.read{opacity:.75}
+
+    /* Unread dot */
+    .unread-dot{position:absolute;top:.85rem;right:.85rem;width:8px;height:8px;border-radius:50%;background:var(--rust)}
+
+    /* Icon */
+    .notif-icon-wrap{width:42px;height:42px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+    .ni-course   {background:rgba(45,74,62,.1)}
+    .ni-cert     {background:rgba(232,197,71,.15)}
+    .ni-payment  {background:rgba(45,122,79,.1)}
+    .ni-review   {background:rgba(37,99,235,.1)}
+    .ni-promo    {background:rgba(196,82,42,.1)}
+    .ni-system   {background:rgba(13,13,15,.07)}
+    .ni-alert    {background:rgba(224,85,85,.1)}
+
+    /* Content */
+    .notif-content{flex:1;min-width:0}
+    .notif-title{font-size:.875rem;font-weight:600;margin-bottom:.2rem;line-height:1.35}
+    .notif-body{font-size:.82rem;color:rgba(13,13,15,.55);line-height:1.55;margin-bottom:.4rem}
+    .notif-meta{display:flex;align-items:center;gap:.75rem;font-size:.72rem;color:rgba(13,13,15,.35)}
+    .notif-tag{background:var(--smoke);padding:.12rem .45rem;border-radius:100px;font-weight:600}
+    .notif-action-link{font-size:.78rem;font-weight:600;color:var(--rust)}
+    .notif-action-link:hover{opacity:.7}
+
+    /* Actions */
+    .notif-actions{display:flex;flex-direction:column;gap:.4rem;flex-shrink:0;opacity:0;transition:.2s}
+    .notif-item:hover .notif-actions{opacity:1}
+    .notif-act-btn{width:28px;height:28px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:rgba(13,13,15,.4);background:var(--smoke);border:none;cursor:pointer;transition:.15s;font-size:.75rem}
+    .notif-act-btn:hover{background:var(--mist);color:var(--ink)}
+    .notif-act-btn.danger:hover{background:rgba(224,85,85,.1);color:var(--error)}
+
+    /* Empty state */
+    .empty-state{text-align:center;padding:4rem 2rem;display:none}
+    .empty-state.show{display:block}
+    .empty-icon{font-size:3.5rem;margin-bottom:1rem}
+    .empty-title{font-family:var(--font-display);font-size:1.4rem;font-weight:700;margin-bottom:.5rem;letter-spacing:-.02em}
+    .empty-sub{font-size:.9rem;color:rgba(13,13,15,.45)}
+
+    /* Notification settings panel */
+    .settings-panel{background:white;border-radius:var(--radius-xl);border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);padding:1.75rem;margin-bottom:2rem;display:none}
+    .settings-panel.show{display:block}
+    .sp-title{font-family:var(--font-display);font-size:1.1rem;font-weight:700;letter-spacing:-.02em;margin-bottom:1.25rem}
+    .sp-row{display:flex;align-items:center;justify-content:space-between;padding:.75rem 0;border-bottom:1px solid rgba(13,13,15,.05)}
+    .sp-row:last-child{border-bottom:none}
+    .sp-info strong{display:block;font-size:.875rem;font-weight:600;margin-bottom:.1rem}
+    .sp-info span{font-size:.78rem;color:rgba(13,13,15,.45)}
+    .toggle-switch{position:relative;width:42px;height:22px;flex-shrink:0}
+    .toggle-switch input{opacity:0;width:0;height:0;position:absolute}
+    .toggle-track{position:absolute;inset:0;border-radius:100px;background:rgba(13,13,15,.12);cursor:pointer;transition:.25s}
+    .toggle-track::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:white;top:3px;left:3px;transition:.25s;box-shadow:0 1px 4px rgba(13,13,15,.2)}
+    .toggle-switch input:checked + .toggle-track{background:var(--moss)}
+    .toggle-switch input:checked + .toggle-track::after{left:23px}
+
+    /* Toast */
+    .toast{position:fixed;bottom:2rem;right:2rem;background:var(--success);color:white;padding:.8rem 1.3rem;border-radius:var(--radius-md);font-size:.875rem;font-weight:600;box-shadow:0 8px 24px rgba(45,122,79,.3);display:flex;align-items:center;gap:.5rem;transform:translateY(80px);opacity:0;transition:.3s;z-index:999;pointer-events:none}
+    .toast.show{transform:translateY(0);opacity:1}
+
+    @media(max-width:600px){
+      .page-body{padding:1.5rem 1.25rem}
+      .page-hdr{flex-direction:column;align-items:flex-start}
+      .navbar{padding:.85rem 1.25rem}
+      .notif-actions{opacity:1}
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="navbar">
+  <a href="learnhub_responsive.html" class="nav-logo">GIT<span>Academy</span></a>
+  <div class="nav-right">
+    <a href="dashboard.html" class="btn-nav-back">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Dashboard
+    </a>
+    <div class="avatar" id="navAvatar">JE</div>
+  </div>
+</nav>
+
+<div class="page-body">
+
+  <!-- Header -->
+  <div class="page-hdr">
+    <div class="page-hdr-left">
+      <div class="page-eyebrow">Activity</div>
+      <h1 class="page-title">Notifications <span class="unread-count" id="unreadBadge">4</span></h1>
+    </div>
+    <div class="page-hdr-actions">
+      <button class="btn-mark-all" onclick="markAllRead()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Mark all read
+      </button>
+      <button class="btn-settings" onclick="toggleSettings()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings
+      </button>
+    </div>
+  </div>
+
+  <!-- Settings panel -->
+  <div class="settings-panel" id="settingsPanel">
+    <div class="sp-title">Notification Preferences</div>
+    <div class="sp-row"><div class="sp-info"><strong>Course updates</strong><span>When instructors add new lessons or resources</span></div><label class="toggle-switch"><input type="checkbox" checked/><span class="toggle-track"></span></label></div>
+    <div class="sp-row"><div class="sp-info"><strong>New certificates</strong><span>When you complete a course and earn a certificate</span></div><label class="toggle-switch"><input type="checkbox" checked/><span class="toggle-track"></span></label></div>
+    <div class="sp-row"><div class="sp-info"><strong>Q&A replies</strong><span>When instructors or students reply to your questions</span></div><label class="toggle-switch"><input type="checkbox" checked/><span class="toggle-track"></span></label></div>
+    <div class="sp-row"><div class="sp-info"><strong>Payment receipts</strong><span>Confirmation emails for all purchases and refunds</span></div><label class="toggle-switch"><input type="checkbox" checked/><span class="toggle-track"></span></label></div>
+    <div class="sp-row"><div class="sp-info"><strong>Promotions & offers</strong><span>Flash sales, discount codes and GITAcademy news</span></div><label class="toggle-switch"><input type="checkbox"/><span class="toggle-track"></span></label></div>
+    <div class="sp-row"><div class="sp-info"><strong>Weekly digest</strong><span>A weekly summary of your learning progress</span></div><label class="toggle-switch"><input type="checkbox" checked/><span class="toggle-track"></span></label></div>
+  </div>
+
+  <!-- Filter Tabs -->
+  <div class="filter-tabs">
+    <button class="filter-tab active" onclick="filterNotifs('all', this)">All <span class="tab-badge" id="allBadge">4</span></button>
+    <button class="filter-tab" onclick="filterNotifs('unread', this)">Unread</button>
+    <button class="filter-tab" onclick="filterNotifs('course', this)">Courses</button>
+    <button class="filter-tab" onclick="filterNotifs('payment', this)">Payments</button>
+    <button class="filter-tab" onclick="filterNotifs('system', this)">System</button>
+  </div>
+
+  <!-- TODAY -->
+  <div class="notif-section" id="section-today">
+    <div class="notif-section-label">Today</div>
+
+    <div class="notif-item unread" data-type="course" data-id="1">
+      <div class="unread-dot"></div>
+      <div class="notif-icon-wrap ni-course">📚</div>
+      <div class="notif-content">
+        <div class="notif-title">New lesson added to Machine Learning A-Z</div>
+        <div class="notif-body">Prof. ATO SIAW QUARSHIE added "Advanced XGBoost Techniques" to Section 8. Jump in and continue learning.</div>
+        <div class="notif-meta">
+          <span>2 minutes ago</span>
+          <span class="notif-tag">Course Update</span>
+          <a href="course-player.html" class="notif-action-link">Continue Learning →</a>
+        </div>
+      </div>
+      <div class="notif-actions">
+        <button class="notif-act-btn" onclick="markRead(1, this)" title="Mark as read">✓</button>
+        <button class="notif-act-btn danger" onclick="deleteNotif(this)" title="Delete">×</button>
+      </div>
+    </div>
+
+    <div class="notif-item unread" data-type="payment" data-id="2">
+      <div class="unread-dot"></div>
+      <div class="notif-icon-wrap ni-payment">💳</div>
+      <div class="notif-content">
+        <div class="notif-title">Payment successful — Order #LH-2024-00847</div>
+        <div class="notif-body">You've been successfully enrolled in Machine Learning A-Z and UI/UX Design Bootcamp. Enjoy your courses!</div>
+        <div class="notif-meta">
+          <span>1 hour ago</span>
+          <span class="notif-tag">Payment</span>
+          <a href="payment-success.html" class="notif-action-link">View Receipt →</a>
+        </div>
+      </div>
+      <div class="notif-actions">
+        <button class="notif-act-btn" onclick="markRead(2, this)" title="Mark as read">✓</button>
+        <button class="notif-act-btn danger" onclick="deleteNotif(this)" title="Delete">×</button>
+      </div>
+    </div>
+
+    <div class="notif-item unread" data-type="course" data-id="3">
+      <div class="unread-dot"></div>
+      <div class="notif-icon-wrap ni-cert">🏆</div>
+      <div class="notif-content">
+        <div class="notif-title">🎉 Certificate ready — JavaScript Complete 2026</div>
+        <div class="notif-body">Congratulations! You've completed the course and your certificate is ready to download and share.</div>
+        <div class="notif-meta">
+          <span>3 hours ago</span>
+          <span class="notif-tag">Certificate</span>
+          <a href="profile.html#certificates" class="notif-action-link">Download Certificate →</a>
+        </div>
+      </div>
+      <div class="notif-actions">
+        <button class="notif-act-btn" onclick="markRead(3, this)" title="Mark as read">✓</button>
+        <button class="notif-act-btn danger" onclick="deleteNotif(this)" title="Delete">×</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- YESTERDAY -->
+  <div class="notif-section" id="section-yesterday">
+    <div class="notif-section-label">Yesterday</div>
+
+    <div class="notif-item unread" data-type="course" data-id="4">
+      <div class="unread-dot"></div>
+      <div class="notif-icon-wrap ni-review">💬</div>
+      <div class="notif-content">
+        <div class="notif-title">Prof. ATO SIAW QUARSHIE replied to your Q&A question</div>
+        <div class="notif-body">"Great question! Yes, you should always fit the scaler on training data only to prevent data leakage. See my full reply in the Q&A tab."</div>
+        <div class="notif-meta">
+          <span>Yesterday, 4:30 PM</span>
+          <span class="notif-tag">Q&A Reply</span>
+          <a href="course-player.html" class="notif-action-link">View Reply →</a>
+        </div>
+      </div>
+      <div class="notif-actions">
+        <button class="notif-act-btn" onclick="markRead(4, this)" title="Mark as read">✓</button>
+        <button class="notif-act-btn danger" onclick="deleteNotif(this)" title="Delete">×</button>
+      </div>
+    </div>
+
+    <div class="notif-item read" data-type="system" data-id="5">
+      <div class="notif-icon-wrap ni-promo">🏷️</div>
+      <div class="notif-content">
+        <div class="notif-title">Flash Sale — 70% off all courses today only</div>
+        <div class="notif-body">Our biggest sale of the year! Use code FLASH70 at checkout. Valid for 24 hours only.</div>
+        <div class="notif-meta">
+          <span>Yesterday, 9:00 AM</span>
+          <span class="notif-tag">Promotion</span>
+          <a href="home.html" class="notif-action-link">Browse Deals →</a>
+        </div>
+      </div>
+      <div class="notif-actions">
+        <button class="notif-act-btn danger" onclick="deleteNotif(this)" title="Delete">×</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- OLDER -->
+  <div class="notif-section" id="section-older">
+    <div class="notif-section-label">Earlier this week</div>
+
+    <div class="notif-item read" data-type="system" data-id="6">
+      <div class="notif-icon-wrap ni-system">⚙️</div>
+      <div class="notif-content">
+        <div class="notif-title">Your profile has been updated</div>
+        <div class="notif-body">Your profile photo and bio were successfully saved. Your profile is now visible to other learners.</div>
+        <div class="notif-meta">
+          <span>3 days ago</span>
+          <span class="notif-tag">Account</span>
+        </div>
+      </div>
+      <div class="notif-actions">
+        <button class="notif-act-btn danger" onclick="deleteNotif(this)" title="Delete">×</button>
+      </div>
+    </div>
+
+    <div class="notif-item read" data-type="course" data-id="7">
+      <div class="notif-icon-wrap ni-course">📚</div>
+      <div class="notif-content">
+        <div class="notif-title">Reminder: Continue Python for Everybody</div>
+        <div class="notif-body">You haven't visited this course in 3 days. You're 68% complete — keep going!</div>
+        <div class="notif-meta">
+          <span>4 days ago</span>
+          <span class="notif-tag">Reminder</span>
+          <a href="course-player.html" class="notif-action-link">Resume →</a>
+        </div>
+      </div>
+      <div class="notif-actions">
+        <button class="notif-act-btn danger" onclick="deleteNotif(this)" title="Delete">×</button>
+      </div>
+    </div>
+
+    <div class="notif-item read" data-type="payment" data-id="8">
+      <div class="notif-icon-wrap ni-payment">💰</div>
+      <div class="notif-content">
+        <div class="notif-title">Refund processed — Order #LH-2024-00821</div>
+        <div class="notif-body">Your refund of $34.00 for "Data Analysis with Pandas" has been processed and will appear in 5–10 business days.</div>
+        <div class="notif-meta">
+          <span>5 days ago</span>
+          <span class="notif-tag">Refund</span>
+        </div>
+      </div>
+      <div class="notif-actions">
+        <button class="notif-act-btn danger" onclick="deleteNotif(this)" title="Delete">×</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Empty state -->
+  <div class="empty-state" id="emptyState">
+    <div class="empty-icon">🔔</div>
+    <div class="empty-title">All caught up!</div>
+    <p class="empty-sub">No notifications to show right now. We'll let you know when something happens.</p>
+  </div>
+
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">✓ <span id="toastTxt">Notification marked as read</span></div>
+
+<script>
+  let unreadCount = 4;
+
+  // Populate user info
+  try {
+    const user = JSON.parse(localStorage.getItem('lh_user'));
+    if (user) {
+      document.getElementById('navAvatar').textContent =
+        ((user.first_name?.[0]||'') + (user.last_name?.[0]||'')).toUpperCase() || 'U';
+    }
+  } catch(_) {}
+
+  function markRead(id, btn) {
+    const item = document.querySelector(`[data-id="${id}"]`);
+    if (!item) return;
+    if (item.classList.contains('unread')) {
+      item.classList.remove('unread');
+      item.classList.add('read');
+      item.querySelector('.unread-dot')?.remove();
+      unreadCount = Math.max(0, unreadCount - 1);
+      updateBadge();
+      showToast('Marked as read');
+    }
+    // Remove mark-read button
+    btn.remove();
+  }
+
+  function markAllRead() {
+    document.querySelectorAll('.notif-item.unread').forEach(item => {
+      item.classList.remove('unread');
+      item.classList.add('read');
+      item.querySelector('.unread-dot')?.remove();
+      item.querySelector('.notif-act-btn:not(.danger)')?.remove();
+    });
+    unreadCount = 0;
+    updateBadge();
+    showToast('All notifications marked as read');
+  }
+
+  function deleteNotif(btn) {
+    const item = btn.closest('.notif-item');
+    if (item.classList.contains('unread')) {
+      unreadCount = Math.max(0, unreadCount - 1);
+      updateBadge();
+    }
+    item.style.opacity = '0';
+    item.style.transform = 'translateX(20px)';
+    item.style.transition = '.25s';
+    setTimeout(() => {
+      item.remove();
+      checkEmpty();
+    }, 250);
+  }
+
+  function updateBadge() {
+    const badge = document.getElementById('unreadBadge');
+    const allBadge = document.getElementById('allBadge');
+    if (unreadCount === 0) {
+      badge.style.display = 'none';
+      if (allBadge) allBadge.style.display = 'none';
+    } else {
+      badge.textContent = unreadCount;
+      if (allBadge) allBadge.textContent = unreadCount;
+    }
+  }
+
+  function checkEmpty() {
+    const visible = document.querySelectorAll('.notif-item').length;
+    document.getElementById('emptyState').classList.toggle('show', visible === 0);
+    // Hide empty sections
+    ['today','yesterday','older'].forEach(sec => {
+      const section = document.getElementById('section-' + sec);
+      if (!section) return;
+      const items = section.querySelectorAll('.notif-item');
+      section.style.display = items.length === 0 ? 'none' : '';
+    });
+  }
+
+  function filterNotifs(type, tabEl) {
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    tabEl.classList.add('active');
+
+    document.querySelectorAll('.notif-item').forEach(item => {
+      if (type === 'all') {
+        item.style.display = '';
+      } else if (type === 'unread') {
+        item.style.display = item.classList.contains('unread') ? '' : 'none';
+      } else {
+        item.style.display = item.dataset.type === type ? '' : 'none';
+      }
+    });
+
+    // Show/hide sections based on visible children
+    ['today','yesterday','older'].forEach(sec => {
+      const section = document.getElementById('section-' + sec);
+      if (!section) return;
+      const visible = [...section.querySelectorAll('.notif-item')]
+        .filter(i => i.style.display !== 'none').length;
+      section.style.display = visible === 0 ? 'none' : '';
+    });
+
+    checkEmpty();
+  }
+
+  function toggleSettings() {
+    document.getElementById('settingsPanel').classList.toggle('show');
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toastTxt').textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+</script>
+</body>
+</html>

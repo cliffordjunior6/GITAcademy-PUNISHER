@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quiz — GITAcademy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--ink:#0d0d0f;--cream:#f5f0e8;--gold:#e8c547;--moss:#2d4a3e;--rust:#c4522a;--paper:#faf8f3;--smoke:#f0ece4;--error:#e05555;--success:#2d7a4f;--font-display:'Fraunces',Georgia,serif;--font-body:'DM Sans',system-ui,sans-serif;--nav-h:60px;--radius-sm:8px;--radius-md:12px;--radius-lg:18px;--radius-xl:24px;--shadow-sm:0 2px 8px rgba(13,13,15,.06);--shadow-md:0 4px 20px rgba(13,13,15,.1)}
+    html{scroll-behavior:smooth}
+    body{font-family:var(--font-body);background:var(--ink);color:var(--cream);min-height:100vh;display:flex;flex-direction:column}
+    a{text-decoration:none;color:inherit}
+    button{cursor:pointer;font-family:inherit;border:none;background:none}
+
+    /* NAVBAR */
+    .navbar{height:var(--nav-h);background:rgba(13,13,15,.95);border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;padding:0 1.5rem;gap:1rem;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px)}
+    .nav-logo{font-family:var(--font-display);font-size:1.25rem;font-weight:900;color:var(--cream);letter-spacing:-.03em}
+    .nav-logo span{color:var(--rust)}
+    .quiz-title{font-size:.875rem;font-weight:500;color:rgba(245,240,232,.55);padding-left:1rem;border-left:1px solid rgba(255,255,255,.12)}
+    .nav-right{margin-left:auto;display:flex;align-items:center;gap:1rem}
+    .timer-display{display:flex;align-items:center;gap:.5rem;font-size:.875rem;font-weight:700;color:rgba(245,240,232,.7);background:rgba(255,255,255,.06);padding:.35rem .9rem;border-radius:100px;border:1px solid rgba(255,255,255,.08)}
+    .timer-display.warning{color:#f87171;border-color:rgba(248,113,113,.3);background:rgba(248,113,113,.08)}
+    .btn-exit{font-size:.82rem;font-weight:500;color:rgba(245,240,232,.4);padding:.35rem .8rem;border-radius:var(--radius-sm);transition:.15s}
+    .btn-exit:hover{background:rgba(255,255,255,.07);color:var(--cream)}
+
+    /* PROGRESS */
+    .quiz-progress-bar{height:3px;background:rgba(255,255,255,.08)}
+    .quiz-progress-fill{height:3px;background:linear-gradient(to right,var(--moss),var(--gold));transition:.4s}
+
+    /* MAIN */
+    .quiz-body{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem 1.5rem}
+    .quiz-wrap{width:100%;max-width:680px}
+
+    /* QUESTION COUNTER */
+    .q-counter{font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(245,240,232,.35);margin-bottom:.75rem}
+
+    /* QUESTION */
+    .question-text{font-family:var(--font-display);font-size:clamp(1.3rem,3vw,1.8rem);font-weight:700;letter-spacing:-.02em;color:var(--cream);line-height:1.3;margin-bottom:2rem}
+
+    /* OPTIONS */
+    .options-list{display:flex;flex-direction:column;gap:.75rem;margin-bottom:2rem}
+    .option-btn{display:flex;align-items:center;gap:1rem;padding:1rem 1.25rem;background:rgba(255,255,255,.04);border:2px solid rgba(255,255,255,.08);border-radius:var(--radius-lg);cursor:pointer;transition:.2s;text-align:left;width:100%;font-family:inherit}
+    .option-btn:hover:not(:disabled){background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18)}
+    .option-btn.selected{background:rgba(45,74,62,.2);border-color:var(--moss);color:var(--cream)}
+    .option-btn.correct{background:rgba(74,222,128,.1);border-color:#4ade80;color:#4ade80}
+    .option-btn.incorrect{background:rgba(248,113,113,.08);border-color:#f87171;color:#f87171}
+    .option-letter{width:32px;height:32px;border-radius:var(--radius-sm);background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:700;color:rgba(245,240,232,.5);flex-shrink:0;transition:.2s}
+    .option-btn.selected .option-letter{background:var(--moss);color:white}
+    .option-btn.correct  .option-letter{background:#4ade80;color:#0d0d0f}
+    .option-btn.incorrect .option-letter{background:#f87171;color:#0d0d0f}
+    .option-text{font-size:.9rem;color:rgba(245,240,232,.8);line-height:1.4}
+    .option-btn.correct  .option-text,
+    .option-btn.incorrect .option-text{color:inherit}
+
+    /* FEEDBACK */
+    .feedback{padding:.85rem 1.1rem;border-radius:var(--radius-md);font-size:.875rem;line-height:1.6;margin-bottom:1.5rem;display:none;align-items:flex-start;gap:.6rem}
+    .feedback.show{display:flex}
+    .feedback.correct{background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);color:#4ade80}
+    .feedback.incorrect{background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.18);color:#f87171}
+
+    /* ACTIONS */
+    .quiz-actions{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem}
+    .btn-next{background:var(--moss);color:white;border:none;padding:.85rem 2rem;border-radius:100px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:inherit;transition:.2s;display:flex;align-items:center;gap:.5rem}
+    .btn-next:hover{background:#1e3329;transform:translateY(-1px)}
+    .btn-next:disabled{opacity:.4;cursor:not-allowed;transform:none}
+    .q-dots{display:flex;gap:.4rem;flex-wrap:wrap}
+    .q-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.15);transition:.2s}
+    .q-dot.current{background:var(--gold)}
+    .q-dot.answered{background:var(--moss)}
+    .q-dot.wrong{background:var(--error)}
+
+    /* RESULTS SCREEN */
+    .results-screen{display:none;text-align:center;padding:2rem 1rem}
+    .results-screen.show{display:block}
+    .results-emoji{font-size:5rem;margin-bottom:1rem}
+    .results-title{font-family:var(--font-display);font-size:clamp(2rem,5vw,3.5rem);font-weight:900;letter-spacing:-.04em;color:var(--cream);margin-bottom:.5rem}
+    .results-score{font-size:1.1rem;color:rgba(245,240,232,.5);margin-bottom:2rem}
+    .score-big{font-family:var(--font-display);font-size:4rem;font-weight:900;color:var(--gold);letter-spacing:-.05em;line-height:1}
+    .results-actions{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-top:2rem}
+    .btn-retake{background:rgba(255,255,255,.08);color:var(--cream);border:1.5px solid rgba(255,255,255,.15);padding:.85rem 2rem;border-radius:100px;font-size:.9rem;font-weight:600;cursor:pointer;font-family:inherit;transition:.2s}
+    .btn-retake:hover{background:rgba(255,255,255,.14)}
+    .btn-continue{background:var(--moss);color:white;padding:.85rem 2.25rem;border-radius:100px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:inherit;transition:.2s;border:none}
+    .btn-continue:hover{background:#1e3329}
+
+    @media(max-width:480px){.quiz-body{padding:1.25rem 1rem}.option-btn{padding:.8rem 1rem}}
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="learnhub_responsive.html" class="nav-logo">GIT<span>Academy</span></a>
+  <span class="quiz-title">Section 4 Quiz · Machine Learning A-Z</span>
+  <div class="nav-right">
+    <div class="timer-display" id="timerDisplay">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span id="timerText">10:00</span>
+    </div>
+    <button class="btn-exit" onclick="confirmExit()">Exit Quiz</button>
+  </div>
+</nav>
+
+<div class="quiz-progress-bar">
+  <div class="quiz-progress-fill" id="progressFill" style="width:0%"></div>
+</div>
+
+<div class="quiz-body">
+  <!-- Question Screen -->
+  <div class="quiz-wrap" id="questionScreen">
+    <div class="q-counter" id="qCounter">Question 1 of 5</div>
+    <div class="question-text" id="questionText">Loading…</div>
+    <div class="options-list" id="optionsList"></div>
+    <div class="feedback" id="feedback"></div>
+    <div class="quiz-actions">
+      <div class="q-dots" id="qDots"></div>
+      <button class="btn-next" id="nextBtn" onclick="nextQuestion()" disabled>
+        Next Question
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Results Screen -->
+  <div class="results-screen" id="resultsScreen">
+    <div class="results-emoji" id="resultsEmoji">🏆</div>
+    <div class="score-big" id="scoreBig">0/5</div>
+    <div class="results-title" id="resultsTitle">Great work!</div>
+    <div class="results-score" id="resultsSub">You passed the quiz</div>
+    <div class="results-actions">
+      <button class="btn-retake" onclick="retakeQuiz()">Retake Quiz</button>
+      <a href="course-player.html" class="btn-continue">Continue Learning →</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  const questions = [
+    { q: "What is the primary goal of supervised learning?", options: ["To find hidden patterns in data without labels","To learn a mapping from input features to output labels","To reduce the dimensionality of data","To cluster data points into groups"], answer: 1, explanation: "Supervised learning trains on labelled examples to predict outputs for new, unseen inputs." },
+    { q: "Which of the following is NOT a supervised learning algorithm?", options: ["Linear Regression","Decision Tree","K-Means Clustering","Support Vector Machine"], answer: 2, explanation: "K-Means is an unsupervised clustering algorithm — it doesn't use labelled data." },
+    { q: "What does 'overfitting' mean in machine learning?", options: ["The model performs poorly on both training and test data","The model fits the training data too closely and fails to generalise","The model is not complex enough to capture the data patterns","The model trains too slowly"], answer: 1, explanation: "Overfitting means the model memorises the training set, including noise, so it performs poorly on new data." },
+    { q: "Which metric would you typically use to evaluate a regression model?", options: ["Accuracy","F1 Score","Mean Squared Error (MSE)","Area Under Curve (AUC)"], answer: 2, explanation: "MSE measures the average squared difference between predictions and actual values — lower is better for regression." },
+    { q: "What is the purpose of cross-validation?", options: ["To increase training data size","To speed up model training","To get a reliable estimate of model performance on unseen data","To visualise the model's decision boundary"], answer: 2, explanation: "Cross-validation splits data into folds so you can evaluate model performance without needing a separate test set." },
+  ];
+
+  let currentQ     = 0;
+  let score        = 0;
+  let answered     = false;
+  let timerSeconds = 600; // 10 min
+  let timerInterval;
+  const letters    = ['A','B','C','D'];
+
+  // Build dots
+  const dotsWrap = document.getElementById('qDots');
+  questions.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'q-dot' + (i === 0 ? ' current' : '');
+    dot.id = 'dot-' + i;
+    dotsWrap.appendChild(dot);
+  });
+
+  function loadQuestion(idx) {
+    const q = questions[idx];
+    answered = false;
+    document.getElementById('qCounter').textContent   = `Question ${idx + 1} of ${questions.length}`;
+    document.getElementById('questionText').textContent = q.q;
+    document.getElementById('progressFill').style.width = (idx / questions.length * 100) + '%';
+
+    // Dots
+    document.querySelectorAll('.q-dot').forEach((d, i) => d.classList.toggle('current', i === idx));
+
+    // Options
+    const list = document.getElementById('optionsList');
+    list.innerHTML = '';
+    q.options.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span class="option-text">${opt}</span>`;
+      btn.addEventListener('click', () => selectOption(i, btn));
+      list.appendChild(btn);
+    });
+
+    // Feedback + next
+    const fb = document.getElementById('feedback');
+    fb.className = 'feedback';
+    fb.textContent = '';
+    document.getElementById('nextBtn').disabled = true;
+    document.getElementById('nextBtn').textContent = idx === questions.length - 1 ? 'See Results' : 'Next Question';
+    document.getElementById('nextBtn').innerHTML += ' <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>';
+  }
+
+  function selectOption(idx, clickedBtn) {
+    if (answered) return;
+    answered = true;
+    const q = questions[currentQ];
+    const isCorrect = idx === q.answer;
+    if (isCorrect) score++;
+
+    // Style options
+    document.querySelectorAll('.option-btn').forEach((btn, i) => {
+      btn.disabled = true;
+      if (i === q.answer) btn.classList.add('correct');
+      else if (i === idx && !isCorrect) btn.classList.add('incorrect');
+    });
+
+    // Feedback
+    const fb = document.getElementById('feedback');
+    fb.className = 'feedback show ' + (isCorrect ? 'correct' : 'incorrect');
+    fb.innerHTML = (isCorrect ? '✓ Correct! ' : '✗ Incorrect. ') + q.explanation;
+
+    // Dot
+    const dot = document.getElementById('dot-' + currentQ);
+    dot.classList.remove('current');
+    dot.classList.add(isCorrect ? 'answered' : 'wrong');
+
+    document.getElementById('nextBtn').disabled = false;
+  }
+
+  function nextQuestion() {
+    currentQ++;
+    if (currentQ >= questions.length) {
+      showResults();
+    } else {
+      loadQuestion(currentQ);
+    }
+  }
+
+  function showResults() {
+    clearInterval(timerInterval);
+    document.getElementById('questionScreen').style.display = 'none';
+    document.getElementById('progressFill').style.width = '100%';
+    const pct = Math.round(score / questions.length * 100);
+    const passed = pct >= 60;
+    document.getElementById('resultsScreen').classList.add('show');
+    document.getElementById('resultsEmoji').textContent = pct >= 80 ? '🏆' : pct >= 60 ? '✅' : '📚';
+    document.getElementById('scoreBig').textContent = `${score}/${questions.length}`;
+    document.getElementById('resultsTitle').textContent = pct >= 80 ? 'Excellent work!' : pct >= 60 ? 'Well done!' : 'Keep practising!';
+    document.getElementById('resultsSub').textContent = passed ? `You scored ${pct}% — quiz passed!` : `You scored ${pct}% — need 60% to pass. Try again!`;
+    document.getElementById('resultsSub').style.color = passed ? '#4ade80' : '#f87171';
+  }
+
+  function retakeQuiz() {
+    currentQ = 0; score = 0;
+    document.querySelectorAll('.q-dot').forEach((d,i) => { d.className = 'q-dot' + (i===0?' current':''); });
+    document.getElementById('questionScreen').style.display = '';
+    document.getElementById('resultsScreen').classList.remove('show');
+    timerSeconds = 600;
+    startTimer();
+    loadQuestion(0);
+  }
+
+  function confirmExit() {
+    if (confirm('Are you sure you want to exit the quiz? Your progress will be lost.')) window.location.href = 'course-player.html';
+  }
+
+  // Timer
+  function startTimer() {
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      timerSeconds--;
+      const m = Math.floor(timerSeconds / 60);
+      const s = timerSeconds % 60;
+      document.getElementById('timerText').textContent = `${m}:${String(s).padStart(2,'0')}`;
+      if (timerSeconds <= 60) document.getElementById('timerDisplay').classList.add('warning');
+      if (timerSeconds <= 0) { clearInterval(timerInterval); showResults(); }
+    }, 1000);
+  }
+
+  // Init
+  loadQuestion(0);
+  startTimer();
+</script>
+</body>
+</html>
