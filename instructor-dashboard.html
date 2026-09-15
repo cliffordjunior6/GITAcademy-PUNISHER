@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instructor Dashboard — GITAcademy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root { --ink:#0d0d0f; --cream:#f5f0e8; --gold:#e8c547; --moss:#2d4a3e; --rust:#c4522a; --paper:#faf8f3; --smoke:#f0ece4; --font-display:'Fraunces',Georgia,serif; --font-body:'DM Sans',system-ui,sans-serif; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:var(--font-body); background:var(--smoke); color:var(--ink); }
+    .shell { max-width:1200px; margin:0 auto; padding:24px 18px 60px; }
+    .topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:26px; }
+    .brand { font-family:var(--font-display); font-size:2rem; font-weight:900; letter-spacing:-.04em; }
+    .brand span { color: var(--rust); }
+    .actions { display:flex; gap:12px; align-items:center; }
+    .pill { border-radius:999px; background:#fff; padding:10px 16px; border:1px solid rgba(13,13,15,.08); font-weight:600; }
+    .btn { appearance:none; border:none; border-radius:12px; padding:12px 18px; font-weight:700; cursor:pointer; }
+    .btn.primary { background:var(--ink); color:white; }
+    .btn.secondary { background:var(--gold); color:var(--ink); }
+    .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+    .stat { background:white; border-radius:18px; padding:20px; border:1px solid rgba(13,13,15,.06); }
+    .stat .kicker { font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:rgba(13,13,15,.55); }
+    .stat .value { margin-top:10px; font-family:var(--font-display); font-size:2rem; font-weight:900; }
+    .panel { background:white; border:1px solid rgba(13,13,15,.06); border-radius:20px; padding:20px; }
+    .two-col { display:grid; grid-template-columns:1.3fr .7fr; gap:18px; margin-top:18px; }
+    table { width:100%; border-collapse:collapse; }
+    th, td { text-align:left; padding:12px 10px; border-bottom:1px solid rgba(13,13,15,.06); }
+    th { font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; color:rgba(13,13,15,.5); }
+    .badge { display:inline-block; background:rgba(45,74,62,.1); color:var(--moss); border-radius:999px; padding:5px 8px; font-size:.72rem; font-weight:700; }
+    .empty { color:rgba(13,13,15,.55); }
+    .card { background:var(--paper); border-radius:20px; padding:18px; }
+    .card h3 { margin:0 0 14px; font-family:var(--font-display); font-size:1.4rem; }
+    .course-list { display:grid; gap:12px; }
+    .course-item { display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid rgba(13,13,15,.06); }
+    .course-item:last-child { border-bottom:none; }
+    .small { font-size:.82rem; color:rgba(13,13,15,.65); }
+    @media (max-width: 800px) { .stats, .two-col { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="topbar">
+      <div class="brand">GIT<span>Academy</span></div>
+      <div class="actions">
+        <div class="pill">Instructor access</div>
+        <button class="btn secondary" type="button" onclick="window.location='login.html'">Back to login</button>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="kicker">Students</div><div class="value">548</div></div>
+      <div class="stat"><div class="kicker">Revenue</div><div class="value">₵12.8k</div></div>
+      <div class="stat"><div class="kicker">Courses</div><div class="value">18</div></div>
+      <div class="stat"><div class="kicker">Rating</div><div class="value">4.8</div></div>
+    </div>
+
+    <div class="two-col">
+      <div class="panel">
+        <h3 style="margin:0 0 12px; font-family:var(--font-display); font-size:1.7rem;">Course performance</h3>
+        <table>
+          <thead>
+            <tr><th>Course</th><th>Students</th><th>Revenue</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Machine Learning A-Z</td><td>2,600</td><td>₵14,200</td><td><span class="badge">Live</span></td></tr>
+            <tr><td>UI/UX Design Bootcamp</td><td>1,140</td><td>₵6,500</td><td><span class="badge">Live</span></td></tr>
+            <tr><td>Python for Everybody</td><td>3,210</td><td>₵5,100</td><td><span class="badge">Draft</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h3>Quick actions</h3>
+        <div class="course-list">
+          <div class="course-item"><span>Create a course</span><button class="btn secondary" type="button" onclick="window.location='create-course.html'">Open</button></div>
+          <div class="course-item"><span>Review students</span><button class="btn primary" type="button" onclick="window.location='course-list.html'">View</button></div>
+          <div class="course-item"><span>Payments</span><span class="small">₵12,800 total</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="currency.js"></script>
+  <script>
+    (() => {
+      const user = JSON.parse(localStorage.getItem('lh_user') || 'null');
+      const token = localStorage.getItem('lh_token');
+
+      if (!user || !token) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      if (user.role === 'student') {
+        window.location.href = 'dashboard.html';
+        return;
+      }
+
+      if (user.role === 'admin') {
+        window.location.href = 'admin-dashboard.html';
+        return;
+      }
+
+      if (user.role !== 'instructor') {
+        window.location.href = 'login.html';
+        return;
+      }
+    })();
+
+    setTimeout(() => window.applyCurrencyConversion && window.applyCurrencyConversion(), 50);
+  </script>
+</body>
+</html>
