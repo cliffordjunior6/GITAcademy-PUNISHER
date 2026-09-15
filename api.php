@@ -1,319 +1,237 @@
 <?php
+header('Content-Type: application/json; charset=utf-8');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
+header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\{
-    AuthController,
-    SocialAuthController,
-    EmailVerificationController,
-    PasswordResetController,
-};
-use App\Http\Controllers\Student\{
-    DashboardController,
-    ProfileController,
-    EnrollmentController,
-    ProgressController,
-    WishlistController,
-    CartController,
-    CertificateController,
-    NoteController,
-    QAController,
-    SearchController,
-};
-use App\Http\Controllers\Instructor\{
-    InstructorDashboardController,
-    CourseManagementController,
-    LessonController,
-    VideoUploadController,
-    QuizController,
-    AnalyticsController,
-    EarningsController,
-    StudentManagementController,
-};
-use App\Http\Controllers\Admin\{
-    AdminDashboardController,
-    AdminUserController,
-    AdminCourseController,
-    AdminPaymentController,
-    AdminReviewController,
-    AdminCategoryController,
-    AdminSettingsController,
-};
-use App\Http\Controllers\{
-    CourseController,
-    CategoryController,
-    ReviewController,
-    PaymentController,
-    NotificationController,
-};
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(204);
+    exit;
+}
 
-// ──────────────────────────────────────────────────────────────
-//  PUBLIC ROUTES
-// ──────────────────────────────────────────────────────────────
+function jsonResponse($payload, $status = 200): void {
+    http_response_code($status);
+    echo json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+    exit;
+}
 
-// Auth
-Route::prefix('auth')->group(function () {
-    Route::post('/register',         [AuthController::class, 'register']);
-    Route::post('/login',            [AuthController::class, 'login']);
-    Route::post('/forgot-password',  [PasswordResetController::class, 'sendLink']);
-    Route::post('/reset-password',   [PasswordResetController::class, 'reset']);
+function getBody(): array {
+    $raw = file_get_contents('php://input');
+    if ($raw === false || trim($raw) === '') {
+        return [];
+    }
+    $json = json_decode($raw, true);
+    return is_array($json) ? $json : [];
+}
 
-    // OAuth
-    Route::get('/{provider}/redirect',  [SocialAuthController::class, 'redirect']);
-    Route::get('/{provider}/callback',  [SocialAuthController::class, 'callback']);
-});
+function normalizeUser(array $user): array {
+    $first = $user['first_name'] ?? ($user['name'] ?? 'User');
+    $last = $user['last_name'] ?? '';
+    return [
+        'id' => (int) ($user['id'] ?? 0),
+        'first_name' => $first,
+        'last_name' => $last,
+        'name' => trim($first . ($last ? ' ' . $last : '')),
+        'email' => $user['email'] ?? '',
+        'role' => $user['role'] ?? 'student',
+        'status' => $user['status'] ?? 'active',
+    ];
+}
 
-// Public course browsing
-Route::prefix('courses')->group(function () {
-    Route::get('/',              [CourseController::class, 'index']);
-    Route::get('/featured',      [CourseController::class, 'featured']);
-    Route::get('/trending',      [CourseController::class, 'trending']);
-    Route::get('/search',        [SearchController::class, 'search']);
-    Route::get('/{slug}',        [CourseController::class, 'show']);
-    Route::get('/{id}/reviews',  [ReviewController::class, 'index']);
-});
+$demoUsers = [
+    [
+        'id' => 1,
+        'first_name' => 'Justice',
+        'last_name' => 'Elorm',
+        'email' => 'justiceelorm@example.com',
+        'password' => 'password',
+        'role' => 'student',
+        'status' => 'active',
+    ],
+    [
+        'id' => 2,
+        'first_name' => 'Ato Siaw',
+        'last_name' => 'Quarshie',
+        'email' => 'atosiaw@example.com',
+        'password' => 'password',
+        'role' => 'instructor',
+        'status' => 'active',
+    ],
+    [
+        'id' => 3,
+        'first_name' => 'Clifford',
+        'last_name' => 'Junior',
+        'email' => 'cliffordjunior@GITAcademy.com',
+        'password' => 'admin123',
+        'role' => 'admin',
+        'status' => 'active',
+    ],
+];
 
-// Public categories
-Route::prefix('categories')->group(function () {
-    Route::get('/',       [CategoryController::class, 'index']);
-    Route::get('/{slug}', [CategoryController::class, 'show']);
-});
+function resolveDemoUser(string $email, string $password): ?array {
+    global $demoUsers;
+    foreach ($demoUsers as $user) {
+        if (strtolower($user['email']) === strtolower($email) && $user['password'] === $password) {
+            return $user;
+        }
+    }
+    return null;
+}
 
-// Certificate verification (public)
-Route::get('/certificates/verify/{credentialId}', [CertificateController::class, 'verify']);
+function resolveTokenUser(string $token): ?array {
+    global $demoUsers;
+    if (!$token || !str_contains($token, ':')) {
+        return null;
+    }
+    [$kind, $role, $id] = explode(':', $token, 3);
+    if ($kind !== 'demo') {
+        return null;
+    }
+    foreach ($demoUsers as $user) {
+        if ((string) $user['id'] === (string) $id && $user['role'] === $role) {
+            return $user;
+        }
+    }
+    return null;
+}
 
+$route = $_GET['route'] ?? parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$route = $route === '/api.php' ? '/' : $route;
+$route = preg_replace('#^/+#', '/', $route);
+$method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+$authorization = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+$token = preg_match('/Bearer\s+(.*)$/i', $authorization, $matches) ? trim($matches[1]) : null;
 
-// ──────────────────────────────────────────────────────────────
-//  AUTHENTICATED ROUTES
-// ──────────────────────────────────────────────────────────────
+$courseData = json_decode(file_get_contents(__DIR__ . '/courses.json'), true);
+$courses = $courseData['courses'] ?? [];
 
-Route::middleware('auth:sanctum')->group(function () {
+switch ($route) {
+    case '/auth/login':
+        if ($method !== 'POST') jsonResponse(['message' => 'Method not allowed'], 405);
+        $input = getBody();
+        $email = trim((string) ($input['email'] ?? ''));
+        $password = (string) ($input['password'] ?? '');
+        $role = trim((string) ($input['role'] ?? 'student'));
+        $adminCode = trim((string) ($input['admin_code'] ?? ''));
 
-    // Auth
-    Route::prefix('auth')->group(function () {
-        Route::post('/logout',           [AuthController::class, 'logout']);
-        Route::get('/me',                [AuthController::class, 'me']);
-        Route::post('/refresh',          [AuthController::class, 'refresh']);
-        Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
-             ->name('verification.verify');
-        Route::post('/email/resend',     [EmailVerificationController::class, 'resend']);
-    });
+        $user = resolveDemoUser($email, $password);
+        if (!$user) {
+            jsonResponse(['message' => 'Invalid credentials'], 401);
+        }
+        if ($user['role'] === 'admin' && $role === 'admin' && $adminCode !== 'ADMIN2024') {
+            jsonResponse(['message' => 'Admin access code is required'], 403);
+        }
 
-    // Notifications
-    Route::prefix('notifications')->group(function () {
-        Route::get('/',         [NotificationController::class, 'index']);
-        Route::post('/read-all',[NotificationController::class, 'markAllRead']);
-        Route::patch('/{id}',   [NotificationController::class, 'markRead']);
-        Route::delete('/{id}',  [NotificationController::class, 'destroy']);
-    });
+        $tokenValue = 'demo:' . $user['role'] . ':' . $user['id'];
+        jsonResponse(['token' => $tokenValue, 'user' => normalizeUser($user)]);
 
-    // ── STUDENT ───────────────────────────────────────────────
+    case '/auth/register':
+        if ($method !== 'POST') jsonResponse(['message' => 'Method not allowed'], 405);
+        $input = getBody();
+        $first = trim((string) ($input['first_name'] ?? $input['firstName'] ?? 'Student'));
+        $last = trim((string) ($input['last_name'] ?? $input['lastName'] ?? 'User'));
+        $email = trim((string) ($input['email'] ?? ''));
+        $password = (string) ($input['password'] ?? '');
+        if (!$email || !$password) {
+            jsonResponse(['message' => 'Email and password are required'], 422);
+        }
 
-    Route::middleware('role:student,instructor,admin')->group(function () {
+        $newUser = [
+            'id' => 999 + count($demoUsers),
+            'first_name' => $first,
+            'last_name' => $last,
+            'email' => $email,
+            'password' => $password,
+            'role' => 'student',
+            'status' => 'active',
+        ];
+        $demoUsers[] = $newUser;
+        jsonResponse([
+            'token' => 'demo:student:' . $newUser['id'],
+            'user' => normalizeUser($newUser),
+        ]);
 
-        // Dashboard
-        Route::get('/dashboard', [DashboardController::class, 'index']);
+    case '/auth/logout':
+        jsonResponse(['message' => 'Logged out successfully']);
 
-        // Profile
-        Route::prefix('user')->group(function () {
-            Route::get('/profile',           [ProfileController::class, 'show']);
-            Route::patch('/profile',         [ProfileController::class, 'update']);
-            Route::post('/avatar',           [ProfileController::class, 'uploadAvatar']);
-            Route::delete('/account',        [ProfileController::class, 'deleteAccount']);
-            Route::get('/my-courses',        [EnrollmentController::class, 'index']);
-            Route::get('/certificates',      [CertificateController::class, 'index']);
-            Route::get('/achievements',      [DashboardController::class, 'achievements']);
-            Route::get('/activity',          [DashboardController::class, 'activity']);
-        });
+    case '/auth/me':
+        if (!$token) jsonResponse(['message' => 'Unauthenticated'], 401);
+        $user = resolveTokenUser($token);
+        if (!$user) jsonResponse(['message' => 'Invalid token'], 401);
+        jsonResponse(normalizeUser($user));
 
-        // Wishlist
-        Route::prefix('wishlist')->group(function () {
-            Route::get('/',           [WishlistController::class, 'index']);
-            Route::post('/{courseId}',[WishlistController::class, 'add']);
-            Route::delete('/{courseId}',[WishlistController::class, 'remove']);
-        });
+    case '/courses':
+        $query = strtolower(trim((string) ($_GET['q'] ?? '')));
+        $items = $courses;
+        if ($query !== '') {
+            $items = array_values(array_filter($items, function ($course) use ($query) {
+                $haystack = strtolower(($course['title'] ?? '') . ' ' . ($course['category'] ?? '') . ' ' . ($course['subcategory'] ?? ''));
+                return str_contains($haystack, $query);
+            }));
+        }
+        jsonResponse($items);
 
-        // Cart
-        Route::prefix('cart')->group(function () {
-            Route::get('/',           [CartController::class, 'index']);
-            Route::post('/{courseId}',[CartController::class, 'add']);
-            Route::delete('/{courseId}',[CartController::class, 'remove']);
-            Route::delete('/',        [CartController::class, 'clear']);
-            Route::post('/coupon',    [CartController::class, 'applyCoupon']);
-        });
+    case '/courses/featured':
+        $filtered = array_values(array_filter($courses, fn($course) => !empty($course['is_bestseller']) || !empty($course['is_new'])));
+        jsonResponse(array_slice($filtered, 0, 4));
 
-        // Payments & Orders
-        Route::prefix('payments')->group(function () {
-            Route::post('/checkout',         [PaymentController::class, 'checkout']);
-            Route::get('/callback/paystack', [PaymentController::class, 'paystackCallback']);
-            Route::get('/callback/stripe',   [PaymentController::class, 'stripeCallback']);
-            Route::post('/webhook/paystack', [PaymentController::class, 'paystackWebhook']);
-            Route::post('/webhook/stripe',   [PaymentController::class, 'stripeWebhook']);
-        });
+    case '/courses/trending':
+        jsonResponse(array_slice($courses, 0, 4));
 
-        Route::prefix('orders')->group(function () {
-            Route::get('/',    [PaymentController::class, 'orders']);
-            Route::get('/{id}',[PaymentController::class, 'orderDetail']);
-        });
+    case '/categories':
+        $categories = json_decode(file_get_contents(__DIR__ . '/categories.json'), true);
+        jsonResponse($categories['categories'] ?? $categories);
 
-        // Enrollment & Progress
-        Route::prefix('courses/{courseId}')->group(function () {
-            Route::post('/enroll',   [EnrollmentController::class, 'enroll']);  // free courses
-            Route::get('/progress',  [ProgressController::class, 'show']);
+    case '/dashboard':
+        jsonResponse([
+            'stats' => ['courses' => 12, 'hours' => 42, 'certificates' => 3, 'streak' => 5],
+            'courses' => [
+                ['title' => 'Machine Learning A-Z', 'progress' => 68, 'category' => 'AI'],
+                ['title' => 'JavaScript Bootcamp', 'progress' => 22, 'category' => 'Web Dev'],
+            ],
+        ]);
 
-            // Lessons
-            Route::prefix('lessons/{lessonId}')->group(function () {
-                Route::post('/progress', [ProgressController::class, 'update']);
-                Route::get('/notes',     [NoteController::class, 'index']);
-                Route::post('/notes',    [NoteController::class, 'store']);
-            });
+    case '/instructor/dashboard':
+        jsonResponse([
+            'stats' => ['students' => 548, 'revenue' => 12800, 'courses' => 18, 'rating' => 4.8],
+            'courses' => [
+                ['title' => 'Machine Learning A-Z', 'students' => 2600, 'revenue' => 14200],
+                ['title' => 'UI/UX Design Bootcamp', 'students' => 1140, 'revenue' => 6500],
+            ],
+        ]);
 
-            // Notes (course-level)
-            Route::get('/notes',  [NoteController::class, 'courseNotes']);
+    case '/admin/stats':
+        jsonResponse([
+            'stats' => ['users' => 1284, 'courses' => 420, 'revenue' => 65980, 'active' => 87],
+            'users' => [
+                ['name' => 'Justice Elorm', 'role' => 'student'],
+                ['name' => 'Ato Siaw Quarshie', 'role' => 'instructor'],
+                ['name' => 'Clifford Junior', 'role' => 'admin'],
+            ],
+        ]);
 
-            // Q&A
-            Route::get('/questions',      [QAController::class, 'index']);
-            Route::post('/questions',     [QAController::class, 'store']);
-            Route::post('/questions/{questionId}/answers', [QAController::class, 'answer']);
-            Route::post('/questions/{questionId}/upvote',  [QAController::class, 'upvote']);
+    case '/payments/checkout':
+        $body = getBody();
+        $amount = (float) ($body['amount'] ?? 93.0);
+        $currency = strtoupper((string) ($body['currency'] ?? 'GHS'));
+        jsonResponse([
+            'payment_url' => '/payment-success.html?status=paid&ref=' . uniqid('GHS-'),
+            'reference' => 'GHS-' . uniqid(),
+            'currency' => $currency,
+            'amount' => $amount,
+            'status' => 'pending',
+            'message' => 'Demo payment initiated successfully.',
+        ]);
 
-            // Reviews
-            Route::post('/reviews', [ReviewController::class, 'store']);
-            Route::put('/reviews',  [ReviewController::class, 'update']);
-        });
-
-        Route::delete('/notes/{id}',   [NoteController::class, 'destroy']);
-    });
-
-
-    // ── INSTRUCTOR ────────────────────────────────────────────
-
-    Route::middleware('role:instructor,admin')->prefix('instructor')->group(function () {
-
-        // Dashboard
-        Route::get('/dashboard', [InstructorDashboardController::class, 'index']);
-        Route::get('/stats',     [InstructorDashboardController::class, 'stats']);
-
-        // Course management
-        Route::prefix('courses')->group(function () {
-            Route::get('/',                [CourseManagementController::class, 'index']);
-            Route::post('/',               [CourseManagementController::class, 'store']);
-            Route::get('/{id}',            [CourseManagementController::class, 'show']);
-            Route::put('/{id}',            [CourseManagementController::class, 'update']);
-            Route::delete('/{id}',         [CourseManagementController::class, 'destroy']);
-            Route::post('/{id}/publish',   [CourseManagementController::class, 'publish']);
-            Route::post('/{id}/unpublish', [CourseManagementController::class, 'unpublish']);
-            Route::post('/{id}/thumbnail', [CourseManagementController::class, 'uploadThumbnail']);
-
-            // Sections
-            Route::get('/{courseId}/sections',      [LessonController::class, 'sections']);
-            Route::post('/{courseId}/sections',     [LessonController::class, 'storeSection']);
-            Route::put('/{courseId}/sections/{id}', [LessonController::class, 'updateSection']);
-            Route::delete('/{courseId}/sections/{id}',[LessonController::class, 'deleteSection']);
-
-            // Lessons
-            Route::post('/{courseId}/sections/{sectionId}/lessons',     [LessonController::class, 'store']);
-            Route::put('/{courseId}/lessons/{id}',                       [LessonController::class, 'update']);
-            Route::delete('/{courseId}/lessons/{id}',                    [LessonController::class, 'destroy']);
-            Route::post('/{courseId}/lessons/reorder',                   [LessonController::class, 'reorder']);
-
-            // Video upload
-            Route::post('/{courseId}/videos',        [VideoUploadController::class, 'store']);
-            Route::get('/{courseId}/videos/{lessonId}/status', [VideoUploadController::class, 'status']);
-
-            // Quizzes
-            Route::post('/{courseId}/lessons/{lessonId}/quiz',  [QuizController::class, 'store']);
-            Route::put('/{courseId}/lessons/{lessonId}/quiz',   [QuizController::class, 'update']);
-            Route::delete('/{courseId}/lessons/{lessonId}/quiz',[QuizController::class, 'destroy']);
-        });
-
-        // Analytics
-        Route::prefix('analytics')->group(function () {
-            Route::get('/',           [AnalyticsController::class, 'overview']);
-            Route::get('/revenue',    [AnalyticsController::class, 'revenue']);
-            Route::get('/students',   [AnalyticsController::class, 'students']);
-            Route::get('/courses/{id}', [AnalyticsController::class, 'courseDetail']);
-        });
-
-        // Earnings & Payouts
-        Route::prefix('earnings')->group(function () {
-            Route::get('/',       [EarningsController::class, 'index']);
-            Route::get('/summary',[EarningsController::class, 'summary']);
-        });
-        Route::prefix('payouts')->group(function () {
-            Route::get('/',     [EarningsController::class, 'payouts']);
-            Route::post('/',    [EarningsController::class, 'requestPayout']);
-        });
-
-        // Student management
-        Route::get('/students',     [StudentManagementController::class, 'index']);
-        Route::get('/students/{id}',[StudentManagementController::class, 'show']);
-
-        // Review responses
-        Route::post('/reviews/{id}/reply', [ReviewController::class, 'reply']);
-    });
-
-
-    // ── ADMIN ─────────────────────────────────────────────────
-
-    Route::middleware('role:admin')->prefix('admin')->group(function () {
-
-        // Dashboard
-        Route::get('/dashboard', [AdminDashboardController::class, 'index']);
-        Route::get('/stats',     [AdminDashboardController::class, 'stats']);
-        Route::get('/activity',  [AdminDashboardController::class, 'recentActivity']);
-
-        // Users
-        Route::prefix('users')->group(function () {
-            Route::get('/',                  [AdminUserController::class, 'index']);
-            Route::get('/{id}',              [AdminUserController::class, 'show']);
-            Route::patch('/{id}',            [AdminUserController::class, 'update']);
-            Route::patch('/{id}/role',       [AdminUserController::class, 'updateRole']);
-            Route::patch('/{id}/status',     [AdminUserController::class, 'updateStatus']);
-            Route::delete('/{id}',           [AdminUserController::class, 'destroy']);
-            Route::post('/{id}/impersonate', [AdminUserController::class, 'impersonate']);
-        });
-
-        // Courses
-        Route::prefix('courses')->group(function () {
-            Route::get('/',                   [AdminCourseController::class, 'index']);
-            Route::get('/{id}',               [AdminCourseController::class, 'show']);
-            Route::patch('/{id}/status',      [AdminCourseController::class, 'updateStatus']);
-            Route::patch('/{id}/featured',    [AdminCourseController::class, 'toggleFeatured']);
-            Route::delete('/{id}',            [AdminCourseController::class, 'destroy']);
-        });
-
-        // Reviews
-        Route::prefix('reviews')->group(function () {
-            Route::get('/',              [AdminReviewController::class, 'index']);
-            Route::patch('/{id}/status', [AdminReviewController::class, 'updateStatus']);
-            Route::delete('/{id}',       [AdminReviewController::class, 'destroy']);
-        });
-
-        // Payments
-        Route::prefix('payments')->group(function () {
-            Route::get('/',            [AdminPaymentController::class, 'index']);
-            Route::get('/{id}',        [AdminPaymentController::class, 'show']);
-            Route::post('/{id}/refund',[AdminPaymentController::class, 'refund']);
-        });
-
-        // Categories (CRUD)
-        Route::apiResource('categories', AdminCategoryController::class);
-        Route::patch('categories/{id}/toggle', [AdminCategoryController::class, 'toggle']);
-
-        // Platform settings
-        Route::get('/settings',       [AdminSettingsController::class, 'index']);
-        Route::patch('/settings',     [AdminSettingsController::class, 'update']);
-        Route::post('/settings/test-email', [AdminSettingsController::class, 'testEmail']);
-
-        // Payouts management
-        Route::get('/payouts',               [EarningsController::class, 'adminPayouts']);
-        Route::patch('/payouts/{id}/process',[EarningsController::class, 'processPayout']);
-
-        // Coupons
-        Route::apiResource('coupons', \App\Http\Controllers\Admin\AdminCouponController::class);
-
-        // Platform stats export
-        Route::get('/export/users',    [AdminDashboardController::class, 'exportUsers']);
-        Route::get('/export/revenue',  [AdminDashboardController::class, 'exportRevenue']);
-    });
-});
+    default:
+        if (preg_match('#^/courses/(\d+)$#', $route, $matches)) {
+            $id = (int) $matches[1];
+            foreach ($courses as $course) {
+                if ((int) ($course['id'] ?? 0) === $id) {
+                    jsonResponse($course);
+                }
+            }
+            jsonResponse(['message' => 'Course not found'], 404);
+        }
+        jsonResponse(['message' => 'Route not found', 'route' => $route], 404);
+}
