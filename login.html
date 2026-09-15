@@ -300,6 +300,8 @@
 </div>
 
 <script>
+  window.GITAcademy_API_URL = 'api.php';
+
   const ROLES = {
     student: {
       eyebrow:'Student Login', btnText:'Sign In as Student', btnClass:'btn-s',
@@ -327,37 +329,28 @@
     currentRole = role;
     const cfg = ROLES[role];
 
-    // Tabs
     document.querySelectorAll('.rt').forEach(t => t.classList.remove('active'));
     tabEl.classList.add('active');
 
-    // Hint
     document.getElementById('rhText').textContent = cfg.hint;
     document.getElementById('rhDot').className = 'rh-dot ' + cfg.dotClass;
 
-    // Eyebrow & button
     document.getElementById('fEyebrow').textContent = cfg.eyebrow;
     const btn = document.getElementById('loginBtn');
     btn.className = 'btn-submit ' + cfg.btnClass;
     document.getElementById('btnTxt').textContent = cfg.btnText;
 
-    // Social login
     document.getElementById('socialWrap').style.display = cfg.showSocial ? '' : 'none';
-
-    // Admin code
     document.getElementById('adminCodeWrap').classList.toggle('show', cfg.showAdminCode);
 
-    // Left panel highlight
     document.querySelectorAll('.rc').forEach(c => c.classList.remove('active-rc'));
     document.getElementById(cfg.rcId)?.classList.add('active-rc');
 
-    // Clear errors
     document.getElementById('loginErr').classList.remove('show');
     document.getElementById('email').classList.remove('err');
     document.getElementById('password').classList.remove('err');
   }
 
-  // Password visibility toggles
   function makeToggle(inputId, btnId) {
     document.getElementById(btnId)?.addEventListener('click', () => {
       const inp = document.getElementById(inputId);
@@ -367,7 +360,6 @@
   makeToggle('password', 'togglePw');
   makeToggle('adminCode', 'toggleAdminPw');
 
-  // Enter key
   ['email','password','adminCode'].forEach(id => {
     document.getElementById(id)?.addEventListener('keydown', e => {
       if (e.key === 'Enter') handleLogin();
@@ -380,50 +372,41 @@
   }
 
   async function handleLogin() {
-    const email     = document.getElementById('email').value.trim();
-    const password  = document.getElementById('password').value;
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
     const adminCode = document.getElementById('adminCode').value.trim();
-    const cfg       = ROLES[currentRole];
-    const btn       = document.getElementById('loginBtn');
-    const spinner   = document.getElementById('loginSpinner');
-    const btnTxt    = document.getElementById('btnTxt');
+    const cfg = ROLES[currentRole];
+    const btn = document.getElementById('loginBtn');
+    const spinner = document.getElementById('loginSpinner');
+    const btnTxt = document.getElementById('btnTxt');
 
     document.getElementById('loginErr').classList.remove('show');
     document.getElementById('email').classList.remove('err');
     document.getElementById('password').classList.remove('err');
 
-    // Validate
     if (!email) { showError('Please enter your email address.'); document.getElementById('email').classList.add('err'); return; }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('Please enter a valid email address.'); document.getElementById('email').classList.add('err'); return; }
     if (!password) { showError('Please enter your password.'); document.getElementById('password').classList.add('err'); return; }
     if (currentRole === 'admin' && !adminCode) { showError('Admin access code is required.'); document.getElementById('adminCode').classList.add('err'); return; }
 
-    // Loading state
     btn.disabled = true;
     btnTxt.style.opacity = '0';
     spinner.style.display = 'block';
 
     try {
-      // ── Laravel Sanctum ──────────────────────────
-      // const res = await fetch('/api/auth/login', {
-      //   method:'POST',
-      //   headers:{'Content-Type':'application/json','Accept':'application/json'},
-      //   body: JSON.stringify({ email, password, role: currentRole, admin_code: adminCode || undefined }),
-      // });
-      // const data = await res.json();
-      // if (!res.ok) throw new Error(data.message || 'Login failed');
-      // localStorage.setItem('lh_token', data.token);
-      // localStorage.setItem('lh_user', JSON.stringify(data.user));
-      // ─────────────────────────────────────────────
+      const response = await fetch(`api.php?route=${encodeURIComponent('/auth/login')}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ email, password, role: currentRole, admin_code: adminCode || undefined })
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || 'Login failed');
 
-      // Demo simulation
-      await new Promise(r => setTimeout(r, 1200));
-      localStorage.setItem('lh_role', currentRole);
-      localStorage.setItem('lh_user', JSON.stringify({ first_name:'Ama', last_name:'Kofi', email, role: currentRole }));
+      localStorage.setItem('lh_token', data.token);
+      localStorage.setItem('lh_user', JSON.stringify(data.user));
       window.location.href = cfg.redirect;
-
-    } catch (err) {
-      showError(err.message || 'Invalid credentials. Please try again.');
+    } catch (error) {
+      showError(error.message || 'Invalid credentials. Please try again.');
       btn.disabled = false;
       btnTxt.style.opacity = '1';
       spinner.style.display = 'none';
@@ -431,9 +414,16 @@
   }
 
   function socialLogin(provider) {
-    // window.location.href = `/auth/${provider}/redirect?role=${currentRole}`;
     alert(`${provider} login — role: ${currentRole}`);
   }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const user = JSON.parse(localStorage.getItem('lh_user') || 'null');
+    if (user && user.role) {
+      const landing = user.role === 'instructor' ? 'instructor-dashboard.html' : user.role === 'admin' ? 'admin-dashboard.html' : 'dashboard.html';
+      window.location.href = landing;
+    }
+  });
 </script>
 </body>
 </html>
