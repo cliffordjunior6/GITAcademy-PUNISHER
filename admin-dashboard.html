@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — GITAcademy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root { --ink:#0d0d0f; --cream:#f5f0e8; --gold:#e8c547; --moss:#2d4a3e; --rust:#c4522a; --paper:#faf8f3; --smoke:#f0ece4; --error:#e05555; --font-display:'Fraunces',Georgia,serif; --font-body:'DM Sans',system-ui,sans-serif; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:var(--font-body); background:var(--smoke); color:var(--ink); }
+    .shell { max-width:1200px; margin:0 auto; padding:24px 18px 60px; }
+    .topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:26px; }
+    .brand { font-family:var(--font-display); font-size:2rem; font-weight:900; letter-spacing:-.04em; }
+    .brand span { color: var(--rust); }
+    .actions { display:flex; align-items:center; gap:12px; }
+    .pill { border-radius:999px; background:#fff; padding:10px 16px; border:1px solid rgba(13,13,15,.08); font-weight:600; }
+    .btn { appearance:none; border:none; border-radius:12px; padding:12px 18px; font-weight:700; cursor:pointer; }
+    .btn.primary { background:var(--ink); color:white; }
+    .btn.secondary { background:var(--gold); color:var(--ink); }
+    .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+    .stat { background:white; border-radius:18px; padding:20px; border:1px solid rgba(13,13,15,.06); }
+    .stat .kicker { font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:rgba(13,13,15,.55); }
+    .stat .value { margin-top:10px; font-family:var(--font-display); font-size:2rem; font-weight:900; }
+    .two-col { display:grid; grid-template-columns:1.25fr .75fr; gap:18px; }
+    .panel { background:white; border:1px solid rgba(13,13,15,.06); border-radius:20px; padding:20px; }
+    table { width:100%; border-collapse:collapse; }
+    th, td { text-align:left; padding:12px 10px; border-bottom:1px solid rgba(13,13,15,.06); }
+    th { font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; color:rgba(13,13,15,.5); }
+    .badge { display:inline-block; border-radius:999px; padding:5px 8px; font-size:.72rem; font-weight:700; }
+    .badge.student { background:rgba(45,74,62,.1); color:var(--moss); }
+    .badge.instructor { background:rgba(232,197,71,.18); color:var(--ink); }
+    .badge.admin { background:rgba(196,82,42,.12); color:var(--rust); }
+    .info { display:grid; gap:12px; }
+    .info-item { background:var(--paper); border-radius:16px; padding:16px; }
+    .info-item strong { display:block; margin-bottom:6px; }
+    @media (max-width: 800px) { .stats, .two-col { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="topbar">
+      <div class="brand">GIT<span>Academy</span></div>
+      <div class="actions">
+        <div class="pill">Admin control panel</div>
+        <button class="btn secondary" type="button" onclick="window.location='login.html'">Back to login</button>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="kicker">Users</div><div class="value">1,284</div></div>
+      <div class="stat"><div class="kicker">Courses</div><div class="value">420</div></div>
+      <div class="stat"><div class="kicker">Revenue</div><div class="value">₵65.9k</div></div>
+      <div class="stat"><div class="kicker">Active</div><div class="value">87%</div></div>
+    </div>
+
+    <div class="two-col">
+      <div class="panel">
+        <h3 style="margin:0 0 12px; font-family:var(--font-display); font-size:1.7rem;">System users</h3>
+        <table>
+          <thead>
+            <tr><th>Name</th><th>Role</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Justice Elorm</td><td><span class="badge student">Student</span></td><td>Active</td></tr>
+            <tr><td>Ato Siaw Quarshie</td><td><span class="badge instructor">Instructor</span></td><td>Active</td></tr>
+            <tr><td>Clifford Junior</td><td><span class="badge admin">Admin</span></td><td>Active</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="info">
+        <div class="info-item"><strong>Payments</strong> Platform revenue is ₵65,980 this cycle.</div>
+        <div class="info-item"><strong>Reviews</strong> 84 new student reviews are awaiting moderation.</div>
+        <div class="info-item"><strong>Course approvals</strong> Students are enrolled across 420 courses.</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="currency.js"></script>
+  <script>
+    (() => {
+      const user = JSON.parse(localStorage.getItem('lh_user') || 'null');
+      const token = localStorage.getItem('lh_token');
+
+      if (!user || !token) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      if (user.role === 'student') {
+        window.location.href = 'dashboard.html';
+        return;
+      }
+
+      if (user.role === 'instructor') {
+        window.location.href = 'instructor-dashboard.html';
+        return;
+      }
+
+      if (user.role !== 'admin') {
+        window.location.href = 'login.html';
+        return;
+      }
+    })();
+
+    setTimeout(() => window.applyCurrencyConversion && window.applyCurrencyConversion(), 50);
+  </script>
+</body>
+</html>
