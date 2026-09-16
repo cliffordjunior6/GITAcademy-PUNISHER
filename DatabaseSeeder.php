@@ -65,7 +65,7 @@ class UserSeeder extends Seeder
 
         // Student
         User::create([
-            'first_name'        => 'Jutice',
+            'first_name'        => 'Justice',
             'last_name'         => 'Elorm',
             'email'             => 'justiceelorm@example.com',
             'password'          => Hash::make('password'),
@@ -102,7 +102,7 @@ class CourseSeeder extends Seeder
     public function run(): void
     {
         $instructor = User::where('role', 'instructor')->first();
-        $student    = User::where('email', 'ama@example.com')->first();
+        $student    = User::where('email', 'justiceelorm@example.com')->first();
 
         $devCat  = Category::where('slug', 'development')->first();
         $dataCat = Category::where('slug', 'data-science')->first();
@@ -229,8 +229,8 @@ class CourseSeeder extends Seeder
                 }
             }
 
-            // Enroll the demo student in first 2 courses
-            if (in_array($course->slug, ['machine-learning-a-z', 'complete-javascript-2024'])) {
+            // Enroll the demo student in the first two seeded courses.
+            if ($student && in_array($course->slug, ['machine-learning-a-z', 'complete-javascript-2026'])) {
                 Enrollment::create([
                     'user_id'          => $student->id,
                     'course_id'        => $course->id,
