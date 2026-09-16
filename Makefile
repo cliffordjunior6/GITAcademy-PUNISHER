@@ -35,7 +35,7 @@ fresh: ## Fresh migration + seed (wipes all data)
 	@echo "\n🌱 Database reset. Demo logins:"
 	@echo "   Student:    justiceelorm@example.com / password"
 	@echo "   Instructor: atosiaw@example.com / password"
-	@echo "   Admin:      admin@GITAcadmy.com / admin123 (code: ADMIN2024)"
+	@echo "   Admin:      cliffordjunior@GITAcademy.com / admin123 (code: ADMIN2024)"
 
 # ── Development ────────────────────────────────────────────────────────────
 
