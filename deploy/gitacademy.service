@@ -1,0 +1,34 @@
+# Real systemd unit for php8.3-fpm serving GITAcademy.
+# Most distros already ship a php8.3-fpm.service — you usually just need:
+#   sudo systemctl enable --now php8.3-fpm
+#   sudo systemctl enable --now nginx
+# and point php8.3-fpm's pool config (/etc/php/8.3/fpm/pool.d/www.conf) at
+# the same socket referenced in deploy/nginx.conf.
+#
+# This file is only needed if you want a custom pool/service instead of the
+# distro default — install with:
+#   sudo cp deploy/gitacademy.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now gitacademy
+
+[Unit]
+Description=GITAcademy PHP-FPM pool
+After=network.target
+
+[Service]
+Type=notify
+ExecStart=/usr/sbin/php-fpm8.3 --nodaemonize --fpm-config /etc/php/8.3/fpm/php-fpm.conf
+ExecReload=/bin/kill -USR2 $MAINPID
+Restart=on-failure
+RestartSec=5
+
+# Real hardening — the service only needs access to the app directory
+User=www-data
+Group=www-data
+ReadWritePaths=/var/www/gitacademy/api /var/www/gitacademy/uploads /var/www/gitacademy/storage
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

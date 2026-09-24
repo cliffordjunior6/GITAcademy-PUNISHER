@@ -1,0 +1,140 @@
+version: '3.9'
+
+services:
+
+  # ── Laravel API ────────────────────────────────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: GITAcademy-api
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+      - ./storage:/var/www/storage
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - GITAcademy
+
+  # ── Nginx ──────────────────────────────────────────────────────────────
+  nginx:
+    image: nginx:alpine
+    container_name: GITAcademy-nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - GITAcademy
+
+  # ── MySQL ──────────────────────────────────────────────────────────────
+  mysql:
+    image: mysql:8.0
+    container_name: GITAcademy-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: GITAcademy
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_PASSWORD: secret
+      MYSQL_USER: GITAcademy
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - GITAcademy
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Redis ──────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: GITAcademy-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - GITAcademy
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # ── Queue Worker ───────────────────────────────────────────────────────
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: GITAcademy-queue
+    restart: unless-stopped
+    working_dir: /var/www
+    command: php artisan queue:work --sleep=3 --tries=3 --timeout=90 --queue=default,emails,videos
+    volumes:
+      - .:/var/www
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - GITAcademy
+
+  # ── Scheduler ─────────────────────────────────────────────────────────
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: GITAcademy-scheduler
+    restart: unless-stopped
+    working_dir: /var/www
+    command: >
+      sh -c "while true; do
+               php artisan schedule:run --no-interaction;
+               sleep 60;
+             done"
+    volumes:
+      - .:/var/www
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - GITAcademy
+
+  # ── phpMyAdmin (development only) ─────────────────────────────────────
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: GITAcademy-phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: secret
+    depends_on:
+      - mysql
+    networks:
+      - GITAcademy
+    profiles:
+      - dev  # Only starts with: docker compose --profile dev up
+
+volumes:
+  mysql-data:
+  redis-data:
+
+networks:
+  learnhub:
+    driver: bridge

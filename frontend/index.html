@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GITAcademy — Project Index</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --ink:#0d0d0f;--cream:#f5f0e8;--gold:#e8c547;--moss:#2d4a3e;
+      --rust:#c4522a;--paper:#faf8f3;--smoke:#f0ece4;--dark:#161618;
+      --font-display:'Fraunces',Georgia,serif;--font-body:'DM Sans',system-ui,sans-serif;
+      --radius-md:12px;--radius-lg:18px;--radius-xl:24px;
+      --shadow-sm:0 2px 8px rgba(13,13,15,.06);--shadow-md:0 4px 20px rgba(13,13,15,.1);
+    }
+    body{font-family:var(--font-body);background:var(--smoke);color:var(--ink);min-height:100vh;overflow-x:hidden}
+    a{text-decoration:none;color:inherit}
+
+    /* HERO */
+    .hero{background:var(--ink);padding:4rem 2rem 3.5rem;text-align:center;position:relative;overflow:hidden}
+    .hero-blob{position:absolute;border-radius:50%;pointer-events:none}
+    .hero-blob-1{width:500px;height:500px;background:radial-gradient(circle,rgba(45,74,62,.5),transparent 70%);top:-180px;left:-80px}
+    .hero-blob-2{width:400px;height:400px;background:radial-gradient(circle,rgba(232,197,71,.1),transparent 70%);top:-150px;right:-60px}
+    .hero-blob-3{width:300px;height:300px;background:radial-gradient(circle,rgba(196,82,42,.08),transparent 70%);bottom:-100px;left:35%}
+    .hero-inner{position:relative;z-index:1;max-width:700px;margin:0 auto}
+    .hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(232,197,71,.12);border:1px solid rgba(232,197,71,.2);color:var(--gold);font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.35rem .9rem;border-radius:100px;margin-bottom:1.25rem}
+    .hero-dot{width:6px;height:6px;background:var(--gold);border-radius:50%;animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+    .hero-title{font-family:var(--font-display);font-size:clamp(2.2rem,6vw,4.5rem);font-weight:900;color:var(--cream);letter-spacing:-.03em;margin-bottom:.75rem;line-height:.95}
+    .hero-title em{font-style:italic;font-weight:300;color:var(--gold)}
+    .hero-sub{font-size:.95rem;color:rgba(245,240,232,.5);font-weight:300;line-height:1.7;max-width:500px;margin:0 auto 2rem}
+    .hero-stats{display:flex;align-items:center;justify-content:center;gap:2rem;flex-wrap:wrap}
+    .hs-item{text-align:center}
+    .hs-num{font-family:var(--font-display);font-size:1.6rem;font-weight:700;color:var(--cream);line-height:1}
+    .hs-label{font-size:.72rem;color:rgba(245,240,232,.35);margin-top:.15rem}
+    .hs-sep{width:1px;height:28px;background:rgba(255,255,255,.1)}
+
+    /* SEARCH */
+    .search-wrap{max-width:440px;margin:0 auto 3rem;position:relative}
+    .search-input{width:100%;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.12);border-radius:100px;padding:.75rem 1rem .75rem 2.8rem;font-size:.9rem;color:var(--cream);font-family:var(--font-body);outline:none;transition:.2s}
+    .search-input:focus{background:rgba(255,255,255,.12);border-color:rgba(232,197,71,.4)}
+    .search-input::placeholder{color:rgba(245,240,232,.3)}
+    .search-icon{position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:rgba(245,240,232,.3);pointer-events:none}
+
+    /* CONTENT */
+    .container{max-width:1200px;margin:0 auto;padding:0 2rem}
+    .section{padding:3rem 0}
+
+    /* SECTION HEADER */
+    .section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem}
+    .section-hdr-left{}
+    .section-eyebrow{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem}
+    .section-title{font-family:var(--font-display);font-size:1.5rem;font-weight:900;letter-spacing:-.03em}
+    .section-count{font-size:.78rem;font-weight:600;background:var(--ink);color:var(--cream);padding:.25rem .7rem;border-radius:100px}
+
+    /* PAGE GRID */
+    .pages-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.85rem}
+    .page-card{
+      background:white;border-radius:var(--radius-lg);border:1px solid rgba(13,13,15,.06);
+      box-shadow:var(--shadow-sm);padding:1.1rem 1.25rem;
+      display:flex;align-items:flex-start;gap:.85rem;
+      transition:.2s;position:relative;overflow:hidden
+    }
+    .page-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);border-color:rgba(13,13,15,.12)}
+    .page-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px}
+    .page-card.auth::before{background:var(--rust)}
+    .page-card.dashboard::before{background:var(--moss)}
+    .page-card.course::before{background:var(--gold)}
+    .page-card.instructor::before{background:#7c3aed}
+    .page-card.checkout::before{background:#059669}
+    .page-card.admin::before{background:#dc2626}
+    .page-card.static::before{background:#64748b}
+    .page-icon{font-size:1.4rem;flex-shrink:0;margin-top:.05rem}
+    .page-info{flex:1;min-width:0}
+    .page-name{font-size:.875rem;font-weight:700;margin-bottom:.15rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .page-file{font-size:.7rem;color:rgba(13,13,15,.35);font-family:monospace;margin-bottom:.3rem}
+    .page-desc{font-size:.75rem;color:rgba(13,13,15,.5);line-height:1.45}
+    .page-badge{display:inline-block;font-size:.58rem;font-weight:700;padding:.12rem .4rem;border-radius:4px;text-transform:uppercase;letter-spacing:.04em;margin-top:.35rem}
+    .badge-done{background:rgba(45,122,79,.1);color:#166534}
+    .badge-new{background:rgba(232,197,71,.15);color:#854d0e}
+
+    /* FILE ASSETS */
+    .assets-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.85rem}
+    .asset-card{background:white;border-radius:var(--radius-lg);border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);padding:1rem 1.25rem;display:flex;align-items:center;gap:.85rem;transition:.2s}
+    .asset-card:hover{box-shadow:var(--shadow-md)}
+    .asset-icon{font-size:1.3rem;flex-shrink:0}
+    .asset-info{flex:1;min-width:0}
+    .asset-name{font-size:.875rem;font-weight:600;font-family:monospace;margin-bottom:.1rem}
+    .asset-desc{font-size:.75rem;color:rgba(13,13,15,.45)}
+
+    /* LARAVEL GUIDE */
+    .guide-card{background:var(--ink);border-radius:var(--radius-xl);padding:2rem 2.5rem;margin-bottom:1.5rem;position:relative;overflow:hidden}
+    .guide-blob{position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(232,197,71,.1),transparent 70%);top:-100px;right:-60px;pointer-events:none}
+    .guide-title{font-family:var(--font-display);font-size:1.3rem;font-weight:700;color:var(--cream);margin-bottom:1rem;position:relative;z-index:1}
+    .guide-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem;position:relative;z-index:1}
+    .guide-step{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius-md);padding:1rem 1.1rem}
+    .gs-num{font-size:.65rem;font-weight:700;color:var(--gold);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.35rem}
+    .gs-title{font-size:.875rem;font-weight:700;color:var(--cream);margin-bottom:.3rem}
+    .gs-text{font-size:.78rem;color:rgba(245,240,232,.45);line-height:1.55}
+    .gs-code{font-family:monospace;background:rgba(232,197,71,.1);color:var(--gold);padding:.1rem .35rem;border-radius:4px;font-size:.75rem}
+
+    /* FOOTER */
+    .footer{background:var(--ink);color:var(--cream);padding:2rem;margin-top:0}
+    .footer-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;font-size:.78rem;color:rgba(245,240,232,.3)}
+    .footer-inner a{color:rgba(245,240,232,.3)}.footer-inner a:hover{color:var(--cream)}
+
+    /* RESPONSIVE */
+    @media(max-width:768px){
+      .hero{padding:3rem 1.25rem 2.5rem}
+      .container{padding:0 1.25rem}
+      .guide-grid{grid-template-columns:1fr}
+      .hero-stats{gap:1.25rem}
+      .hs-sep{display:none}
+    }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-blob hero-blob-1"></div>
+  <div class="hero-blob hero-blob-2"></div>
+  <div class="hero-blob hero-blob-3"></div>
+  <div class="hero-inner">
+    <div class="hero-badge"><span class="hero-dot"></span> Project Index</div>
+    <h1 class="hero-title">GITAcademy<br><em>Frontend.</em></h1>
+    <p class="hero-sub">Complete online learning platform frontend — 34 pages, 3 JS modules, 3 JSON datasets. Built to connect to a Laravel backend.</p>
+
+    <div class="search-wrap" style="margin-top:2rem">
+      <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input class="search-input" type="text" id="searchInput" placeholder="Search pages…"/>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hs-item"><div class="hs-num">52</div><div class="hs-label">HTML Pages</div></div>
+      <div class="hs-sep"></div>
+      <div class="hs-item"><div class="hs-num">3</div><div class="hs-label">JS Modules</div></div>
+      <div class="hs-sep"></div>
+      <div class="hs-item"><div class="hs-num">3</div><div class="hs-label">JSON Datasets</div></div>
+      <div class="hs-sep"></div>
+      <div class="hs-item"><div class="hs-num">100%</div><div class="hs-label">Responsive</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ── AUTH ── -->
+  <div class="section" id="group-auth">
+    <div class="section-hdr">
+      <div class="section-hdr-left">
+        <div class="section-eyebrow" style="color:var(--rust)">🔐 Authentication</div>
+        <div class="section-title">Auth Pages</div>
+      </div>
+      <span class="section-count">5 pages</span>
+    </div>
+    <div class="pages-grid" id="grid-auth">
+      <a href="learnhub_responsive.html" class="page-card auth"><span class="page-icon">🏠</span><div class="page-info"><div class="page-name">Landing Page</div><div class="page-file">learnhub_responsive.html</div><div class="page-desc">Main entry page with split hero, marquee strip, CTA buttons</div><span class="page-badge badge-done">Home Base</span></div></a>
+      <a href="login.html" class="page-card auth"><span class="page-icon">🔑</span><div class="page-info"><div class="page-name">Login</div><div class="page-file">login.html</div><div class="page-desc">Email + password, Google, GitHub login. Password toggle, validation</div></div></a>
+      <a href="register.html" class="page-card auth"><span class="page-icon">📝</span><div class="page-info"><div class="page-name">Register</div><div class="page-file">register.html</div><div class="page-desc">Full sign-up with name, email, password strength bar, terms</div></div></a>
+      <a href="forgot-password.html" class="page-card auth"><span class="page-icon">🔓</span><div class="page-info"><div class="page-name">Forgot Password</div><div class="page-file">forgot-password.html</div><div class="page-desc">Email recovery with 3-step guide. Animated success state</div></div></a>
+      <a href="reset-password.html" class="page-card auth"><span class="page-icon">🛡️</span><div class="page-info"><div class="page-name">Reset Password</div><div class="page-file">reset-password.html</div><div class="page-desc">New password with strength meter, confirm match, security tips</div></div></a>
+    </div>
+  </div>
+
+  <!-- ── USER DASHBOARD ── -->
+  <div class="section" id="group-dashboard">
+    <div class="section-hdr">
+      <div class="section-hdr-left">
+        <div class="section-eyebrow" style="color:var(--moss)">👤 User</div>
+        <div class="section-title">Dashboard & Profile</div>
+      </div>
+      <span class="section-count">3 pages</span>
+    </div>
+    <div class="pages-grid" id="grid-dashboard">
+      <a href="dashboard.html" class="page-card dashboard"><span class="page-icon">📊</span><div class="page-info"><div class="page-name">Dashboard</div><div class="page-file">dashboard.html</div><div class="page-desc">Welcome banner, stats, continue learning, recommended courses, activity feed</div></div></a>
+      <a href="profile.html" class="page-card dashboard"><span class="page-icon">🙋</span><div class="page-info"><div class="page-name">Profile</div><div class="page-file">profile.html</div><div class="page-desc">Cover photo, tabs: About, Courses, Certificates, Achievements, Reviews</div></div></a>
+      <a href="edit-profile.html" class="page-card dashboard"><span class="page-icon">✏️</span><div class="page-info"><div class="page-name">Edit Profile</div><div class="page-file">edit-profile.html</div><div class="page-desc">Avatar upload, personal info, social links, password change, notifications, danger zone</div></div></a>
+    </div>
+  </div>
+
+  <!-- ── COURSE DISCOVERY ── -->
+  <div class="section" id="group-courses">
+    <div class="section-hdr">
+      <div class="section-hdr-left">
+        <div class="section-eyebrow" style="color:#854d0e">🔍 Discovery</div>
+        <div class="section-title">Course Discovery</div>
+      </div>
+      <span class="section-count">4 pages</span>
+    </div>
+    <div class="pages-grid" id="grid-courses">
+      <a href="home.html" class="page-card course"><span class="page-icon">🏠</span><div class="page-info"><div class="page-name">Home / Browse</div><div class="page-file">home.html</div><div class="page-desc">Hero search, categories, trending courses, featured banner, instructors, testimonials, CTA</div></div></a>
+      <a href="course-list.html" class="page-card course"><span class="page-icon">📚</span><div class="page-info"><div class="page-name">Course List</div><div class="page-file">course-list.html</div><div class="page-desc">Filter sidebar (category, level, rating, price), grid/list view, sort, pagination</div></div></a>
+      <a href="course-details.html" class="page-card course"><span class="page-icon">📄</span><div class="page-info"><div class="page-name">Course Details</div><div class="page-file">course-details.html</div><div class="page-desc">Hero, sticky enroll card, curriculum accordion, instructor bio, reviews, related courses</div></div></a>
+      <a href="category-list.html" class="page-card course"><span class="page-icon">🗂️</span><div class="page-info"><div class="page-name">Categories</div><div class="page-file">category-list.html</div><div class="page-desc">Featured categories hero, full 12-category grid, popular topics cloud</div></div></a>
+    </div>
+  </div>
+
+  <!-- ── COURSE PLAYER ── -->
+  <div class="section" id="group-player">
+    <div class="section-hdr">
+      <div class="section-hdr-left">
+        <div class="section-eyebrow" style="color:var(--gold)">🎬 Learning</div>
+        <div class="section-title">Course Player</div>
+      </div>
+      <span class="section-count">1 page</span>
+    </div>
+    <div class="pages-grid" id="grid-player">
+      <a href="course-player.html" class="page-card course"><span class="page-icon">▶️</span><div class="page-info"><div class="page-name">Course Player</div><div class="page-file">course-player.html</div><div class="page-desc">Video player with controls, speed, progress bar. Tabs: Overview, Notes, Q&A, Resources. Curriculum sidebar with completion tracking</div><span class="page-badge badge-done">Full-featured</span></div></a>
+    </div>
+  </div>
+
+  <!-- ── INSTRUCTOR ── -->
+  <div class="section" id="group-instructor">
+    <div class="section-hdr">
+      <div class="section-hdr-left">
+        <div class="section-eyebrow" style="color:#7c3aed">🧑‍🏫 Instructor</div>
+        <div class="section-title">Instructor Portal</div>
+      </div>
+      <span class="section-count">5 pages</span>
+    </div>
+    <div class="pages-grid" id="grid-instructor">
+      <a href="instructor-dashboard.html" class="page-card instructor"><span class="page-icon">📈</span><div class="page-info"><div class="page-name">Instructor Dashboard</div><div class="page-file">instructor-dashboard.html</div><div class="page-desc">Dark UI, revenue stats, courses table, bar chart, enrollment feed</div></div></a>
+      <a href="create-course.html" class="page-card instructor"><span class="page-icon">➕</span><div class="page-info"><div class="page-name">Create Course</div><div class="page-file">create-course.html</div><div class="page-desc">5-step wizard: Info → Curriculum → Media → Pricing → Publish</div></div></a>
+      <a href="edit-course.html" class="page-card instructor"><span class="page-icon">✏️</span><div class="page-info"><div class="page-name">Edit Course</div><div class="page-file">edit-course.html</div><div class="page-desc">Left nav switching between sections, save toast, SEO fields</div></div></a>
+      <a href="upload-video.html" class="page-card instructor"><span class="page-icon">📹</span><div class="page-info"><div class="page-name">Upload Video</div><div class="page-file">upload-video.html</div><div class="page-desc">Drag & drop with live progress bar, video metadata form, file list sidebar</div></div></a>
+      <a href="course-analytics.html" class="page-card instructor"><span class="page-icon">📊</span><div class="page-info"><div class="page-name">Course Analytics</div><div class="page-file">course-analytics.html</div><div class="page-desc">Date filter, 5 KPI cards, revenue bar chart, regions donut, student table, rating breakdown</div></div></a>
+      <a href="instructor-profile.html?id=2" class="page-card instructor"><span class="page-icon">🧑‍🏫</span><div class="page-info"><div class="page-name">Instructor Profile</div><div class="page-file">instructor-profile.html</div><div class="page-desc">Public instructor page — bio, real rating/student/course stats, and their full course list.</div></div></a>
+    </div>
+  </div>
+
+  <!-- ── CHECKOUT ── -->
+  <div class="section" id="group-checkout">
+    <div class="section-hdr">
+      <div class="section-hdr-left">
+        <div class="section-eyebrow" style="color:#059669">💳 Payments</div>
+        <div class="section-title">Checkout & Payments</div>
+      </div>
+      <span class="section-count">4 pages</span>
+    </div>
+    <div class="pages-grid" id="grid-checkout">
+      <a href="cart.html" class="page-card checkout"><span class="page-icon">🛒</span><div class="page-info"><div class="page-name">Cart</div><div class="page-file">cart.html</div><div class="page-desc">Course items, remove/save later, coupon code (LEARN20), order summary, recommendations</div></div></a>
+      <a href="checkout.html" class="page-card checkout"><span class="page-icon">💳</span><div class="page-info"><div class="page-name">Checkout</div><div class="page-file">checkout.html</div><div class="page-desc">3-step progress, billing info, card/MoMo/PayPal tabs, order review, SSL badges</div></div></a>
+      <a href="payment-success.html" class="page-card checkout"><span class="page-icon">✅</span><div class="page-info"><div class="page-name">Payment Success</div><div class="page-file">payment-success.html</div><div class="page-desc">Confetti animation, purchased courses, receipt, next steps guide</div></div></a>
+      <a href="payment-failed.html" class="page-card checkout"><span class="page-icon">❌</span><div class="page-info"><div class="page-name">Payment Failed</div><div class="page-file">payment-failed.html</div><div class="page-desc">Error details, reasons, tips, alternative payment options, support links</div></div></a>
+    </div>
+  </div>
+
+  <!-- ── ADMIN ── -->
+  <div class="section" id="group-admin">
+    <div class="section-hdr">
+      <div class="section-hdr-left">
+        <div class="section-eyebrow" style="color:#dc2626">🛡 Admin</div>
+        <div class="section-title">Admin Panel</div>
+      </div>
+      <span class="section-count">4 pages</span>
+    </div>
+    <div class="pages-grid" id="grid-admin">
+      <a href="admin-dashboard.html" class="page-card admin"><span class="page-icon">🖥️</span><div class="page-info"><div class="page-name">Admin Dashboard</div><div class="page-file">admin-dashboard.html</div><div class="page-desc">Dark theme, platform KPIs, revenue chart, health stats, activity log, top courses</div></div></a>
+      <a href="admin-users.html" class="page-card admin"><span class="page-icon">👥</span><div class="page-info"><div class="page-name">Manage Users</div><div class="page-file">admin-users.html</div><div class="page-desc">Searchable user table with role badges, filter tabs, suspend/delete actions, pagination</div></div></a>
+      <a href="admin-courses.html" class="page-card admin"><span class="page-icon">📚</span><div class="page-info"><div class="page-name">Manage Courses</div><div class="page-file">admin-courses.html</div><div class="page-desc">Course review queue, approve/reject actions, status badges, bulk actions</div></div></a>
+      <a href="admin-payments.html" class="page-card admin"><span class="page-icon">💰</span><div class="page-info"><div class="page-name">Payments</div><div class="page-file">admin-payments.html</div><div class="page-desc">Transaction log, revenue summary, refund/dispute management, export CSV</div></div></a>
+    </div>
+  </div>
+
+  <!-- ── STATIC ── -->
+  <div class="section" id="group-static">
+    <div class="section-hdr">
+      <div class="section-hdr-left">
+        <div class="section-eyebrow" style="color:#64748b">📄 Static</div>
+        <div class="section-title">Static Pages</div>
+      </div>
+      <span class="section-count">5 pages</span>
+    </div>
+    <div class="pages-grid" id="grid-static">
+      <a href="about.html" class="page-card static"><span class="page-icon">💡</span><div class="page-info"><div class="page-name">About Us</div><div class="page-file">about.html</div><div class="page-desc">Mission, values, team section, stats, CTA banner, footer</div></div></a>
+      <a href="contact.html" class="page-card static"><span class="page-icon">📬</span><div class="page-info"><div class="page-name">Contact</div><div class="page-file">contact.html</div><div class="page-desc">Contact options (chat, email, help), contact form with success state, FAQ accordion</div></div></a>
+      <a href="help.html" class="page-card static"><span class="page-icon">❓</span><div class="page-info"><div class="page-name">Help Centre</div><div class="page-file">help.html</div><div class="page-desc">Searchable hero, 6 help categories, 8 popular articles, support CTA</div></div></a>
+      <a href="terms.html" class="page-card static"><span class="page-icon">⚖️</span><div class="page-info"><div class="page-name">Terms of Service</div><div class="page-file">terms.html</div><div class="page-desc">11 sections with sticky TOC, scroll-highlighted navigation, data table</div></div></a>
+      <a href="privacy.html" class="page-card static"><span class="page-icon">🔒</span><div class="page-info"><div class="page-name">Privacy Policy</div><div class="page-file">privacy.html</div><div class="page-desc">10 sections, data collection table, sticky TOC with active section highlight</div></div></a>
+    </div>
+  </div>
+  <!-- ── Newly Built Pages ── -->
+  <div class="section" id="group-new">
+    <div class="section-hdr">
+      <div class="section-hdr-left">
+        <div class="section-eyebrow" style="color:#7c3aed">✨ New</div>
+        <div class="section-title">Newly Built Pages</div>
+      </div>
+      <span class="section-count">18 pages</span>
+    </div>
+    <div class="pages-grid">
+      <a href="my-courses.html" class="page-card dashboard"><span class="page-icon">📚</span><div class="page-info"><div class="page-name">My Courses</div><div class="page-file">my-courses.html</div><div class="page-desc">All enrolled courses with progress bars, filter tabs, sort options and continue learning buttons.</div></div></a>
+      <a href="certificates.html" class="page-card dashboard"><span class="page-icon">🏆</span><div class="page-info"><div class="page-name">Certificates</div><div class="page-file">certificates.html</div><div class="page-desc">All earned certificates with download PDF, share to LinkedIn, and credential verification.</div></div></a>
+      <a href="edit-profile.html" class="page-card dashboard"><span class="page-icon">⚙️</span><div class="page-info"><div class="page-name">Account Settings</div><div class="page-file">settings.html</div><div class="page-desc">Notification preferences, privacy controls, billing info and account deletion.</div></div></a>
+      <a href="course-list.html" class="page-card dashboard"><span class="page-icon">🔍</span><div class="page-info"><div class="page-name">Search Results</div><div class="page-file">search-results.html</div><div class="page-desc">Dedicated search results page with filters, sort and result count.</div></div></a>
+      <a href="instructor-earnings.html" class="page-card instructor"><span class="page-icon">💰</span><div class="page-info"><div class="page-name">Earnings</div><div class="page-file">instructor-earnings.html</div><div class="page-desc">Revenue chart, payout balance, course breakdown and transaction history.</div></div></a>
+      <a href="student-list.html" class="page-card instructor"><span class="page-icon">👥</span><div class="page-info"><div class="page-name">Student List</div><div class="page-file">student-list.html</div><div class="page-desc">All enrolled students with search, course filter, progress bars and CSV export.</div></div></a>
+      <a href="course-review.html" class="page-card dashboard"><span class="page-icon">⭐</span><div class="page-info"><div class="page-name">Course Review</div><div class="page-file">course-review.html</div><div class="page-desc">Star rating, category ratings, written review, recommend toggle and success state.</div></div></a>
+      <a href="quiz.html" class="page-card dashboard"><span class="page-icon">📝</span><div class="page-info"><div class="page-name">Quiz</div><div class="page-file">quiz.html</div><div class="page-desc">Full quiz engine with countdown timer, multiple choice, instant feedback and results screen.</div></div></a>
+      <a href="admin-reviews.html" class="page-card admin"><span class="page-icon">🛡️</span><div class="page-info"><div class="page-name">Admin Reviews</div><div class="page-file">admin-reviews.html</div><div class="page-desc">Review moderation queue — approve, flag, remove with status badges and search.</div></div></a>
+      <a href="admin-categories.html" class="page-card admin"><span class="page-icon">🗂️</span><div class="page-info"><div class="page-name">Admin Categories</div><div class="page-file">admin-categories.html</div><div class="page-desc">Manage categories with add/edit modal, emoji picker, show/hide toggle and delete.</div></div></a>
+      <a href="admin-settings.html" class="page-card admin"><span class="page-icon">⚙️</span><div class="page-info"><div class="page-name">Admin Settings</div><div class="page-file">admin-settings.html</div><div class="page-desc">Platform settings — general, payments, email, features, security, storage with save bar.</div></div></a>
+      <a href="register.html" class="page-card static"><span class="page-icon">🚀</span><div class="page-info"><div class="page-name">Become Instructor</div><div class="page-file">become-instructor.html</div><div class="page-desc">Instructor landing page with benefits, requirements and application form.</div></div></a>
+    </div>
+  </div>
+
+
+  </div>
+
+    <div class="assets-grid">
+      <div class="asset-card"><span class="asset-icon">🔌</span><div class="asset-info"><div class="asset-name">api.js</div><div class="asset-desc">Central fetch helper — all Laravel API endpoints (auth, courses, user, cart, payments, instructor, admin)</div></div></div>
+      <div class="asset-card"><span class="asset-icon">🔐</span><div class="asset-info"><div class="asset-name">auth.js</div><div class="asset-desc">Login, register, logout, token handling, session management, UI form init, nav population</div></div></div>
+      <div class="asset-card"><span class="asset-icon">🛠️</span><div class="asset-info"><div class="asset-name">utils.js</div><div class="asset-desc">Format helpers, DOM utilities, validation, debounce, course card builder, toast notifications</div></div></div>
+      <div class="asset-card"><span class="asset-icon">📦</span><div class="asset-info"><div class="asset-name">courses.json</div><div class="asset-desc">10 dummy courses with full metadata — title, price, rating, instructor, tags, curriculum</div></div></div>
+      <div class="asset-card"><span class="asset-icon">👤</span><div class="asset-info"><div class="asset-name">users.json</div><div class="asset-desc">4 dummy users — student, instructor, admin — with enrolled courses, certificates, social links</div></div></div>
+      <div class="asset-card"><span class="asset-icon">🗂️</span><div class="asset-info"><div class="asset-name">categories.json</div><div class="asset-desc">12 course categories with subcategories, course counts, student counts and popular topics</div></div></div>
+    </div>
+  </div>
+
+  <!-- ── LARAVEL INTEGRATION GUIDE ── -->
+  <div class="section">
+    <div class="section-hdr">
+      <div class="section-hdr-left">
+        <div class="section-eyebrow" style="color:var(--moss)">🚀 Integration</div>
+        <div class="section-title">Laravel Backend Guide</div>
+      </div>
+    </div>
+    <div class="guide-card">
+      <div class="guide-blob"></div>
+      <div class="guide-title">Connecting to Laravel</div>
+      <div class="guide-grid">
+        <div class="guide-step">
+          <div class="gs-num">Step 01</div>
+          <div class="gs-title">Convert to Blade</div>
+          <p class="gs-text">Rename <span class="gs-code">.html</span> → <span class="gs-code">.blade.php</span>. Extract shared navbar/footer into <span class="gs-code">layouts/app.blade.php</span> and use <span class="gs-code">@extends</span> + <span class="gs-code">@section</span>.</p>
+        </div>
+        <div class="guide-step">
+          <div class="gs-num">Step 02</div>
+          <div class="gs-title">Set API Base URL</div>
+          <p class="gs-text">Set <span class="gs-code">window.GITAcademy_API_URL</span> in your Blade layout to your Laravel API URL. <span class="gs-code">api.js</span> picks it up automatically.</p>
+        </div>
+        <div class="guide-step">
+          <div class="gs-num">Step 03</div>
+          <div class="gs-title">Auth — Laravel Sanctum</div>
+          <p class="gs-code">php artisan sanctum:install</p>
+          <p class="gs-text" style="margin-top:.4rem">Use <span class="gs-code">auth.js</span> login/register functions. They post to <span class="gs-code">/api/auth/login</span> and store the Bearer token in localStorage.</p>
+        </div>
+        <div class="guide-step">
+          <div class="gs-num">Step 04</div>
+          <div class="gs-title">Replace Static Data</div>
+          <p class="gs-text">Replace hardcoded HTML course cards with JS calls to <span class="gs-code">coursesApi.list()</span> and <span class="gs-code">renderCourseGrid()</span> from <span class="gs-code">utils.js</span>. Connect payments to Paystack or Stripe.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <div class="footer-inner">
+    <span>GITAcademy Frontend · 34 pages · Built for Laravel · March 2026</span>
+    <div style="display:flex;gap:1.5rem">
+      <a href="learnhub_responsive.html">Home</a>
+      <a href="login.html">Login</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="admin-dashboard.html">Admin</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Live search
+  const searchInput = document.getElementById('searchInput');
+  const allCards = document.querySelectorAll('.page-card');
+
+  searchInput.addEventListener('input', function() {
+    const q = this.value.toLowerCase().trim();
+    let anyVisible = false;
+
+    allCards.forEach(card => {
+      const text = card.textContent.toLowerCase();
+      const match = !q || text.includes(q);
+      card.style.display = match ? '' : 'none';
+      if (match) anyVisible = true;
+    });
+
+    // Show/hide section groups based on content
+    document.querySelectorAll('[id^="grid-"]').forEach(grid => {
+      const visibleCards = grid.querySelectorAll('.page-card:not([style*="none"])');
+      const section = grid.closest('[id^="group-"]');
+      if (section) section.style.display = visibleCards.length === 0 ? 'none' : '';
+    });
+  });
+</script>
+</body>
+</html>

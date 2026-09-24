@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reviews — GITAcademy Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--ink:#0d0d0f;--cream:#f5f0e8;--gold:#e8c547;--moss:#2d4a3e;--rust:#c4522a;--error:#e05555;--success:#2d7a4f;--dark:#161618;--darker:#111113;--font-display:'Fraunces',Georgia,serif;--font-body:'DM Sans',system-ui,sans-serif;--nav-h:56px;--sidebar-w:220px;--radius-sm:8px;--radius-md:12px;--radius-lg:18px;--radius-xl:24px}
+    html{scroll-behavior:smooth}
+    body{font-family:var(--font-body);background:var(--darker);color:rgba(245,240,232,.85);min-height:100vh;overflow-x:hidden}
+    a{text-decoration:none;color:inherit}
+    button{cursor:pointer;font-family:inherit;border:none;background:none}
+
+    .navbar{position:sticky;top:0;z-index:500;height:var(--nav-h);background:var(--dark);border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;padding:0 1.25rem;gap:1rem}
+    .nav-logo{font-family:var(--font-display);font-size:1.3rem;font-weight:900;color:var(--cream);letter-spacing:-.03em}
+    .nav-logo span{color:var(--rust)}
+    .nav-admin-badge{background:rgba(196,82,42,.2);color:#fca5a5;font-size:.62rem;font-weight:700;padding:.15rem .55rem;border-radius:100px;letter-spacing:.06em;text-transform:uppercase}
+    .nav-right{margin-left:auto;display:flex;align-items:center;gap:.65rem}
+    .nav-icon-btn{width:34px;height:34px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:rgba(245,240,232,.5);transition:.2s;position:relative}
+    .nav-icon-btn:hover{background:rgba(255,255,255,.08)}
+    .nav-badge{position:absolute;top:4px;right:4px;width:7px;height:7px;background:var(--rust);border-radius:50%}
+    .nav-user{display:flex;align-items:center;gap:.5rem;padding:.25rem .4rem .25rem .7rem;border-radius:100px;border:1px solid rgba(255,255,255,.1);cursor:pointer}
+    .nav-user-name{font-size:.82rem;font-weight:500;color:rgba(245,240,232,.7)}
+    .avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--rust),#f97316);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:white;flex-shrink:0}
+
+    .page-wrap{display:flex;min-height:calc(100vh - var(--nav-h))}
+    .sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--dark);border-right:1px solid rgba(255,255,255,.06);padding:1rem .65rem;display:flex;flex-direction:column;gap:.1rem;position:sticky;top:var(--nav-h);height:calc(100vh - var(--nav-h));overflow-y:auto}
+    .sidebar-section{font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,240,232,.22);padding:.4rem .6rem;margin-top:.4rem}
+    .sidebar-link{display:flex;align-items:center;gap:.55rem;padding:.55rem .7rem;border-radius:var(--radius-sm);font-size:.83rem;font-weight:500;color:rgba(245,240,232,.45);transition:.15s}
+    .sidebar-link:hover{background:rgba(255,255,255,.06);color:rgba(245,240,232,.85)}
+    .sidebar-link.active{background:rgba(196,82,42,.15);color:#fca5a5}
+
+    .main{flex:1;padding:2rem;overflow-x:hidden}
+    .page-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.75rem;flex-wrap:wrap;gap:1rem}
+    .page-eyebrow{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(196,82,42,.8);margin-bottom:.3rem}
+    .page-title{font-family:var(--font-display);font-size:2rem;font-weight:900;letter-spacing:-.03em;color:var(--cream)}
+
+    /* STATS */
+    .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.85rem;margin-bottom:1.75rem}
+    .stat-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-lg);padding:1rem 1.25rem}
+    .stat-num{font-family:var(--font-display);font-size:1.6rem;font-weight:900;color:var(--cream);letter-spacing:-.03em;margin-bottom:.15rem}
+    .stat-label{font-size:.68rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(245,240,232,.3)}
+
+    /* TOOLBAR */
+    .toolbar{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem;flex-wrap:wrap}
+    .filter-tabs{display:flex;gap:.25rem;background:rgba(255,255,255,.04);border-radius:100px;padding:.2rem}
+    .filter-tab{padding:.35rem .85rem;border-radius:100px;font-size:.78rem;font-weight:600;color:rgba(245,240,232,.35);cursor:pointer;transition:.15s;background:none;border:none;font-family:inherit}
+    .filter-tab:hover{color:rgba(245,240,232,.75)}
+    .filter-tab.active{background:rgba(255,255,255,.09);color:rgba(245,240,232,.85)}
+    .search-input{background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.08);border-radius:100px;padding:.4rem .9rem .4rem 2rem;font-size:.82rem;color:var(--cream);font-family:var(--font-body);outline:none;width:220px;transition:.2s;position:relative}
+    .search-input:focus{border-color:rgba(196,82,42,.4)}
+    .search-input::placeholder{color:rgba(245,240,232,.25)}
+
+    /* REVIEW CARDS */
+    .reviews-list{display:flex;flex-direction:column;gap:.85rem}
+    .review-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-xl);padding:1.25rem 1.5rem}
+    .review-card.pending{border-color:rgba(232,197,71,.2)}
+    .review-card.approved{border-color:rgba(74,222,128,.1)}
+    .review-card.flagged{border-color:rgba(248,113,113,.2)}
+    .rv-hdr{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:.85rem;flex-wrap:wrap}
+    .rv-hdr-left{display:flex;align-items:center;gap:.75rem}
+    .rv-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--moss),#16a34a);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:white;flex-shrink:0}
+    .rv-name{font-size:.875rem;font-weight:700;color:rgba(245,240,232,.85)}
+    .rv-meta{font-size:.72rem;color:rgba(245,240,232,.3)}
+    .rv-stars{color:var(--gold);font-size:.9rem;letter-spacing:1px}
+    .rv-status-badge{font-size:.65rem;font-weight:700;padding:.2rem .6rem;border-radius:100px;letter-spacing:.04em;text-transform:uppercase}
+    .badge-pending{background:rgba(232,197,71,.12);color:#d4a017}
+    .badge-approved{background:rgba(74,222,128,.1);color:#4ade80}
+    .badge-flagged{background:rgba(248,113,113,.1);color:#f87171}
+    .rv-course{font-size:.75rem;color:rgba(245,240,232,.4);margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem}
+    .rv-title{font-size:.9rem;font-weight:700;color:rgba(245,240,232,.85);margin-bottom:.4rem}
+    .rv-body{font-size:.85rem;color:rgba(245,240,232,.55);line-height:1.65;margin-bottom:1rem}
+    .rv-actions{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+    .rv-btn{font-size:.78rem;font-weight:600;padding:.4rem .9rem;border-radius:var(--radius-sm);cursor:pointer;transition:.15s;font-family:inherit;border:1px solid}
+    .rv-btn.approve{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.2);color:#4ade80}
+    .rv-btn.approve:hover{background:rgba(74,222,128,.2)}
+    .rv-btn.flag{background:rgba(232,197,71,.08);border-color:rgba(232,197,71,.2);color:#d4a017}
+    .rv-btn.flag:hover{background:rgba(232,197,71,.15)}
+    .rv-btn.remove{background:rgba(248,113,113,.08);border-color:rgba(248,113,113,.18);color:#f87171}
+    .rv-btn.remove:hover{background:rgba(248,113,113,.15)}
+    .rv-btn.reply{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1);color:rgba(245,240,232,.5)}
+    .rv-btn.reply:hover{color:var(--cream)}
+
+    /* PAGINATION */
+    .pagination{display:flex;align-items:center;justify-content:space-between;margin-top:1.5rem;flex-wrap:wrap;gap:.75rem}
+    .pg-info{font-size:.78rem;color:rgba(245,240,232,.3)}
+    .pg-btns{display:flex;gap:.35rem}
+    .pg-btn{width:32px;height:32px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:600;color:rgba(245,240,232,.4);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);cursor:pointer;transition:.15s}
+    .pg-btn.active{background:rgba(196,82,42,.25);color:#fca5a5;border-color:rgba(196,82,42,.3)}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--success);color:white;padding:.7rem 1.2rem;border-radius:var(--radius-md);font-size:.82rem;font-weight:600;transform:translateY(60px);opacity:0;transition:.3s;z-index:999}
+    .toast.show{transform:translateY(0);opacity:1}
+
+    @media(max-width:1024px){.stats-row{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:768px){.sidebar{display:none}.main{padding:1.25rem}.stats-row{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="learnhub_responsive.html" class="nav-logo">GIT<span>Academy</span></a>
+  <span class="nav-admin-badge">Admin</span>
+  <div class="nav-right">
+    <a href="notifications.html" class="nav-icon-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="nav-badge"></span></a>
+    <div class="nav-user">
+      <span class="nav-user-name" id="navUserName">AKEY CLIFFORD JUNIOR</span>
+      <div class="avatar" id="navAvatar">ACJ</div>
+    </div>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <aside class="sidebar">
+    <div class="sidebar-section">Overview</div>
+    <a href="admin-dashboard.html" class="sidebar-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+    <div class="sidebar-section">Manage</div>
+    <a href="admin-users.html" class="sidebar-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Users</a>
+    <a href="admin-courses.html" class="sidebar-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Courses</a>
+    <a href="admin-reviews.html" class="sidebar-link active"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Reviews</a>
+    <a href="admin-payments.html" class="sidebar-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Payments</a>
+    <a href="admin-categories.html" class="sidebar-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Categories</a>
+    <a href="admin-settings.html" class="sidebar-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings</a>
+    <a href="profile.html" class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>My Profile</a>
+    <a href="login.html" class="sidebar-link" id="sidebarLogout" style="margin-top:auto;color:rgba(248,113,113,.6)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Log Out</a>
+  </aside>
+
+  <main class="main">
+    <div class="page-hdr">
+      <div>
+        <div class="page-eyebrow">Moderation</div>
+        <h1 class="page-title">Course Reviews</h1>
+      </div>
+    </div>
+
+    <div class="stats-row" id="reviewStats">
+      <div class="stat-card"><div class="stat-num" style="color:#d4a017" id="statPending">–</div><div class="stat-label">Pending Review</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:#4ade80" id="statApproved">–</div><div class="stat-label">Approved</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:#f87171" id="statFlagged">–</div><div class="stat-label">Flagged</div></div>
+      <div class="stat-card"><div class="stat-num" id="statAvg">–</div><div class="stat-label">Platform Avg</div></div>
+    </div>
+
+    <div class="toolbar">
+      <div class="filter-tabs" id="filterTabs">
+        <button class="filter-tab active" data-status="all">All</button>
+        <button class="filter-tab" data-status="pending">Pending</button>
+        <button class="filter-tab" data-status="approved">Approved</button>
+        <button class="filter-tab" data-status="flagged">Flagged</button>
+      </div>
+      <input class="search-input" type="text" placeholder="Search reviews…" id="reviewSearch" style="position:relative"/>
+    </div>
+
+    <div class="reviews-list" id="reviewsList"></div>
+
+    <div class="pagination">
+      <div class="pg-info" id="pgInfo">Showing all reviews</div>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+  import { adminApi } from './api.js';
+  import { redirectIfNotLoggedIn, getUser, logout } from './auth.js';
+
+  redirectIfNotLoggedIn('login.html');
+  document.getElementById('sidebarLogout')?.addEventListener('click', e => { e.preventDefault(); logout(); });
+  const me = getUser();
+  if (!me || me.role !== 'admin') window.location.href = 'dashboard.html';
+
+  if (me) {
+    document.getElementById('navUserName').textContent = me.first_name || 'Admin';
+    document.getElementById('navAvatar').textContent = ((me.first_name?.[0]||'A')+(me.last_name?.[0]||'D')).toUpperCase();
+  }
+
+  let reviews = [];
+  let currentFilter = 'all';
+  const gradients = ['linear-gradient(135deg,#7c3aed,#a855f7)','linear-gradient(135deg,#b45309,#d97706)','linear-gradient(135deg,#2d4a3e,#16a34a)','linear-gradient(135deg,#1a237e,#7c4dff)'];
+
+  async function loadReviews() {
+    try {
+      reviews = (await adminApi.reviews()).reviews || [];
+    } catch (err) {
+      reviews = [];
+    }
+    document.getElementById('statPending').textContent = reviews.filter(r => r.status === 'pending').length;
+    document.getElementById('statApproved').textContent = reviews.filter(r => r.status === 'approved').length;
+    document.getElementById('statFlagged').textContent = reviews.filter(r => r.status === 'flagged').length;
+    const avg = reviews.length ? (reviews.reduce((s,r)=>s+r.rating,0) / reviews.length).toFixed(1) : '–';
+    document.getElementById('statAvg').textContent = avg + '⭐';
+    render();
+  }
+
+  function render() {
+    const q = document.getElementById('reviewSearch').value.toLowerCase();
+    const list = reviews.filter(r => currentFilter === 'all' || r.status === currentFilter)
+                         .filter(r => !q || (`${r.first_name} ${r.last_name} ${r.title} ${r.comment} ${r.course_title}`).toLowerCase().includes(q));
+
+    document.getElementById('reviewsList').innerHTML = list.map((r, i) => {
+      const name = `${r.first_name} ${r.last_name}`;
+      const initials = name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+      const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
+      return `
+      <div class="review-card ${r.status}" data-id="${r.id}">
+        <div class="rv-hdr">
+          <div class="rv-hdr-left">
+            <div class="rv-avatar" style="background:${gradients[i % gradients.length]}">${initials}</div>
+            <div><div class="rv-name">${name}</div><div class="rv-meta">${r.created_at}</div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:.6rem">
+            <div class="rv-stars">${stars}</div>
+            <span class="rv-status-badge badge-${r.status}">${r.status.charAt(0).toUpperCase()+r.status.slice(1)}</span>
+          </div>
+        </div>
+        <div class="rv-course">${r.course_title}</div>
+        <div class="rv-title">${r.title || ''}</div>
+        <div class="rv-body">${r.comment || ''}</div>
+        <div class="rv-actions">
+          <button class="rv-btn approve" data-mod="${r.id}" data-status="approved">✓ Approve</button>
+          <button class="rv-btn flag" data-mod="${r.id}" data-status="flagged">⚑ Flag</button>
+          <button class="rv-btn remove" data-mod="${r.id}" data-status="removed">✕ Remove</button>
+        </div>
+      </div>`;
+    }).join('') || '<p style="color:rgba(245,240,232,.4);font-size:.85rem;padding:2rem;text-align:center">No reviews match this filter.</p>';
+
+    document.getElementById('reviewsList').querySelectorAll('[data-mod]').forEach(btn => {
+      btn.addEventListener('click', () => moderateReview(btn.dataset.mod, btn.dataset.status));
+    });
+  }
+
+  document.getElementById('filterTabs').addEventListener('click', (e) => {
+    if (!e.target.classList.contains('filter-tab')) return;
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    e.target.classList.add('active');
+    currentFilter = e.target.dataset.status;
+    render();
+  });
+
+  document.getElementById('reviewSearch').addEventListener('input', render);
+
+  async function moderateReview(id, action) {
+    const messages = { approved:'Review approved ✓', flagged:'Review flagged ⚑', removed:'Review removed ✕' };
+    const colors   = { approved:'#2d7a4f', flagged:'#d4a017', removed:'#e05555' };
+    try {
+      if (action === 'removed') {
+        await adminApi.deleteReview(id);
+      } else {
+        await adminApi.updateReviewStatus(id, action);
+      }
+      showToast(messages[action], colors[action]);
+      await loadReviews();
+    } catch (err) {
+      showToast('Could not update review.', '#e05555');
+    }
+  }
+
+  function showToast(msg, bg = '#2d7a4f') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.background = bg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  loadReviews();
+</script>
+</body>
+</html>

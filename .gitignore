@@ -1,0 +1,20 @@
+# Real secrets — never commit these
+.env
+
+# Generated database (created by api/seed.php)
+api/database.sqlite
+
+# Real user-uploaded content — don't commit real uploaded videos
+/uploads/*
+!/uploads/.gitkeep
+
+# Demo email log (created by api/mailer.php in demo mode)
+/storage/mail.log
+
+# Real backups (created by deploy/backup.sh)
+/backups/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp

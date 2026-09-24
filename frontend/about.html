@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About Us — GITAcademy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --ink:#0d0d0f;--cream:#f5f0e8;--gold:#e8c547;--moss:#2d4a3e;
+      --rust:#c4522a;--paper:#faf8f3;--smoke:#f0ece4;--mist:#e8e3db;
+      --font-display:'Fraunces',Georgia,serif;--font-body:'DM Sans',system-ui,sans-serif;
+      --nav-h:64px;--shadow-sm:0 2px 8px rgba(13,13,15,.06);--shadow-md:0 4px 20px rgba(13,13,15,.1);
+      --radius-sm:8px;--radius-md:12px;--radius-lg:18px;--radius-xl:24px;
+    }
+    body{font-family:var(--font-body);background:var(--cream);color:var(--ink);overflow-x:hidden}
+    a{text-decoration:none;color:inherit}
+    button{cursor:pointer;font-family:inherit;border:none;background:none}
+
+    /* NAVBAR */
+    .navbar{position:sticky;top:0;z-index:500;height:var(--nav-h);background:var(--cream);border-bottom:1px solid rgba(13,13,15,.08);display:flex;align-items:center;padding:0 2rem;gap:1.5rem}
+    .nav-logo{font-family:var(--font-display);font-size:1.4rem;font-weight:900;color:var(--ink);letter-spacing:-.03em}
+    .nav-logo span{color:var(--rust)}
+    .nav-links{display:flex;gap:.25rem}
+    .nav-link{font-size:.875rem;font-weight:500;color:rgba(13,13,15,.5);padding:.4rem .8rem;border-radius:var(--radius-md);transition:.15s}
+    .nav-link:hover,.nav-link.active{color:var(--ink);background:var(--smoke)}
+    .nav-right{display:flex;align-items:center;gap:.75rem;margin-left:auto}
+    .btn-ghost{background:none;border:1.5px solid rgba(13,13,15,.18);padding:.5rem 1.2rem;border-radius:100px;font-size:.85rem;font-weight:500;color:var(--ink);transition:.2s;font-family:inherit}
+    .btn-ghost:hover{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+    .btn-primary{background:var(--ink);color:var(--cream);border:none;padding:.5rem 1.4rem;border-radius:100px;font-size:.85rem;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit}
+    .btn-primary:hover{background:var(--rust)}
+
+    /* HERO */
+    .page-hero{background:var(--ink);padding:5rem 2rem;text-align:center;position:relative;overflow:hidden}
+    .hero-blob{position:absolute;border-radius:50%;pointer-events:none}
+    .hero-blob-1{width:500px;height:500px;background:radial-gradient(circle,rgba(45,74,62,.5),transparent 70%);top:-200px;left:-100px}
+    .hero-blob-2{width:400px;height:400px;background:radial-gradient(circle,rgba(232,197,71,.1),transparent 70%);top:-150px;right:-80px}
+    .hero-inner{position:relative;z-index:1;max-width:700px;margin:0 auto}
+    .hero-eyebrow{font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,240,232,.4);margin-bottom:1rem}
+    .hero-title{font-family:var(--font-display);font-size:clamp(2.5rem,6vw,5rem);font-weight:900;color:var(--cream);letter-spacing:-.03em;margin-bottom:1rem;line-height:.95}
+    .hero-title em{font-style:italic;font-weight:300;color:var(--gold)}
+    .hero-sub{font-size:1.05rem;color:rgba(245,240,232,.55);font-weight:300;line-height:1.7;max-width:520px;margin:0 auto}
+
+    /* CONTENT */
+    .container{max-width:1100px;margin:0 auto;padding:0 2rem}
+    .section{padding:5rem 0}
+    .section-alt{background:var(--smoke)}
+
+    /* MISSION */
+    .mission-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+    .mission-eyebrow{font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--rust);margin-bottom:.75rem}
+    .mission-title{font-family:var(--font-display);font-size:clamp(2rem,4vw,3rem);font-weight:900;letter-spacing:-.03em;margin-bottom:1.25rem;line-height:1}
+    .mission-title em{font-style:italic;font-weight:300;color:var(--rust)}
+    .mission-text{font-size:.95rem;color:rgba(13,13,15,.65);line-height:1.8;margin-bottom:1rem}
+    .mission-visual{background:var(--ink);border-radius:var(--radius-xl);padding:3rem;display:flex;flex-direction:column;gap:1.25rem;position:relative;overflow:hidden}
+    .mv-blob{position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(232,197,71,.12),transparent 70%);top:-100px;right:-80px;pointer-events:none}
+    .mv-stat{display:flex;flex-direction:column;gap:.2rem;position:relative;z-index:1}
+    .mv-num{font-family:var(--font-display);font-size:2.5rem;font-weight:900;color:var(--cream);letter-spacing:-.03em;line-height:1}
+    .mv-label{font-size:.82rem;color:rgba(245,240,232,.45)}
+
+    /* VALUES */
+    .values-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3rem}
+    .value-card{background:white;border-radius:var(--radius-xl);padding:2rem;border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);transition:.2s}
+    .value-card:hover{box-shadow:var(--shadow-md);transform:translateY(-3px)}
+    .value-icon{font-size:2.5rem;margin-bottom:1rem}
+    .value-title{font-family:var(--font-display);font-size:1.2rem;font-weight:700;letter-spacing:-.02em;margin-bottom:.6rem}
+    .value-text{font-size:.875rem;color:rgba(13,13,15,.6);line-height:1.7}
+
+    /* TEAM */
+    .section-title{font-family:var(--font-display);font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:900;letter-spacing:-.03em;margin-bottom:.5rem;line-height:1}
+    .section-sub{font-size:.95rem;color:rgba(13,13,15,.5);max-width:500px;margin-bottom:3rem;line-height:1.7}
+    .team-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem}
+    .team-card{background:white;border-radius:var(--radius-xl);padding:1.75rem;text-align:center;border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);transition:.2s}
+    .team-card:hover{box-shadow:var(--shadow-md);transform:translateY(-3px)}
+    .team-avatar{width:72px;height:72px;border-radius:50%;margin:0 auto 1rem;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:1.4rem;font-weight:700;color:var(--cream)}
+    .team-name{font-weight:700;font-size:.95rem;margin-bottom:.2rem}
+    .team-role{font-size:.78rem;color:rgba(13,13,15,.45)}
+
+    /* CTA */
+    .cta-banner{background:var(--ink);border-radius:var(--radius-xl);padding:4rem 3rem;text-align:center;position:relative;overflow:hidden;margin:0 2rem}
+    .cta-blob{position:absolute;border-radius:50%;pointer-events:none}
+    .cta-blob-1{width:400px;height:400px;background:radial-gradient(circle,rgba(232,197,71,.1),transparent 70%);top:-150px;right:-80px}
+    .cta-blob-2{width:300px;height:300px;background:radial-gradient(circle,rgba(196,82,42,.1),transparent 70%);bottom:-100px;left:10%}
+    .cta-inner{position:relative;z-index:1;max-width:580px;margin:0 auto}
+    .cta-title{font-family:var(--font-display);font-size:clamp(2rem,4vw,3rem);font-weight:900;color:var(--cream);letter-spacing:-.03em;margin-bottom:.75rem;line-height:1}
+    .cta-title em{font-style:italic;font-weight:300;color:var(--gold)}
+    .cta-sub{font-size:.95rem;color:rgba(245,240,232,.5);margin-bottom:2rem}
+    .btn-cta{background:var(--gold);color:var(--ink);border:none;padding:1rem 2.5rem;border-radius:100px;font-size:1rem;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit;display:inline-flex;align-items:center;gap:.5rem}
+    .btn-cta:hover{background:#f0d258;transform:translateY(-2px);box-shadow:0 10px 30px rgba(232,197,71,.3)}
+
+    /* FOOTER */
+    footer{background:var(--ink);color:var(--cream);padding:3.5rem 2rem 2rem;margin-top:5rem}
+    .footer-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;padding-bottom:2.5rem;border-bottom:1px solid rgba(255,255,255,.08)}
+    .footer-brand .nav-logo{font-size:1.4rem;display:block;margin-bottom:.85rem}
+    .footer-brand p{font-size:.85rem;color:rgba(245,240,232,.4);line-height:1.7;max-width:260px}
+    .footer-col-title{font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,240,232,.3);margin-bottom:1rem}
+    .footer-links{display:flex;flex-direction:column;gap:.6rem}
+    .footer-links a{font-size:.85rem;color:rgba(245,240,232,.5);transition:.15s}
+    .footer-links a:hover{color:var(--cream)}
+    .footer-bottom{max-width:1100px;margin:1.5rem auto 0;display:flex;align-items:center;justify-content:space-between;font-size:.75rem;color:rgba(245,240,232,.25);flex-wrap:wrap;gap:1rem}
+
+    /* RESPONSIVE */
+    @media(max-width:900px){.mission-grid,.team-grid{grid-template-columns:1fr 1fr}.values-grid{grid-template-columns:1fr 1fr}.footer-grid{grid-template-columns:1fr 1fr}}
+    @media(max-width:600px){
+      .nav-links{display:none}.nav-right .btn-ghost{display:none}
+      .mission-grid{grid-template-columns:1fr}.team-grid{grid-template-columns:1fr 1fr}.values-grid{grid-template-columns:1fr}
+      .footer-grid{grid-template-columns:1fr}.cta-banner{padding:2.5rem 1.5rem;margin:0 1.25rem}
+      .container{padding:0 1.25rem}.page-hero{padding:3.5rem 1.25rem}
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="learnhub_responsive.html" class="nav-logo">GIT<span>Academy</span></a>
+  <ul class="nav-links">
+    <li><a href="home.html" class="nav-link">Browse</a></li>
+    <li><a href="about.html" class="nav-link active">About</a></li>
+    <li><a href="contact.html" class="nav-link">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="login.html" class="btn-ghost">Log in</a>
+    <a href="register.html" class="btn-primary">Get started free</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="hero-blob hero-blob-1"></div>
+  <div class="hero-blob hero-blob-2"></div>
+  <div class="hero-inner">
+    <p class="hero-eyebrow">Our Story</p>
+    <h1 class="hero-title">Learning is a<br><em>human right.</em></h1>
+    <p class="hero-sub">GITAcademy was built on one belief: that world-class education should be accessible to everyone, everywhere — regardless of where you were born or how much money you have.</p>
+  </div>
+</div>
+
+<!-- MISSION -->
+<section class="section">
+  <div class="container">
+    <div class="mission-grid">
+      <div>
+        <div class="mission-eyebrow">Our Mission</div>
+        <h2 class="mission-title">We exist to<br><em>unlock potential.</em></h2>
+        <p class="mission-text">Founded in 2020 by a team of educators and engineers across Africa and beyond, GITAcademy started with a simple question: why do the best courses only reach people who already have access to the best universities?</p>
+        <p class="mission-text">Today we serve 2 million learners in 150+ countries, partnering with the world's best instructors to deliver practical, career-changing skills at prices that make sense everywhere in the world.</p>
+      </div>
+      <div class="mission-visual">
+        <div class="mv-blob"></div>
+        <div class="mv-stat"><div class="mv-num">2M+</div><div class="mv-label">Active learners worldwide</div></div>
+        <div class="mv-stat"><div class="mv-num">8,400+</div><div class="mv-label">Courses across 50+ categories</div></div>
+        <div class="mv-stat"><div class="mv-num">500+</div><div class="mv-label">Expert instructors</div></div>
+        <div class="mv-stat"><div class="mv-num">150+</div><div class="mv-label">Countries reached</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUES -->
+<section class="section section-alt">
+  <div class="container">
+    <p class="mission-eyebrow">What We Stand For</p>
+    <h2 class="section-title">Our Values</h2>
+    <div class="values-grid">
+      <div class="value-card"><div class="value-icon">🌍</div><div class="value-title">Radical Accessibility</div><p class="value-text">Education shouldn't require a visa or a bank account from the right country. We price our courses fairly for every market.</p></div>
+      <div class="value-card"><div class="value-icon">⚡</div><div class="value-title">Practical First</div><p class="value-text">Theory without practice is just trivia. Every course is built around real projects you can add to your portfolio.</p></div>
+      <div class="value-card"><div class="value-icon">🤝</div><div class="value-title">Community Driven</div><p class="value-text">Learning alone is hard. Our Q&A, reviews and cohorts make sure you always have someone to learn with.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section class="section">
+  <div class="container">
+    <p class="mission-eyebrow">The People</p>
+    <h2 class="section-title">Meet the Team</h2>
+    <p class="section-sub">Built by a passionate team across Accra, Lagos, Nairobi, London and San Francisco.</p>
+    <div class="team-grid">
+      <div class="team-card"><div class="team-avatar" style="background:linear-gradient(135deg,var(--moss),var(--rust))">ACJ</div><div class="team-name">AKEY CLIFFORD JUNIOR</div><div class="team-role">CEO & founder</div></div>
+      <div class="team-card"><div class="team-avatar" style="background:linear-gradient(135deg,#880e4f,#e91e63)">ASQ</div><div class="team-name">ATO SIAW QUARSHIE</div><div class="team-role">Head of Content</div></div>
+      <div class="team-card"><div class="team-avatar" style="background:linear-gradient(135deg,#e65100,#ff9800)">JE</div><div class="team-name">JUCTICE ELORM</div><div class="team-role">Head of Engineering</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section" style="padding-bottom:5rem">
+  <div class="cta-banner">
+    <div class="cta-blob cta-blob-1"></div>
+    <div class="cta-blob cta-blob-2"></div>
+    <div class="cta-inner">
+      <h2 class="cta-title">Join us on the<br><em>journey.</em></h2>
+      <p class="cta-sub">2 million learners have already started. Your seat is waiting.</p>
+      <a href="register.html" class="btn-cta">Get started for free →</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand"><a href="learnhub_responsive.html" class="nav-logo">GITAcademy<span style="color:var(--rust)">GITAcadmey</span></a><p>The platform where curiosity becomes a career.</p></div>
+    <div><div class="footer-col-title">Learn</div><div class="footer-links"><a href="home.html">Browse Courses</a><a href="category-list.html">Categories</a><a href="home.html">Featured</a></div></div>
+    <div><div class="footer-col-title">Company</div><div class="footer-links"><a href="about.html">About</a><a href="contact.html">Contact</a><a href="help.html">Help</a></div></div>
+    <div><div class="footer-col-title">Legal</div><div class="footer-links"><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a></div></div>
+  </div>
+  <div class="footer-bottom"><span>© 2026 GITAcademy. All rights reserved.</span><div style="display:flex;gap:1.5rem"><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a><a href="contact.html">Contact</a></div></div>
+</footer>
+
+<script>
+  // ── User nav populate ─────────────────────────────────────
+  try {
+    const user = JSON.parse(localStorage.getItem('lh_user'));
+    if (user) {
+      const n = document.querySelector('.nav-user-name');
+      const a = document.querySelector('.nav-user .avatar');
+      if (n) n.textContent = user.first_name || 'You';
+      if (a) a.textContent = ((user.first_name?.[0]||'') + (user.last_name?.[0]||'')).toUpperCase() || 'U';
+    }
+  } catch(_) {}
+
+  // ── Scroll reveal animations ──────────────────────────────
+  if ('IntersectionObserver' in window) {
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.style.opacity    = '1';
+          e.target.style.transform  = 'translateY(0)';
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    const animated = document.querySelectorAll(
+      '.value-card, .team-card, .mission-visual, .rc, .benefit-item'
+    );
+    animated.forEach((el, i) => {
+      el.style.opacity    = '0';
+      el.style.transform  = 'translateY(20px)';
+      el.style.transition = `opacity .5s ease ${i * 0.07}s, transform .5s ease ${i * 0.07}s`;
+      obs.observe(el);
+    });
+  }
+
+  // ── Animated stats counter ────────────────────────────────
+  function animateCounter(el, target, suffix = '') {
+    const isDecimal = target % 1 !== 0;
+    const duration  = 1800;
+    const start     = performance.now();
+    function update(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = target * eased;
+      el.textContent = (isDecimal ? current.toFixed(1) : Math.floor(current)) + suffix;
+      if (progress < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  }
+
+  // Observe stats when they scroll into view
+  const statEls = document.querySelectorAll('.mv-num, .al-stat-num');
+  if (statEls.length && 'IntersectionObserver' in window) {
+    const statObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        const el   = e.target;
+        const text = el.textContent.trim();
+        const match = text.match(/^([\d.]+)([^0-9]*)$/);
+        if (match) {
+          const num    = parseFloat(match[1]);
+          const suffix = match[2] || '';
+          animateCounter(el, num, suffix);
+        }
+        statObs.unobserve(el);
+      });
+    }, { threshold: 0.5 });
+    statEls.forEach(el => statObs.observe(el));
+  }
+
+  // ── Team card hover ───────────────────────────────────────
+  document.querySelectorAll('.team-card').forEach(card => {
+    card.addEventListener('mouseenter', function() {
+      this.style.transform = 'translateY(-4px)';
+    });
+    card.addEventListener('mouseleave', function() {
+      this.style.transform = '';
+    });
+  });
+</script>
+</body>
+</html>

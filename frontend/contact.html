@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact Us — GITAcademy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--ink:#0d0d0f;--cream:#f5f0e8;--gold:#e8c547;--moss:#2d4a3e;--rust:#c4522a;--paper:#faf8f3;--smoke:#f0ece4;--font-display:'Fraunces',Georgia,serif;--font-body:'DM Sans',system-ui,sans-serif;--nav-h:64px;--radius-md:12px;--radius-lg:18px;--radius-xl:24px;--shadow-sm:0 2px 8px rgba(13,13,15,.06);--shadow-md:0 4px 20px rgba(13,13,15,.1)}
+    body{font-family:var(--font-body);background:var(--smoke);color:var(--ink);min-height:100vh}
+    a{text-decoration:none;color:inherit}
+    button{cursor:pointer;font-family:inherit;border:none;background:none}
+    .navbar{position:sticky;top:0;z-index:500;height:var(--nav-h);background:var(--cream);border-bottom:1px solid rgba(13,13,15,.08);display:flex;align-items:center;padding:0 2rem;gap:1.5rem}
+    .nav-logo{font-family:var(--font-display);font-size:1.4rem;font-weight:900;color:var(--ink);letter-spacing:-.03em}
+    .nav-logo span{color:var(--rust)}
+    .nav-right{display:flex;align-items:center;gap:.75rem;margin-left:auto}
+    .btn-ghost{background:none;border:1.5px solid rgba(13,13,15,.18);padding:.5rem 1.2rem;border-radius:100px;font-size:.85rem;font-weight:500;color:var(--ink);transition:.2s;font-family:inherit}
+    .btn-ghost:hover{background:var(--ink);color:var(--cream)}
+    .btn-primary{background:var(--ink);color:var(--cream);border:none;padding:.5rem 1.4rem;border-radius:100px;font-size:.85rem;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit}
+    .btn-primary:hover{background:var(--rust)}
+    .page-hero{background:var(--ink);padding:4.5rem 2rem;text-align:center;position:relative;overflow:hidden}
+    .hero-blob{position:absolute;border-radius:50%;pointer-events:none}
+    .hero-blob-1{width:400px;height:400px;background:radial-gradient(circle,rgba(45,74,62,.5),transparent 70%);top:-150px;left:-80px}
+    .hero-blob-2{width:350px;height:350px;background:radial-gradient(circle,rgba(232,197,71,.1),transparent 70%);top:-120px;right:-60px}
+    .hero-inner{position:relative;z-index:1;max-width:580px;margin:0 auto}
+    .hero-eyebrow{font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,240,232,.4);margin-bottom:.75rem}
+    .hero-title{font-family:var(--font-display);font-size:clamp(2.2rem,5vw,4rem);font-weight:900;color:var(--cream);letter-spacing:-.03em;margin-bottom:.75rem;line-height:1}
+    .hero-title em{font-style:italic;font-weight:300;color:var(--gold)}
+    .hero-sub{font-size:.95rem;color:rgba(245,240,232,.5);font-weight:300;line-height:1.7}
+    .container{max-width:1000px;margin:0 auto;padding:0 2rem}
+    .page-body{padding:3.5rem 0 5rem}
+    .contact-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:2.5rem;align-items:start}
+    /* Contact options */
+    .contact-options{display:flex;flex-direction:column;gap:1rem}
+    .contact-option{background:white;border-radius:var(--radius-xl);padding:1.5rem;border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);display:flex;gap:1rem;align-items:flex-start;transition:.2s}
+    .contact-option:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+    .co-icon{width:46px;height:46px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+    .co-icon.moss{background:rgba(45,74,62,.12)}
+    .co-icon.gold{background:rgba(232,197,71,.18)}
+    .co-icon.rust{background:rgba(196,82,42,.12)}
+    .co-title{font-family:var(--font-display);font-size:1rem;font-weight:700;letter-spacing:-.02em;margin-bottom:.25rem}
+    .co-sub{font-size:.82rem;color:rgba(13,13,15,.5);line-height:1.5;margin-bottom:.5rem}
+    .co-link{font-size:.82rem;font-weight:600;color:var(--rust)}
+    /* Contact form */
+    .contact-form-card{background:white;border-radius:var(--radius-xl);padding:2rem;border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm)}
+    .form-title{font-family:var(--font-display);font-size:1.5rem;font-weight:900;letter-spacing:-.03em;margin-bottom:.35rem}
+    .form-sub{font-size:.85rem;color:rgba(13,13,15,.45);margin-bottom:1.75rem}
+    .form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+    .form-group{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1rem}
+    .form-group.full{grid-column:1/-1}
+    .form-label{font-size:.8rem;font-weight:600;color:rgba(13,13,15,.65)}
+    .form-input{background:var(--smoke);border:1.5px solid transparent;border-radius:var(--radius-md);padding:.8rem 1rem;font-size:16px;color:var(--ink);font-family:inherit;outline:none;transition:.2s;width:100%}
+    .form-input:focus{background:white;border-color:var(--moss);box-shadow:0 0 0 3px rgba(45,74,62,.08)}
+    .form-input::placeholder{color:rgba(13,13,15,.3)}
+    textarea.form-input{resize:vertical;min-height:130px;line-height:1.6}
+    select.form-input{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center;padding-right:2.5rem}
+    .btn-submit{background:var(--ink);color:var(--cream);border:none;padding:1rem 2rem;border-radius:100px;font-size:.9rem;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit;display:flex;align-items:center;gap:.5rem;width:100%;justify-content:center}
+    .btn-submit:hover{background:var(--rust);transform:translateY(-1px)}
+    .success-msg{display:none;text-align:center;padding:1.5rem;background:rgba(45,122,79,.07);border:1px solid rgba(45,122,79,.2);border-radius:var(--radius-md);font-size:.9rem;color:#166534}
+    .success-msg.show{display:block}
+    /* FAQ */
+    .faq-section{padding:4rem 0;background:var(--cream)}
+    .faq-title{font-family:var(--font-display);font-size:clamp(1.8rem,3.5vw,2.5rem);font-weight:900;letter-spacing:-.03em;margin-bottom:.5rem}
+    .faq-sub{font-size:.9rem;color:rgba(13,13,15,.5);margin-bottom:2.5rem}
+    .faq-list{display:flex;flex-direction:column;gap:.6rem}
+    .faq-item{background:white;border-radius:var(--radius-lg);border:1px solid rgba(13,13,15,.06);overflow:hidden}
+    .faq-question{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.5rem;cursor:pointer;font-size:.9rem;font-weight:600;transition:.15s;gap:1rem}
+    .faq-question:hover{background:rgba(13,13,15,.02)}
+    .faq-chevron{font-size:.75rem;transition:.2s;flex-shrink:0;color:rgba(13,13,15,.4)}
+    .faq-item.open .faq-chevron{transform:rotate(90deg)}
+    .faq-answer{display:none;padding:0 1.5rem 1.1rem;font-size:.875rem;color:rgba(13,13,15,.65);line-height:1.75}
+    .faq-item.open .faq-answer{display:block}
+    footer{background:var(--ink);color:var(--cream);padding:2.5rem 2rem 1.5rem}
+    .footer-bottom{max-width:1000px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;font-size:.78rem;color:rgba(245,240,232,.25)}
+    .footer-bottom a{color:rgba(245,240,232,.25);transition:.15s}
+    .footer-bottom a:hover{color:var(--cream)}
+    @media(max-width:768px){.contact-grid{grid-template-columns:1fr}.form-grid-2{grid-template-columns:1fr}.form-group.full{grid-column:1}.container{padding:0 1.25rem}.page-hero{padding:3rem 1.25rem}}
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="learnhub_responsive.html" class="nav-logo">GIT<span>Academy</span></a>
+  <div class="nav-right">
+    <a href="login.html" class="btn-ghost">Log in</a>
+    <a href="register.html" class="btn-primary">Sign up</a>
+  </div>
+</nav>
+<div class="page-hero">
+  <div class="hero-blob hero-blob-1"></div>
+  <div class="hero-blob hero-blob-2"></div>
+  <div class="hero-inner">
+    <p class="hero-eyebrow">Get in Touch</p>
+    <h1 class="hero-title">We're here to <em>help.</em></h1>
+    <p class="hero-sub">Whether you have a question about a course, a billing issue, or just want to say hello — our team responds within 24 hours.</p>
+  </div>
+</div>
+<div class="page-body">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-options">
+        <div class="contact-option"><div class="co-icon moss">💬</div><div><div class="co-title">Live Chat</div><div class="co-sub">Talk to a real human right now. Available 9am – 6pm WAT, Mon–Fri.</div><span class="co-link">Start Chat →</span></div></div>
+        <div class="contact-option"><div class="co-icon gold">📧</div><div><div class="co-title">Email Us</div><div class="co-sub">We reply within 24 hours on weekdays.</div><a href="mailto:support@GITAcademy.com" class="co-link">support@GITAcademy.com</a></div></div>
+        <div class="contact-option"><div class="co-icon rust">📚</div><div><div class="co-title">Help Centre</div><div class="co-sub">Browse 200+ articles and guides on common questions.</div><a href="help.html" class="co-link">Visit Help Centre →</a></div></div>
+      </div>
+      <div class="contact-form-card">
+        <div class="form-title">Send us a message</div>
+        <p class="form-sub">We'll get back to you within one business day.</p>
+        <div id="successMsg" class="success-msg">✅ Message sent! We'll be in touch soon.</div>
+        <div class="form-grid-2" id="contactForm">
+          <div class="form-group"><label class="form-label">First Name</label><input class="form-input" id="cFirstName" type="text" placeholder="Ama"/></div>
+          <div class="form-group"><label class="form-label">Last Name</label><input class="form-input" id="cLastName" type="text" placeholder="Kofi"/></div>
+          <div class="form-group full"><label class="form-label">Email Address</label><input class="form-input" id="cEmail" type="email" placeholder="you@example.com"/></div>
+          <div class="form-group full"><label class="form-label">Topic</label><select class="form-input" id="cTopic"><option>Course Question</option><option>Billing & Payments</option><option>Technical Issue</option><option>Become an Instructor</option><option>Other</option></select></div>
+          <div class="form-group full"><label class="form-label">Message</label><textarea class="form-input" id="cMessage" placeholder="Tell us what's on your mind…"></textarea></div>
+          <div class="form-group full" id="cError" style="display:none;color:var(--error);font-size:.82rem"></div>
+        </div>
+        <button class="btn-submit" id="submitContactBtn">Send Message <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+      </div>
+    </div>
+  </div>
+</div>
+<section class="faq-section">
+  <div class="container">
+    <h2 class="faq-title">Frequently Asked Questions</h2>
+    <p class="faq-sub">Quick answers to the most common questions.</p>
+    <div class="faq-list">
+      ${[
+        ['How do I access my courses after purchase?','Log in to your account and go to your Dashboard. All purchased courses appear under "My Courses" with a Continue Learning button.'],
+        ['Does GITAcademy offer a money-back guarantee?','Yes! We offer a full 30-day money-back guarantee on all paid courses, no questions asked.'],
+        ['Can I download course videos for offline viewing?','Some courses allow downloads — look for the download icon in the course player. Downloadable content is marked by the instructor.'],
+        ['How do I become an instructor?','Click "Become an Instructor" from your dashboard, complete your profile, and submit your first course for review. Our team approves it within 3–5 business days.'],
+        ['Do certificates expire?','No. GITAcademy certificates are yours forever and can be shared directly to your LinkedIn profile.'],
+      ].map(([q,a]) => `<div class="faq-item"><div class="faq-question" onclick="this.parentElement.classList.toggle('open')">${q}<span class="faq-chevron">›</span></div><div class="faq-answer">${a}</div></div>`).join('')}
+    </div>
+  </div>
+</section>
+<footer><div class="footer-bottom"><span>© 2026 GITAcademy. All rights reserved.</span><div style="display:flex;gap:1.5rem"><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a><a href="help.html">Help</a></div></div></footer>
+<script type="module">
+  import { contactApi } from './api.js';
+
+  document.getElementById('submitContactBtn').addEventListener('click', async () => {
+    const errEl = document.getElementById('cError');
+    errEl.style.display = 'none';
+
+    const email = document.getElementById('cEmail').value.trim();
+    const message = document.getElementById('cMessage').value.trim();
+    if (!email || !email.includes('@')) {
+      errEl.textContent = 'Please enter a valid email address.';
+      errEl.style.display = '';
+      return;
+    }
+    if (message.length < 5) {
+      errEl.textContent = 'Please enter a message.';
+      errEl.style.display = '';
+      return;
+    }
+
+    const btn = document.getElementById('submitContactBtn');
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    try {
+      await contactApi.send({
+        first_name: document.getElementById('cFirstName').value.trim(),
+        last_name: document.getElementById('cLastName').value.trim(),
+        email,
+        topic: document.getElementById('cTopic').value,
+        message,
+      });
+      document.getElementById('contactForm').style.display = 'none';
+      document.getElementById('successMsg').classList.add('show');
+      document.getElementById('submitContactBtn').style.display = 'none';
+    } catch (err) {
+      errEl.textContent = err.data?.message || 'Could not send your message. Please try again.';
+      errEl.style.display = '';
+      btn.disabled = false;
+      btn.textContent = 'Send Message';
+    }
+  });
+</script>
+</body>
+</html>

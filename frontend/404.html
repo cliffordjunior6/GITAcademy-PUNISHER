@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Page Not Found — GITAcademy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --ink:#0d0d0f;--cream:#f5f0e8;--gold:#e8c547;--moss:#2d4a3e;
+      --rust:#c4522a;--paper:#faf8f3;--smoke:#f0ece4;
+      --font-display:'Fraunces',Georgia,serif;
+      --font-body:'DM Sans',system-ui,sans-serif;
+    }
+    body{font-family:var(--font-body);background:var(--ink);color:var(--cream);min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden}
+    a{text-decoration:none;color:inherit}
+
+    /* NAV */
+    .navbar{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 2rem;border-bottom:1px solid rgba(255,255,255,.07)}
+    .nav-logo{font-family:var(--font-display);font-size:1.4rem;font-weight:900;letter-spacing:-.03em}
+    .nav-logo span{color:var(--rust)}
+    .btn-home{background:rgba(255,255,255,.08);color:rgba(245,240,232,.7);border:1.5px solid rgba(255,255,255,.1);padding:.5rem 1.2rem;border-radius:100px;font-size:.85rem;font-weight:500;transition:.2s;font-family:inherit;cursor:pointer}
+    .btn-home:hover{background:rgba(255,255,255,.14);color:var(--cream)}
+
+    /* MAIN */
+    .main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 2rem;text-align:center;position:relative;overflow:hidden}
+
+    /* Blobs */
+    .blob{position:absolute;border-radius:50%;pointer-events:none}
+    .blob-1{width:600px;height:600px;background:radial-gradient(circle,rgba(45,74,62,.3),transparent 70%);top:-200px;left:-150px}
+    .blob-2{width:500px;height:500px;background:radial-gradient(circle,rgba(196,82,42,.15),transparent 70%);bottom:-150px;right:-100px}
+    .blob-3{width:300px;height:300px;background:radial-gradient(circle,rgba(232,197,71,.07),transparent 70%);top:30%;right:10%}
+
+    /* 404 number */
+    .error-num{font-family:var(--font-display);font-size:clamp(7rem,20vw,14rem);font-weight:900;line-height:1;letter-spacing:-.05em;color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.08);position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;user-select:none;z-index:0}
+
+    /* Content */
+    .content{position:relative;z-index:1;max-width:540px}
+    .error-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(196,82,42,.15);border:1px solid rgba(196,82,42,.25);color:#f87171;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.35rem .9rem;border-radius:100px;margin-bottom:1.5rem}
+    .error-icon{font-size:4rem;margin-bottom:1.25rem;display:block;animation:float 3s ease-in-out infinite}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+    .error-title{font-family:var(--font-display);font-size:clamp(2.2rem,5vw,4rem);font-weight:900;letter-spacing:-.03em;margin-bottom:.85rem;line-height:1}
+    .error-title em{font-style:italic;font-weight:300;color:var(--gold)}
+    .error-sub{font-size:1rem;color:rgba(245,240,232,.45);font-weight:300;line-height:1.7;margin-bottom:2.5rem;max-width:420px;margin-left:auto;margin-right:auto}
+
+    /* CTA buttons */
+    .cta-row{display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;margin-bottom:3rem}
+    .btn-primary{background:var(--rust);color:white;border:none;padding:.9rem 2rem;border-radius:100px;font-size:.925rem;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit;display:inline-flex;align-items:center;gap:.5rem}
+    .btn-primary:hover{background:#b04424;transform:translateY(-1px);box-shadow:0 8px 24px rgba(196,82,42,.3)}
+    .btn-ghost{background:rgba(255,255,255,.06);color:rgba(245,240,232,.7);border:1.5px solid rgba(255,255,255,.1);padding:.9rem 1.75rem;border-radius:100px;font-size:.925rem;font-weight:500;cursor:pointer;transition:.2s;font-family:inherit;display:inline-flex;align-items:center;gap:.5rem}
+    .btn-ghost:hover{background:rgba(255,255,255,.12);color:var(--cream)}
+
+    /* Search */
+    .search-wrap{max-width:400px;margin:0 auto;position:relative}
+    .search-input{width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:100px;padding:.75rem 1rem .75rem 2.8rem;font-size:.9rem;color:var(--cream);font-family:var(--font-body);outline:none;transition:.2s}
+    .search-input:focus{background:rgba(255,255,255,.11);border-color:rgba(232,197,71,.4)}
+    .search-input::placeholder{color:rgba(245,240,232,.28)}
+    .search-icon{position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:rgba(245,240,232,.3);pointer-events:none}
+    .search-hint{font-size:.75rem;color:rgba(245,240,232,.3);margin-top:.65rem}
+
+    /* Quick links */
+    .quick-links{margin-top:3rem}
+    .ql-label{font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,240,232,.3);margin-bottom:1rem}
+    .ql-grid{display:flex;align-items:center;justify-content:center;gap:.6rem;flex-wrap:wrap}
+    .ql-link{display:flex;align-items:center;gap:.4rem;padding:.45rem 1rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:100px;font-size:.8rem;color:rgba(245,240,232,.55);transition:.2s}
+    .ql-link:hover{background:rgba(255,255,255,.1);color:var(--cream);border-color:rgba(255,255,255,.15)}
+
+    /* Footer */
+    footer{padding:1.5rem 2rem;border-top:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;font-size:.78rem;color:rgba(245,240,232,.2);flex-wrap:wrap;gap:1rem}
+    footer a{color:rgba(245,240,232,.2);transition:.15s}
+    footer a:hover{color:rgba(245,240,232,.6)}
+
+    @media(max-width:600px){
+      .cta-row{flex-direction:column;width:100%}
+      .btn-primary,.btn-ghost{width:100%;justify-content:center}
+      .main{padding:2rem 1.25rem}
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="navbar">
+  <a href="learnhub_responsive.html" class="nav-logo">GIT<span>Academy</span></a>
+  <a href="learnhub_responsive.html" class="btn-home">← Back to Home</a>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <div class="error-num">404</div>
+
+  <div class="content">
+    <div class="error-badge">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Error 404 — Page not found
+    </div>
+
+    <span class="error-icon">🔍</span>
+
+    <h1 class="error-title">Oops! This page<br>has <em>gone missing.</em></h1>
+    <p class="error-sub">The page you're looking for doesn't exist, may have been moved, or the link might be broken. Let's get you back on track.</p>
+
+    <div class="cta-row">
+      <a href="learnhub_responsive.html" class="btn-primary">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Go to Homepage
+      </a>
+      <a href="home.html" class="btn-ghost">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        Browse Courses
+      </a>
+    </div>
+
+    <div class="search-wrap">
+      <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input class="search-input" type="text" placeholder="Search for a course…" id="searchInput"/>
+      <p class="search-hint">Press Enter to search all courses</p>
+    </div>
+
+    <div class="quick-links">
+      <div class="ql-label">Or try one of these</div>
+      <div class="ql-grid">
+        <a href="dashboard.html" class="ql-link">📊 My Dashboard</a>
+        <a href="home.html" class="ql-link">🎓 Browse Courses</a>
+        <a href="category-list.html" class="ql-link">🗂️ Categories</a>
+        <a href="cart.html" class="ql-link">🛒 My Cart</a>
+        <a href="profile.html" class="ql-link">👤 My Profile</a>
+        <a href="help.html" class="ql-link">❓ Help Centre</a>
+        <a href="contact.html" class="ql-link">📬 Contact Us</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span>© 2026 GITAcademy. All rights reserved.</span>
+  <div style="display:flex;gap:1.5rem">
+    <a href="terms.html">Terms</a>
+    <a href="privacy.html">Privacy</a>
+    <a href="contact.html">Support</a>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('searchInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      const q = e.target.value.trim();
+      if (q) window.location.href = `home.html?q=${encodeURIComponent(q)}`;
+    }
+  });
+</script>
+</body>
+</html>

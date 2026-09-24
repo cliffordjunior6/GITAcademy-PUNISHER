@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Create Account — GITAacdemy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --ink:#0d0d0f;--cream:#f5f0e8;--gold:#e8c547;--moss:#2d4a3e;
+      --rust:#c4522a;--paper:#faf8f3;--smoke:#f0ece4;
+      --error:#e05555;--success:#2d7a4f;--purple:#7c3aed;
+      --font-display:'Fraunces',Georgia,serif;
+      --font-body:'DM Sans',system-ui,sans-serif;
+      --radius-sm:8px;--radius-md:12px;--radius-lg:18px;--radius-xl:24px;
+      --shadow-sm:0 2px 8px rgba(13,13,15,.06);--shadow-md:0 4px 20px rgba(13,13,15,.1);
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:var(--font-body);background:var(--cream);color:var(--ink);min-height:100vh;overflow-x:hidden}
+    a{text-decoration:none;color:inherit}
+    button{cursor:pointer;font-family:inherit;border:none;background:none}
+
+    /* NAV */
+    .navbar{display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;background:var(--cream);border-bottom:1px solid rgba(13,13,15,.07);position:sticky;top:0;z-index:200}
+    .nav-logo{font-family:var(--font-display);font-size:1.4rem;font-weight:900;color:var(--ink);letter-spacing:-.03em}
+    .nav-logo span{color:var(--rust)}
+    .nav-links{display:flex;align-items:center;gap:.75rem}
+    .nav-hint{font-size:.85rem;color:rgba(13,13,15,.45)}
+    .btn-nav{background:none;border:1.5px solid rgba(13,13,15,.15);color:var(--ink);padding:.5rem 1.2rem;border-radius:100px;font-size:.85rem;font-weight:600;transition:.2s;display:inline-block}
+    .btn-nav:hover{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+
+    /* LAYOUT */
+    .auth-wrap{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 65px)}
+
+    /* LEFT PANEL */
+    .auth-left{background:var(--ink);padding:3.5rem;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+    .al-blob{position:absolute;border-radius:50%;pointer-events:none}
+    .al-blob-1{width:500px;height:500px;background:radial-gradient(circle,rgba(45,74,62,.5),transparent 70%);top:-180px;right:-80px}
+    .al-blob-2{width:300px;height:300px;background:radial-gradient(circle,rgba(232,197,71,.1),transparent 70%);bottom:-80px;left:-40px}
+    .al-top{position:relative;z-index:1}
+    .al-eyebrow{font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(245,240,232,.3);margin-bottom:1.25rem}
+    .al-title{font-family:var(--font-display);font-size:clamp(2rem,3vw,3rem);font-weight:900;color:var(--cream);line-height:1;letter-spacing:-.03em;margin-bottom:1rem}
+    .al-title em{font-style:italic;font-weight:300;color:var(--gold)}
+    .al-subtitle{font-size:.925rem;color:rgba(245,240,232,.45);font-weight:300;line-height:1.75;max-width:340px;margin-bottom:2.5rem}
+
+    /* Benefit list */
+    .benefits-list{display:flex;flex-direction:column;gap:.85rem}
+    .benefit-item{display:flex;align-items:flex-start;gap:.85rem}
+    .benefit-icon{width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0}
+    .benefit-icon.s{background:rgba(45,74,62,.28)}
+    .benefit-icon.i{background:rgba(124,58,237,.2)}
+    .benefit-icon.a{background:rgba(196,82,42,.22)}
+    .benefit-icon.general{background:rgba(232,197,71,.15)}
+    .benefit-text strong{display:block;font-size:.85rem;font-weight:700;color:rgba(245,240,232,.85);margin-bottom:.1rem}
+    .benefit-text span{font-size:.72rem;color:rgba(245,240,232,.35)}
+
+    .al-bottom{position:relative;z-index:1}
+    .al-trust{display:flex;align-items:center;gap:.85rem;padding:1rem 1.25rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius-md);font-size:.8rem;color:rgba(245,240,232,.5)}
+    .trust-icon{font-size:1.2rem;flex-shrink:0}
+
+    /* RIGHT PANEL */
+    .auth-right{display:flex;align-items:center;justify-content:center;padding:2.5rem;background:var(--paper);overflow-y:auto}
+    .form-wrap{width:100%;max-width:440px}
+
+    /* Form header */
+    .f-eyebrow{font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--rust);margin-bottom:.5rem}
+    .f-title{font-family:var(--font-display);font-size:2rem;font-weight:900;letter-spacing:-.03em;margin-bottom:.3rem;line-height:1}
+    .f-subtitle{font-size:.875rem;color:rgba(13,13,15,.4);line-height:1.5;margin-bottom:1.75rem}
+
+    /* ROLE SELECTOR */
+    .role-selector{margin-bottom:1.75rem}
+    .rs-label{display:block;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:rgba(13,13,15,.45);margin-bottom:.6rem}
+    .role-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:.35rem;background:var(--smoke);border-radius:var(--radius-md);padding:.28rem}
+    .rt{display:flex;flex-direction:column;align-items:center;gap:.3rem;padding:.7rem .4rem;border-radius:var(--radius-sm);cursor:pointer;transition:.2s;border:2px solid transparent;background:none;font-family:inherit;width:100%}
+    .rt:hover{background:rgba(13,13,15,.04)}
+    .rt.active{background:white;box-shadow:0 2px 10px rgba(13,13,15,.08)}
+    .rt.active.rt-s{border-color:var(--moss)}
+    .rt.active.rt-i{border-color:var(--purple)}
+    .rt.active.rt-a{border-color:var(--rust)}
+    .rt-icon{font-size:1.25rem;line-height:1}
+    .rt-label{font-size:.72rem;font-weight:700;color:rgba(13,13,15,.45);transition:.2s}
+    .rt.active .rt-label{color:var(--ink)}
+    .rt.active.rt-s .rt-label{color:var(--moss)}
+    .rt.active.rt-i .rt-label{color:var(--purple)}
+    .rt.active.rt-a .rt-label{color:var(--rust)}
+
+    /* Role description card */
+    .role-desc-card{margin-top:.5rem;padding:.7rem .9rem;border-radius:var(--radius-sm);font-size:.78rem;line-height:1.55;transition:.25s;display:flex;align-items:flex-start;gap:.6rem}
+    .role-desc-card.s{background:rgba(45,74,62,.07);color:#1a3a2e;border:1px solid rgba(45,74,62,.12)}
+    .role-desc-card.i{background:rgba(124,58,237,.07);color:#4c1d95;border:1px solid rgba(124,58,237,.12)}
+    .role-desc-card.a{background:rgba(196,82,42,.07);color:#7c2d12;border:1px solid rgba(196,82,42,.12)}
+    .rdc-icon{font-size:1rem;flex-shrink:0;margin-top:.05rem}
+
+    /* Social */
+    .social-btns{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1.35rem}
+    .btn-social{display:flex;align-items:center;justify-content:center;gap:.55rem;padding:.72rem;border-radius:var(--radius-md);border:1.5px solid rgba(13,13,15,.1);background:white;font-size:.85rem;font-weight:600;color:var(--ink);transition:.2s;cursor:pointer;font-family:inherit}
+    .btn-social:hover{border-color:rgba(13,13,15,.25);background:var(--smoke)}
+
+    /* Divider */
+    .divider{display:flex;align-items:center;gap:.65rem;margin-bottom:1.35rem}
+    .div-line{flex:1;height:1px;background:rgba(13,13,15,.09)}
+    .div-text{font-size:.73rem;color:rgba(13,13,15,.32);font-weight:500;white-space:nowrap}
+
+    /* Fields */
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
+    .form-group{margin-bottom:.9rem}
+    .form-group.full{grid-column:1/-1;margin-bottom:.9rem}
+    .form-label{display:block;font-size:.78rem;font-weight:600;color:rgba(13,13,15,.6);margin-bottom:.38rem}
+    .input-wrap{position:relative}
+    .form-input{width:100%;background:var(--smoke);border:1.5px solid transparent;border-radius:var(--radius-md);padding:.78rem 2.6rem .78rem .95rem;font-size:.9rem;color:var(--ink);font-family:inherit;outline:none;transition:.2s}
+    .form-input:focus{background:white;border-color:var(--moss);box-shadow:0 0 0 3px rgba(45,74,62,.08)}
+    .form-input.err{border-color:var(--error);background:rgba(224,85,85,.03)}
+    .form-input::placeholder{color:rgba(13,13,15,.28)}
+    .input-btn{position:absolute;right:.8rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:rgba(13,13,15,.35);display:flex;align-items:center;transition:.2s;padding:0}
+    .input-btn:hover{color:var(--ink)}
+
+    /* Password strength */
+    .strength-wrap{margin-top:.45rem;display:flex;align-items:center;gap:.65rem}
+    .strength-bars{display:flex;gap:.25rem;flex:1}
+    .strength-bar{flex:1;height:3px;border-radius:2px;background:rgba(13,13,15,.1);transition:.3s}
+    .strength-bar.filled-1{background:var(--error)}
+    .strength-bar.filled-2{background:var(--warning,#d97706)}
+    .strength-bar.filled-3{background:var(--gold)}
+    .strength-bar.filled-4{background:var(--success)}
+    .strength-label{font-size:.7rem;font-weight:600;min-width:80px;text-align:right;color:rgba(13,13,15,.4);transition:.25s}
+
+    /* Instructor fields (hidden by default) */
+    .instructor-fields{display:none;animation:slideDown .2s ease}
+    .instructor-fields.show{display:contents}
+
+    /* Admin fields */
+    .admin-fields{display:none;animation:slideDown .2s ease}
+    .admin-fields.show{display:contents}
+
+    @keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+
+    /* Terms */
+    .terms-row{display:flex;align-items:flex-start;gap:.55rem;margin-bottom:1.3rem}
+    .terms-row input{width:15px;height:15px;margin-top:.15rem;accent-color:var(--moss);cursor:pointer;flex-shrink:0}
+    .terms-text{font-size:.8rem;color:rgba(13,13,15,.5);line-height:1.5}
+    .terms-text a{color:var(--rust);font-weight:600}
+
+    /* Error */
+    .err-msg{display:none;align-items:center;gap:.5rem;background:rgba(224,85,85,.07);border:1px solid rgba(224,85,85,.18);border-radius:var(--radius-md);padding:.7rem .9rem;font-size:.82rem;color:var(--error);margin-bottom:1rem}
+    .err-msg.show{display:flex}
+
+    /* Submit */
+    .btn-submit{width:100%;border:none;padding:1rem;border-radius:var(--radius-md);font-size:.95rem;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:.5rem;margin-bottom:1.25rem;color:white}
+    .btn-submit:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(13,13,15,.2)}
+    .btn-submit:disabled{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none}
+    .btn-s{background:var(--moss)}
+    .btn-s:hover{background:#1e3329}
+    .btn-i{background:var(--purple)}
+    .btn-i:hover{background:#6d28d9}
+    .btn-a{background:var(--rust)}
+    .btn-a:hover{background:#b04424}
+
+    .f-footer{text-align:center;font-size:.85rem;color:rgba(13,13,15,.42)}
+    .f-footer a{color:var(--rust);font-weight:600}
+    .f-footer a:hover{opacity:.7}
+
+    .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;display:none;flex-shrink:0}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* Responsive */
+    @media(max-width:900px){.auth-wrap{grid-template-columns:1fr}.auth-left{display:none}}
+    @media(max-width:600px){.social-btns{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}}
+    @media(max-width:480px){.auth-right{padding:1.5rem 1.25rem}.navbar{padding:.85rem 1.25rem}}
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="learnhub_responsive.html" class="nav-logo">GIT<span>Academy</span></a>
+  <div class="nav-links">
+    <span class="nav-hint">Already have an account?</span>
+    <a href="login.html" class="btn-nav">Log in</a>
+  </div>
+</nav>
+
+<div class="auth-wrap">
+
+  <!-- ── LEFT PANEL ── -->
+  <div class="auth-left">
+    <div class="al-blob al-blob-1"></div>
+    <div class="al-blob al-blob-2"></div>
+    <div class="al-top">
+      <div class="al-eyebrow">Get started today</div>
+      <h1 class="al-title">Star your <em>journey</em><br>Today on<br>GITAcademy.</h1>
+      <p class="al-subtitle">Everything you need to grow your skills, launch your career,or share your expertise with the world.</p>
+
+      <div class="benefits-list" id="benefitsList">
+        <!-- Updated dynamically -->
+        <div class="benefit-item">
+          <div class="benefit-icon general">🎓</div>
+          <div class="benefit-text"><strong>Access 8,400+ courses</strong><span>From data science to design and everything in between</span></div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon general">🏆</div>
+          <div class="benefit-text"><strong>Earn certificates</strong><span>Share directly to LinkedIn and your CV</span></div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon general">💰</div>
+          <div class="benefit-text"><strong>Lifetime access</strong><span>Pay once and learn at your own pace forever</span></div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon general">🌍</div>
+          <div class="benefit-text"><strong>Africa-first pricing</strong><span>Courses priced fairly for every market</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="al-bottom">
+      <div class="al-trust">
+        <span class="trust-icon">🔒</span>
+        <span>Your data is secure. We never share or sell your personal information.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RIGHT PANEL ── -->
+  <div class="auth-right">
+    <div class="form-wrap">
+
+      <div class="f-eyebrow" id="fEyebrow">Student Registration</div>
+      <h2 class="f-title" id="fTitle">Create your account</h2>
+      <p class="f-subtitle" id="fSubtitle">Start learning for free — no credit card required.</p>
+
+      <!-- ROLE SELECTOR -->
+      <div class="role-selector">
+        <span class="rs-label">I want to join as</span>
+        <div class="role-tabs" role="group">
+          <button class="rt rt-s active" data-role="student" onclick="selectRole('student',this)" type="button">
+            <span class="rt-icon">🎓</span><span class="rt-label">Student</span>
+          </button>
+          <button class="rt rt-i" data-role="instructor" onclick="selectRole('instructor',this)" type="button">
+            <span class="rt-icon">🧑‍🏫</span><span class="rt-label">Instructor</span>
+          </button>
+          <button class="rt rt-a" data-role="admin" onclick="selectRole('admin',this)" type="button">
+            <span class="rt-icon">🛡️</span><span class="rt-label">Admin</span>
+          </button>
+        </div>
+        <div class="role-desc-card s" id="roleDescCard">
+          <span class="rdc-icon">🎓</span>
+          <span id="roleDescText">Browse and enroll in courses, track your progress and earn certificates.</span>
+        </div>
+      </div>
+
+      <!-- SOCIAL (hidden for admin) -->
+      <div id="socialWrap">
+        <div class="social-btns">
+          <button class="btn-social" onclick="socialReg('google')"><span>🌐</span>Sign up with Google</button>
+          <button class="btn-social" onclick="socialReg('github')"><span>⚫</span>Sign up with GitHub</button>
+        </div>
+        <div class="divider"><div class="div-line"></div><span class="div-text">or register with email</span><div class="div-line"></div></div>
+      </div>
+
+      <!-- ERROR -->
+      <div class="err-msg" id="regErr">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="regErrTxt">Please fill in all required fields.</span>
+      </div>
+
+      <!-- FORM GRID -->
+      <div class="form-grid">
+
+        <!-- Name -->
+        <div class="form-group">
+          <label class="form-label" for="firstName">First Name</label>
+          <input class="form-input" type="text" id="firstName" placeholder="Ama" autocomplete="given-name"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="lastName">Last Name</label>
+          <input class="form-input" type="text" id="lastName" placeholder="Kofi" autocomplete="family-name"/>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group full">
+          <label class="form-label" for="email">Email Address</label>
+          <input class="form-input" type="email" id="email" placeholder="you@example.com" autocomplete="email"/>
+        </div>
+
+        <!-- Instructor extra fields -->
+        <div class="instructor-fields" id="instructorFields">
+          <div class="form-group full">
+            <label class="form-label" for="expertise">Area of Expertise <span style="color:var(--rust)">*</span></label>
+            <input class="form-input" type="text" id="expertise" placeholder="e.g. Machine Learning, Web Development, Design…"/>
+          </div>
+          <div class="form-group full">
+            <label class="form-label" for="bio">Short Bio <span style="font-weight:400;color:rgba(13,13,15,.35);font-size:.7rem">(shown on your profile)</span></label>
+            <input class="form-input" type="text" id="bio" placeholder="e.g. 10 years of experience in data science…"/>
+          </div>
+        </div>
+
+        <!-- Admin extra fields -->
+        <div class="admin-fields" id="adminFields">
+          <div class="form-group full">
+            <label class="form-label" for="adminInviteCode">Admin Invite Code <span style="color:var(--rust)">*</span></label>
+            <div class="input-wrap">
+              <input class="form-input" type="password" id="adminInviteCode" placeholder="Enter your admin invite code" autocomplete="off"/>
+              <button class="input-btn" type="button" onclick="toggleField('adminInviteCode')">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <div style="margin-top:.4rem;font-size:.72rem;color:rgba(13,13,15,.4)">Admin accounts require approval. Contact your platform administrator for an invite code.</div>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group full">
+          <label class="form-label" for="password">Password</label>
+          <div class="input-wrap">
+            <input class="form-input" type="password" id="password" placeholder="Create a strong password" autocomplete="new-password" oninput="checkStrength(this.value)"/>
+            <button class="input-btn" type="button" onclick="toggleField('password')">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <div class="strength-wrap">
+            <div class="strength-bars">
+              <div class="strength-bar" id="sb1"></div>
+              <div class="strength-bar" id="sb2"></div>
+              <div class="strength-bar" id="sb3"></div>
+              <div class="strength-bar" id="sb4"></div>
+            </div>
+            <span class="strength-label" id="strengthLabel"></span>
+          </div>
+        </div>
+
+        <!-- Confirm password -->
+        <div class="form-group full">
+          <label class="form-label" for="confirmPw">Confirm Password</label>
+          <div class="input-wrap">
+            <input class="form-input" type="password" id="confirmPw" placeholder="Repeat your password" autocomplete="new-password" oninput="checkMatch()"/>
+            <button class="input-btn" type="button" onclick="toggleField('confirmPw')">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <div id="matchMsg" style="font-size:.72rem;margin-top:.35rem;min-height:1em;transition:.2s"></div>
+        </div>
+
+      </div><!-- /form-grid -->
+
+      <!-- TERMS -->
+      <div class="terms-row">
+        <input type="checkbox" id="terms"/>
+        <span class="terms-text">
+          I agree to GITAcademy's <a href="terms.html" target="_blank">Terms of Service</a> and <a href="privacy.html" target="_blank">Privacy Policy</a>. I understand that my account will be created as a <strong id="termsRole">Student</strong>.
+        </span>
+      </div>
+
+      <!-- SUBMIT -->
+      <button class="btn-submit btn-s" id="regBtn" onclick="handleRegister()" type="button">
+        <span id="btnTxt">Create Student Account</span>
+        <div class="spinner" id="regSpinner"></div>
+      </button>
+
+      <div class="f-footer">
+        Already have an account? <a href="login.html">Sign in →</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { authApi, setToken, setUser } from './api.js';
+
+  const ROLES = {
+    student: {
+      eyebrow: 'Student Registration',
+      title: 'Create your account',
+      subtitle: 'Start learning for free — no credit card required.',
+      btnText: 'Create Student Account',
+      btnClass: 'btn-s',
+      descCardClass: 's',
+      descIcon: '🎓',
+      descText: 'Browse and enroll in courses, track your progress and earn certificates.',
+      showSocial: true,
+      showInstructor: false,
+      showAdmin: false,
+      redirect: 'dashboard.html',
+      benefits: [
+        { icon:'general', emoji:'🎓', title:'Access 8,400+ courses', desc:'From data science to design and everything in between' },
+        { icon:'general', emoji:'🏆', title:'Earn certificates', desc:'Share directly to LinkedIn and your CV' },
+        { icon:'general', emoji:'📱', title:'Learn on any device', desc:'Mobile app, desktop and offline downloads' },
+        { icon:'general', emoji:'🌍', title:'Africa-first pricing', desc:'Courses priced fairly for every market' },
+      ],
+    },
+    instructor: {
+      eyebrow: 'Instructor Registration',
+      title: 'Start teaching today',
+      subtitle: 'Share your expertise and earn from your knowledge.',
+      btnText: 'Create Instructor Account',
+      btnClass: 'btn-i',
+      descCardClass: 'i',
+      descIcon: '🧑‍🏫',
+      descText: 'Create and sell courses, access analytics and manage your students.',
+      showSocial: true,
+      showInstructor: true,
+      showAdmin: false,
+      redirect: 'instructor-dashboard.html',
+      benefits: [
+        { icon:'i', emoji:'💰', title:'Earn 70% revenue share', desc:'Get paid for every course sold worldwide' },
+        { icon:'i', emoji:'📊', title:'Powerful analytics', desc:'Track enrollments, ratings and earnings in real time' },
+        { icon:'i', emoji:'🎬', title:'Simple course builder', desc:'5-step wizard — publish your first course in a day' },
+        { icon:'i', emoji:'🌍', title:'Global reach', desc:'Sell to 2M+ learners across 150+ countries' },
+      ],
+    },
+    admin: {
+      eyebrow: 'Admin Registration',
+      title: 'Create admin account',
+      subtitle: 'Restricted. An invite code from your platform administrator is required.',
+      btnText: 'Create Admin Account',
+      btnClass: 'btn-a',
+      descCardClass: 'a',
+      descIcon: '🛡️',
+      descText: 'Full platform access — manage users, courses, payments and settings.',
+      showSocial: false,
+      showInstructor: false,
+      showAdmin: true,
+      redirect: 'admin-dashboard.html',
+      benefits: [
+        { icon:'a', emoji:'🛡️', title:'Full platform control', desc:'Manage users, courses, payments and settings' },
+        { icon:'a', emoji:'📊', title:'Platform analytics', desc:'Revenue, engagement and growth metrics' },
+        { icon:'a', emoji:'✅', title:'Course review queue', desc:'Approve or reject instructor-submitted courses' },
+        { icon:'a', emoji:'🔒', title:'Security controls', desc:'Role management, audit logs and access policies' },
+      ],
+    },
+  };
+
+  let currentRole = 'student';
+  let passwordOk = false;
+  let matchOk = false;
+
+  function selectRole(role, tabEl) {
+    currentRole = role;
+    const cfg = ROLES[role];
+
+    // Tabs
+    document.querySelectorAll('.rt').forEach(t => t.classList.remove('active'));
+    tabEl.classList.add('active');
+
+    // Header
+    document.getElementById('fEyebrow').textContent = cfg.eyebrow;
+    document.getElementById('fTitle').textContent   = cfg.title;
+    document.getElementById('fSubtitle').textContent = cfg.subtitle;
+
+    // Role desc card
+    const card = document.getElementById('roleDescCard');
+    card.className = 'role-desc-card ' + cfg.descCardClass;
+    card.querySelector('.rdc-icon').textContent = cfg.descIcon;
+    document.getElementById('roleDescText').textContent = cfg.descText;
+
+    // Button
+    const btn = document.getElementById('regBtn');
+    btn.className = 'btn-submit ' + cfg.btnClass;
+    document.getElementById('btnTxt').textContent = cfg.btnText;
+
+    // Terms role label
+    document.getElementById('termsRole').textContent = role.charAt(0).toUpperCase() + role.slice(1);
+
+    // Social
+    document.getElementById('socialWrap').style.display = cfg.showSocial ? '' : 'none';
+
+    // Instructor / admin extra fields
+    const instrFields = document.getElementById('instructorFields');
+    const adminFields = document.getElementById('adminFields');
+    instrFields.classList.toggle('show', cfg.showInstructor);
+    adminFields.classList.toggle('show', cfg.showAdmin);
+
+    // Left panel benefits
+    renderBenefits(cfg.benefits);
+
+    // Clear errors
+    document.getElementById('regErr').classList.remove('show');
+  }
+
+  function renderBenefits(items) {
+    document.getElementById('benefitsList').innerHTML = items.map(b => `
+      <div class="benefit-item">
+        <div class="benefit-icon ${b.icon}">${b.emoji}</div>
+        <div class="benefit-text"><strong>${b.title}</strong><span>${b.desc}</span></div>
+      </div>`).join('');
+  }
+
+  // Password strength
+  function checkStrength(pw) {
+    let score = 0;
+    if (pw.length >= 8)             score++;
+    if (/[A-Z]/.test(pw))           score++;
+    if (/[0-9]/.test(pw))           score++;
+    if (/[^A-Za-z0-9]/.test(pw))    score++;
+
+    const bars = ['sb1','sb2','sb3','sb4'];
+    const colors = { 1:'filled-1', 2:'filled-2', 3:'filled-3', 4:'filled-4' };
+    const labels = { 0:'', 1:'Too weak', 2:'Could be stronger', 3:'Good', 4:'Strong ✓' };
+    const labelColors = { 0:'', 1:'#e05555', 2:'#d97706', 3:'#a0820a', 4:'#2d7a4f' };
+
+    bars.forEach((id, i) => {
+      const bar = document.getElementById(id);
+      bar.className = 'strength-bar ' + (i < score ? colors[score] : '');
+    });
+
+    const lbl = document.getElementById('strengthLabel');
+    lbl.textContent = labels[score];
+    lbl.style.color = labelColors[score];
+    passwordOk = score >= 2;
+    checkMatch(); // re-check match colour
+  }
+
+  function checkMatch() {
+    const pw = document.getElementById('password').value;
+    const cf = document.getElementById('confirmPw').value;
+    const msg = document.getElementById('matchMsg');
+    if (!cf) { msg.textContent = ''; matchOk = false; return; }
+    matchOk = pw === cf;
+    msg.textContent = matchOk ? '✓ Passwords match' : '✗ Passwords don\'t match';
+    msg.style.color = matchOk ? 'var(--success)' : 'var(--error)';
+    document.getElementById('confirmPw').classList.toggle('err', !matchOk);
+  }
+
+  function toggleField(id) {
+    const inp = document.getElementById(id);
+    inp.type = inp.type === 'text' ? 'password' : 'text';
+  }
+
+  function showError(msg) {
+    document.getElementById('regErrTxt').textContent = msg;
+    document.getElementById('regErr').classList.add('show');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  async function handleRegister() {
+    const firstName  = document.getElementById('firstName').value.trim();
+    const lastName   = document.getElementById('lastName').value.trim();
+    const email      = document.getElementById('email').value.trim();
+    const password   = document.getElementById('password').value;
+    const confirmPw  = document.getElementById('confirmPw').value;
+    const terms      = document.getElementById('terms').checked;
+    const expertise  = document.getElementById('expertise')?.value?.trim();
+    const inviteCode = document.getElementById('adminInviteCode')?.value?.trim();
+    const cfg        = ROLES[currentRole];
+    const btn        = document.getElementById('regBtn');
+    const spinner    = document.getElementById('regSpinner');
+    const btnTxt     = document.getElementById('btnTxt');
+
+    document.getElementById('regErr').classList.remove('show');
+
+    // Validation
+    if (!firstName || !lastName) { showError('Please enter your first and last name.'); return; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('Please enter a valid email address.'); return; }
+    if (currentRole === 'instructor' && !expertise) { showError('Please enter your area of expertise.'); return; }
+    if (currentRole === 'admin' && !inviteCode) { showError('An admin invite code is required.'); return; }
+    if (!password || password.length < 6) { showError('Password must be at least 6 characters.'); return; }
+    if (password !== confirmPw) { showError('Passwords do not match.'); return; }
+    if (!terms) { showError('Please agree to the Terms of Service and Privacy Policy.'); return; }
+
+    // Loading state
+    btn.disabled = true;
+    btnTxt.style.opacity = '0';
+    spinner.style.display = 'block';
+
+    try {
+      const data = await authApi.register({
+        first_name: firstName,
+        last_name: lastName,
+        email,
+        password,
+        role: currentRole,
+        admin_invite_code: inviteCode || undefined,
+      });
+      if (!data.token) throw new Error('Registration failed — no token returned.');
+      setToken(data.token);
+      setUser(data.user);
+      localStorage.setItem('lh_role', data.user.role);
+      window.location.href = cfg.redirect;
+
+    } catch (err) {
+      const msg = err.data?.errors?.email?.[0] || err.data?.message || err.message || 'Registration failed. Please try again.';
+      showError(msg);
+      btn.disabled = false;
+      btnTxt.style.opacity = '1';
+      spinner.style.display = 'none';
+    }
+  }
+
+  function socialReg(provider) {
+    alert(`${provider} sign-up isn't wired up in this demo — please use the email/password form.`);
+  }
+
+  // Expose functions referenced by inline onclick="" handlers (module scripts are not global by default)
+  window.selectRole = selectRole;
+  window.handleRegister = handleRegister;
+  window.socialReg = socialReg;
+  window.toggleField = toggleField;
+</script>
+</body>
+</html>

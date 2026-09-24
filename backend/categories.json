@@ -1,0 +1,81 @@
+{
+  "categories": [
+    {
+      "id": 1, "name": "Development", "slug": "development",
+      "emoji": "💻", "courses_count": 1240, "students_count": 620000,
+      "featured": true, "color": "#2d4a3e",
+      "subcategories": ["Web Development", "Mobile Apps", "Game Development", "Data Structures", "DevOps", "Cybersecurity", "Cloud Computing"]
+    },
+    {
+      "id": 2, "name": "Design", "slug": "design",
+      "emoji": "🎨", "courses_count": 820, "students_count": 340000,
+      "featured": true, "color": "#c4522a",
+      "subcategories": ["UI/UX Design", "Graphic Design", "Motion Design", "3D Design", "Illustration", "Photography", "Video Production"]
+    },
+    {
+      "id": 3, "name": "Data Science", "slug": "data-science",
+      "emoji": "📊", "courses_count": 640, "students_count": 280000,
+      "featured": true, "color": "#1a237e",
+      "subcategories": ["Machine Learning", "Data Analysis", "Deep Learning", "NLP", "Computer Vision", "Statistics", "Data Engineering"]
+    },
+    {
+      "id": 4, "name": "Business", "slug": "business",
+      "emoji": "💼", "courses_count": 530, "students_count": 210000,
+      "featured": false,
+      "subcategories": ["Entrepreneurship", "Finance", "Management", "Sales", "Strategy", "Leadership"]
+    },
+    {
+      "id": 5, "name": "Marketing", "slug": "marketing",
+      "emoji": "📢", "courses_count": 410, "students_count": 180000,
+      "featured": false,
+      "subcategories": ["Digital Marketing", "Social Media", "SEO & SEM", "Content Marketing", "Email Marketing", "Analytics"]
+    },
+    {
+      "id": 6, "name": "Photography", "slug": "photography",
+      "emoji": "📸", "courses_count": 280, "students_count": 95000,
+      "featured": false,
+      "subcategories": ["Portrait", "Landscape", "Street Photography", "Photo Editing", "Lightroom", "Photoshop"]
+    },
+    {
+      "id": 7, "name": "Music", "slug": "music",
+      "emoji": "🎵", "courses_count": 190, "students_count": 72000,
+      "featured": false,
+      "subcategories": ["Guitar", "Piano", "Music Production", "Music Theory", "Singing", "DJ & Electronic Music"]
+    },
+    {
+      "id": 8, "name": "Health & Fitness", "slug": "health",
+      "emoji": "🏋️", "courses_count": 320, "students_count": 140000,
+      "featured": false,
+      "subcategories": ["Yoga", "Nutrition", "Mental Health", "Meditation", "Sports Science", "Personal Training"]
+    },
+    {
+      "id": 9, "name": "Language", "slug": "language",
+      "emoji": "🌍", "courses_count": 240, "students_count": 110000,
+      "featured": false,
+      "subcategories": ["English", "French", "Spanish", "Mandarin", "Arabic", "Portuguese", "Sign Language"]
+    },
+    {
+      "id": 10, "name": "Personal Development", "slug": "personal",
+      "emoji": "🧠", "courses_count": 380, "students_count": 165000,
+      "featured": false,
+      "subcategories": ["Productivity", "Leadership", "Mindfulness", "Public Speaking", "Memory & Study Skills", "Career Development"]
+    },
+    {
+      "id": 11, "name": "Video Production", "slug": "video",
+      "emoji": "🎬", "courses_count": 210, "students_count": 88000,
+      "featured": false,
+      "subcategories": ["Filmmaking", "Video Editing", "YouTube", "Animation", "After Effects", "Premiere Pro"]
+    },
+    {
+      "id": 12, "name": "Cybersecurity", "slug": "security",
+      "emoji": "🔐", "courses_count": 180, "students_count": 75000,
+      "featured": false,
+      "subcategories": ["Ethical Hacking", "Network Security", "Cloud Security", "Penetration Testing", "CISSP", "CompTIA"]
+    }
+  ],
+  "popular_topics": [
+    "Python", "ChatGPT & AI", "React", "Figma", "Excel", "SQL",
+    "JavaScript", "AWS", "Docker", "Photoshop", "Node.js", "Flutter",
+    "Cybersecurity", "Power BI", "Django", "Blockchain", "Kotlin", "TypeScript"
+  ]
+}

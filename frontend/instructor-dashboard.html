@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Instructor Dashboard — GITAcademy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --ink:#0d0d0f;--cream:#f5f0e8;--gold:#e8c547;--moss:#2d4a3e;
+      --rust:#c4522a;--paper:#faf8f3;--smoke:#f0ece4;--mist:#e8e3db;
+      --error:#e05555;--success:#2d7a4f;
+      --font-display:'Fraunces',Georgia,serif;--font-body:'DM Sans',system-ui,sans-serif;
+      --nav-h:64px;--sidebar-w:240px;
+      --shadow-sm:0 2px 8px rgba(13,13,15,.06);--shadow-md:0 4px 20px rgba(13,13,15,.1);
+      --radius-sm:8px;--radius-md:12px;--radius-lg:18px;--radius-xl:24px;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:var(--font-body);background:var(--smoke);color:var(--ink);overflow-x:hidden}
+    a{text-decoration:none;color:inherit}
+    button{cursor:pointer;font-family:inherit;border:none;background:none}
+
+    /* ══ NAVBAR ══ */
+    .navbar{position:sticky;top:0;z-index:500;height:var(--nav-h);background:var(--ink);border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;padding:0 1.5rem;gap:1rem}
+    .nav-logo{font-family:var(--font-display);font-size:1.3rem;font-weight:900;color:var(--cream);letter-spacing:-.03em;flex-shrink:0}
+    .nav-logo span{color:var(--rust)}
+    .nav-badge-instructor{background:rgba(232,197,71,.15);border:1px solid rgba(232,197,71,.25);color:var(--gold);font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.25rem .65rem;border-radius:100px;flex-shrink:0}
+    .nav-right{display:flex;align-items:center;gap:.75rem;margin-left:auto}
+    .btn-new-course{background:var(--gold);color:var(--ink);border:none;padding:.5rem 1.2rem;border-radius:100px;font-size:.82rem;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit;display:flex;align-items:center;gap:.4rem}
+    .btn-new-course:hover{background:#f0d258;transform:translateY(-1px)}
+    .nav-icon-btn{width:36px;height:36px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;color:rgba(245,240,232,.5);transition:.2s;position:relative}
+    .nav-icon-btn:hover{background:rgba(255,255,255,.08);color:var(--cream)}
+    .nav-dot{position:absolute;top:4px;right:4px;width:7px;height:7px;background:var(--rust);border-radius:50%;border:1.5px solid var(--ink)}
+    .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--moss),var(--rust));display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:var(--cream);flex-shrink:0}
+    .nav-user{display:flex;align-items:center;gap:.5rem;padding:.3rem .5rem .3rem .85rem;border-radius:100px;border:1.5px solid rgba(255,255,255,.12);cursor:pointer;transition:.2s;background:none}
+    .nav-user:hover{border-color:rgba(255,255,255,.3)}
+    .nav-user-name{font-size:.82rem;font-weight:500;color:rgba(245,240,232,.8);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .hamburger{display:none;flex-direction:column;gap:5px;padding:4px}
+    .hamburger span{display:block;width:22px;height:2px;background:var(--cream);border-radius:2px}
+    .nav-user-wrap{position:relative}
+    .user-dropdown{position:absolute;top:calc(100% + 8px);right:0;background:white;border:1px solid rgba(13,13,15,.08);border-radius:var(--radius-lg);box-shadow:0 12px 40px rgba(13,13,15,.14);padding:.5rem;min-width:200px;opacity:0;pointer-events:none;transform:translateY(-8px);transition:.2s;z-index:600}
+    .user-dropdown.open{opacity:1;pointer-events:all;transform:translateY(0)}
+    .dropdown-item{display:flex;align-items:center;gap:.6rem;padding:.6rem .75rem;border-radius:var(--radius-sm);font-size:.875rem;font-weight:500;color:rgba(13,13,15,.7);transition:.15s}
+    .dropdown-item:hover{background:var(--smoke);color:var(--ink)}
+    .dropdown-item.danger{color:var(--error)}
+    .dropdown-sep{height:1px;background:rgba(13,13,15,.06);margin:.4rem 0}
+
+    /* ══ LAYOUT ══ */
+    .page-wrap{display:flex;min-height:calc(100vh - var(--nav-h))}
+
+    /* ══ SIDEBAR ══ */
+    .sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--ink);border-right:1px solid rgba(255,255,255,.07);padding:1.25rem .75rem;display:flex;flex-direction:column;gap:.2rem;position:sticky;top:var(--nav-h);height:calc(100vh - var(--nav-h));overflow-y:auto}
+    .sidebar-section{font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,240,232,.25);padding:.6rem .75rem .3rem;margin-top:.5rem}
+    .sidebar-link{display:flex;align-items:center;gap:.65rem;padding:.6rem .75rem;border-radius:var(--radius-md);font-size:.845rem;font-weight:500;color:rgba(245,240,232,.5);transition:.15s;text-decoration:none}
+    .sidebar-link:hover{background:rgba(255,255,255,.07);color:rgba(245,240,232,.9)}
+    .sidebar-link.active{background:rgba(255,255,255,.1);color:var(--cream)}
+    .sidebar-link svg{opacity:.6}
+    .sidebar-link.active svg{opacity:1}
+    .sidebar-count{margin-left:auto;background:var(--rust);color:white;font-size:.62rem;font-weight:700;padding:.12rem .42rem;border-radius:100px}
+    .sidebar-link.active .sidebar-count{background:var(--gold);color:var(--ink)}
+    .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(13,13,15,.6);z-index:400}
+
+    /* ══ MAIN ══ */
+    .main{flex:1;padding:2rem;overflow-x:hidden}
+
+    /* ── Welcome ── */
+    .welcome-banner{background:linear-gradient(135deg,var(--moss) 0%,#1e3329 100%);border-radius:var(--radius-xl);padding:2rem 2.5rem;margin-bottom:2rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;position:relative;overflow:hidden}
+    .wb-blob{position:absolute;border-radius:50%;pointer-events:none}
+    .wb-blob-1{width:300px;height:300px;background:radial-gradient(circle,rgba(232,197,71,.12),transparent 70%);top:-100px;right:-60px}
+    .wb-blob-2{width:200px;height:200px;background:radial-gradient(circle,rgba(255,255,255,.05),transparent 70%);bottom:-80px;left:30%}
+    .wb-text{position:relative;z-index:1}
+    .wb-eyebrow{font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,240,232,.5);margin-bottom:.6rem}
+    .wb-title{font-family:var(--font-display);font-size:clamp(1.5rem,2.5vw,2.2rem);font-weight:900;color:var(--cream);line-height:1.05;letter-spacing:-.03em;margin-bottom:.4rem}
+    .wb-title em{font-style:italic;font-weight:300;color:var(--gold)}
+    .wb-sub{font-size:.875rem;color:rgba(245,240,232,.5);font-weight:300}
+    .wb-actions{display:flex;gap:.75rem;position:relative;z-index:1;flex-wrap:wrap}
+    .btn-wb-primary{background:var(--gold);color:var(--ink);border:none;padding:.75rem 1.5rem;border-radius:100px;font-size:.875rem;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit;display:flex;align-items:center;gap:.4rem;text-decoration:none}
+    .btn-wb-primary:hover{background:#f0d258;transform:translateY(-2px)}
+    .btn-wb-ghost{background:transparent;color:rgba(245,240,232,.7);border:1.5px solid rgba(255,255,255,.15);padding:.75rem 1.5rem;border-radius:100px;font-size:.875rem;font-weight:500;cursor:pointer;transition:.2s;font-family:inherit;text-decoration:none;display:flex;align-items:center;gap:.4rem}
+    .btn-wb-ghost:hover{border-color:rgba(255,255,255,.4);color:var(--cream)}
+
+    /* ── Stats ── */
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem}
+    .stat-card{background:white;border-radius:var(--radius-lg);padding:1.3rem 1.5rem;border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);transition:.2s}
+    .stat-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+    .stat-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem}
+    .stat-icon{width:40px;height:40px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1rem}
+    .stat-icon.moss{background:rgba(45,74,62,.12)}
+    .stat-icon.gold{background:rgba(232,197,71,.18)}
+    .stat-icon.rust{background:rgba(196,82,42,.12)}
+    .stat-icon.ink{background:rgba(13,13,15,.07)}
+    .stat-trend{font-size:.72rem;font-weight:600;display:flex;align-items:center;gap:.2rem}
+    .stat-trend.up{color:var(--success)}
+    .stat-trend.down{color:var(--error)}
+    .stat-num{font-family:var(--font-display);font-size:1.9rem;font-weight:700;line-height:1;margin-bottom:.2rem}
+    .stat-label{font-size:.78rem;color:rgba(13,13,15,.45)}
+
+    /* ── Section hdr ── */
+    .section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
+    .section-title{font-family:var(--font-display);font-size:1.3rem;font-weight:700;letter-spacing:-.02em}
+    .section-link{font-size:.82rem;font-weight:600;color:var(--rust);transition:.2s;text-decoration:none}
+    .section-link:hover{opacity:.7}
+
+    /* ── My Courses ── */
+    .courses-table{background:white;border-radius:var(--radius-xl);border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:2rem}
+    .table-header{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 120px;padding:.75rem 1.5rem;background:var(--smoke);border-bottom:1px solid rgba(13,13,15,.06);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(13,13,15,.4)}
+    .table-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 120px;padding:1rem 1.5rem;border-bottom:1px solid rgba(13,13,15,.05);align-items:center;transition:.15s}
+    .table-row:last-child{border-bottom:none}
+    .table-row:hover{background:rgba(13,13,15,.02)}
+    .course-info{display:flex;align-items:center;gap:.85rem}
+    .course-thumb-sm{width:52px;height:40px;border-radius:var(--radius-sm);background:var(--smoke);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+    .course-name-cell{font-size:.875rem;font-weight:600;margin-bottom:.15rem}
+    .course-status-badge{font-size:.65rem;font-weight:700;padding:.15rem .5rem;border-radius:100px;text-transform:uppercase}
+    .badge-published{background:rgba(45,122,79,.1);color:var(--success)}
+    .badge-draft{background:rgba(13,13,15,.08);color:rgba(13,13,15,.5)}
+    .badge-review{background:rgba(217,119,6,.1);color:#92400e}
+    .table-cell{font-size:.875rem;color:rgba(13,13,15,.65)}
+    .table-cell.bold{font-weight:700;color:var(--ink)}
+    .table-actions{display:flex;gap:.4rem}
+    .tbl-btn{display:flex;align-items:center;gap:.3rem;padding:.4rem .7rem;border-radius:var(--radius-sm);font-size:.75rem;font-weight:600;transition:.15s;border:1.5px solid rgba(13,13,15,.1);color:rgba(13,13,15,.6);background:none;cursor:pointer;font-family:inherit}
+    .tbl-btn:hover{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+
+    /* ── Bottom grid ── */
+    .bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+    .card{background:white;border-radius:var(--radius-lg);padding:1.5rem;border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm)}
+
+    /* Revenue chart placeholder */
+    .chart-placeholder{height:160px;background:var(--smoke);border-radius:var(--radius-md);display:flex;align-items:flex-end;padding:1rem;gap:.5rem;margin-top:1rem;overflow:hidden}
+    .chart-bar{border-radius:4px 4px 0 0;background:var(--moss);opacity:.7;flex:1;transition:.3s;min-height:4px}
+    .chart-bar:hover{opacity:1}
+    .chart-bar.highlight{background:var(--rust);opacity:1}
+
+    /* Recent enrollments */
+    .enrollment-list{display:flex;flex-direction:column;gap:0;margin-top:.75rem}
+    .enrollment-item{display:flex;align-items:center;gap:.75rem;padding:.7rem 0;border-bottom:1px solid rgba(13,13,15,.05)}
+    .enrollment-item:last-child{border-bottom:none}
+    .enroll-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--moss),var(--rust));display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;color:var(--cream);flex-shrink:0}
+    .enroll-info{flex:1}
+    .enroll-name{font-size:.85rem;font-weight:600}
+    .enroll-course{font-size:.75rem;color:rgba(13,13,15,.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px}
+    .enroll-time{font-size:.72rem;color:rgba(13,13,15,.35);white-space:nowrap}
+    .enroll-price{font-size:.85rem;font-weight:700;color:var(--success);white-space:nowrap}
+
+    /* Reviews feed */
+    .reviews-feed{display:flex;flex-direction:column;gap:0;margin-top:.75rem}
+    .review-feed-item{padding:.75rem 0;border-bottom:1px solid rgba(13,13,15,.05)}
+    .review-feed-item:last-child{border-bottom:none}
+    .review-feed-header{display:flex;align-items:center;gap:.6rem;margin-bottom:.4rem}
+    .review-feed-stars{color:var(--gold);font-size:.75rem;letter-spacing:1px}
+    .review-feed-author{font-size:.8rem;font-weight:600}
+    .review-feed-course{font-size:.72rem;color:rgba(13,13,15,.4)}
+    .review-feed-text{font-size:.82rem;color:rgba(13,13,15,.65);line-height:1.5}
+
+    /* ── Fade ── */
+    .fade{animation:fadeUp .6s ease both}
+    .d1{animation-delay:.05s}.d2{animation-delay:.15s}.d3{animation-delay:.25s}.d4{animation-delay:.35s}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+    /* ══ RESPONSIVE ══ */
+    @media(max-width:1200px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:1024px){.bottom-grid{grid-template-columns:1fr}.table-header,.table-row{grid-template-columns:2fr 1fr 1fr 80px}.table-header>*:nth-child(3),.table-row>*:nth-child(3){display:none}}
+    @media(max-width:768px){
+      .sidebar{position:fixed;left:-100%;top:var(--nav-h);z-index:450;transition:.3s;height:calc(100vh - var(--nav-h))}
+      .sidebar.open{left:0}
+      .sidebar-overlay.open{display:block}
+      .hamburger{display:flex}
+      .nav-user-name{display:none}
+      .main{padding:1.25rem}
+      .welcome-banner{flex-direction:column;align-items:flex-start;padding:1.5rem}
+      .wb-actions{width:100%}
+      .stats-grid{grid-template-columns:repeat(2,1fr)}
+      .table-header,.table-row{grid-template-columns:1fr auto}
+      .table-header>*:not(:first-child):not(:last-child),.table-row>*:not(:first-child):not(:last-child){display:none}
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <button class="hamburger" id="hamburgerBtn"><span></span><span></span><span></span></button>
+  <a href="learnhub_responsive.html" class="nav-logo">GIT<span>Academy</span></a>
+  <span class="nav-badge-instructor">Instructor</span>
+  <div class="nav-right">
+    <a href="create-course.html" class="btn-new-course">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      New Course
+    </a>
+    <button class="nav-icon-btn" title="Notifications">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <span class="nav-dot"></span>
+    </button>
+    <div class="nav-user-wrap">
+      <button class="nav-user" id="userMenuBtn">
+        <span class="nav-user-name">Prof. ATO SIAW QUARSHIE</span>
+        <div class="avatar">ASQ</div>
+      </button>
+      <div class="user-dropdown" id="userDropdown">
+        <a href="profile.html" class="dropdown-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>My Profile</a>
+        <a href="dashboard.html" class="dropdown-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Student View</a>
+        <div class="dropdown-sep"></div>
+        <a href="login.html" class="dropdown-item danger"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Log Out</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="page-wrap">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <a href="instructor-dashboard.html" class="sidebar-link active">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </a>
+    <div class="sidebar-section">Courses</div>
+    <a href="create-course.html" class="sidebar-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Create Course
+    </a>
+    <a href="edit-course.html" class="sidebar-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      My Courses
+      <span class="sidebar-count" id="sbMyCoursesCount">–</span>
+    </a>
+    <a href="upload-video.html" class="sidebar-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+      Upload Video
+    </a>
+    <div class="sidebar-section">Analytics</div>
+    <a href="course-analytics.html" class="sidebar-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Analytics
+    </a>
+    <div class="sidebar-section">Account</div>
+    <a href="profile.html" class="sidebar-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Profile
+    </a>
+    <a href="edit-profile.html" class="sidebar-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Settings
+    </a>
+    <a href="dashboard.html" class="sidebar-link" style="margin-top:auto;color:rgba(232,197,71,.7)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+      Switch to Student
+    </a>
+    <a href="login.html" class="sidebar-link" style="color:rgba(224,85,85,.6)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Log Out
+    </a>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- Welcome Banner -->
+    <div class="welcome-banner fade d1">
+      <div class="wb-blob wb-blob-1"></div>
+      <div class="wb-blob wb-blob-2"></div>
+      <div class="wb-text">
+        <div class="wb-eyebrow">Instructor Portal</div>
+        <h1 class="wb-title">Good morning,<br><em id="wbInstructorName">Instructor!</em></h1>
+        <p class="wb-sub" id="wbSub">Loading your stats…</p>
+      </div>
+      <div class="wb-actions">
+        <a href="create-course.html" class="btn-wb-primary">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Create New Course
+        </a>
+        <a href="course-analytics.html" class="btn-wb-ghost">View Analytics →</a>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid fade d2">
+      <div class="stat-card">
+        <div class="stat-header"><div class="stat-icon gold">💰</div></div>
+        <div class="stat-num" id="statRevenue">–</div>
+        <div class="stat-label">Total Revenue</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-header"><div class="stat-icon moss">👥</div></div>
+        <div class="stat-num" id="statStudents">–</div>
+        <div class="stat-label">Total Students</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-header"><div class="stat-icon rust">⭐</div></div>
+        <div class="stat-num" id="statRating">–</div>
+        <div class="stat-label">Average Rating</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-header"><div class="stat-icon ink">📚</div></div>
+        <div class="stat-num" id="statCourseCount">–</div>
+        <div class="stat-label">Published Courses</div>
+      </div>
+    </div>
+
+    <!-- My Courses Table -->
+    <div class="fade d3">
+      <div class="section-hdr">
+        <h2 class="section-title">My Courses</h2>
+        <a href="edit-course.html" class="section-link">Manage all →</a>
+      </div>
+      <div class="courses-table">
+        <div class="table-header">
+          <div>Course</div>
+          <div>Students</div>
+          <div>Revenue</div>
+          <div>Rating</div>
+          <div>Actions</div>
+        </div>
+        <div id="myCoursesRows"></div>
+      </div>
+    </div>
+
+    <!-- Bottom Grid -->
+    <div class="bottom-grid fade d4">
+
+      <!-- Revenue Chart -->
+      <div class="card">
+        <div class="section-hdr" style="margin-bottom:0">
+          <h3 style="font-family:var(--font-display);font-size:1.05rem;font-weight:700">Monthly Revenue</h3>
+          <span style="font-size:.78rem;color:rgba(13,13,15,.4)">Illustrative trend</span>
+        </div>
+        <div class="chart-placeholder">
+          <div class="chart-bar" style="height:45%"></div>
+          <div class="chart-bar" style="height:60%"></div>
+          <div class="chart-bar" style="height:52%"></div>
+          <div class="chart-bar" style="height:70%"></div>
+          <div class="chart-bar" style="height:65%"></div>
+          <div class="chart-bar" style="height:80%"></div>
+          <div class="chart-bar" style="height:75%"></div>
+          <div class="chart-bar highlight" style="height:95%"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:.5rem">
+          <span style="font-size:.7rem;color:rgba(13,13,15,.35)">Aug</span>
+          <span style="font-size:.7rem;color:rgba(13,13,15,.35)">Sep</span>
+          <span style="font-size:.7rem;color:rgba(13,13,15,.35)">Oct</span>
+          <span style="font-size:.7rem;color:rgba(13,13,15,.35)">Nov</span>
+          <span style="font-size:.7rem;color:rgba(13,13,15,.35)">Dec</span>
+          <span style="font-size:.7rem;color:rgba(13,13,15,.35)">Jan</span>
+          <span style="font-size:.7rem;color:rgba(13,13,15,.35)">Feb</span>
+          <span style="font-size:.7rem;color:rgba(13,13,15,.35)">Mar</span>
+        </div>
+      </div>
+
+      <!-- Recent Enrollments -->
+      <div class="card">
+        <div class="section-hdr" style="margin-bottom:0">
+          <h3 style="font-family:var(--font-display);font-size:1.05rem;font-weight:700">Recent Enrollments</h3>
+          <a href="course-analytics.html" class="section-link">All →</a>
+        </div>
+        <div class="enrollment-list" id="enrollmentList"></div>
+      </div>
+
+    </div>
+
+  </main>
+</div>
+
+<script type="module">
+  import { instructorApi } from './api.js';
+  import { redirectIfNotLoggedIn, getUser, logout } from './auth.js';
+
+  redirectIfNotLoggedIn('login.html');
+  const me = getUser();
+  if (!me || (me.role !== 'instructor' && me.role !== 'admin')) window.location.href = 'dashboard.html';
+
+  document.querySelectorAll('.dropdown-item.danger, .sidebar-link[href="login.html"]').forEach(btn => {
+    btn.addEventListener('click', e => { e.preventDefault(); logout(); });
+  });
+  if (me) {
+    const navName = document.querySelector('.nav-user-name');
+    const navAvatar = document.querySelector('.nav-user .avatar');
+    if (navName) navName.textContent = `${me.first_name} ${me.last_name}`;
+    if (navAvatar) navAvatar.textContent = ((me.first_name?.[0]||'')+(me.last_name?.[0]||'')).toUpperCase() || 'I';
+  }
+
+  const fmt = (n) => '₵' + Number(n).toLocaleString('en-GH', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+  const gradients = ['linear-gradient(135deg,#2d4a3e,#c4522a)','linear-gradient(135deg,#1a237e,#7c4dff)','linear-gradient(135deg,#880e4f,#e91e63)','linear-gradient(135deg,#e65100,#ff9800)'];
+
+  async function load() {
+    document.getElementById('wbInstructorName').textContent = (me.first_name || 'Instructor') + '!';
+
+    let dash;
+    try {
+      dash = await instructorApi.dashboard();
+    } catch (err) {
+      dash = { total_revenue: 0, total_students: 0, total_courses: 0, courses: [] };
+    }
+
+    document.getElementById('wbSub').textContent = `You have ${dash.total_courses} course${dash.total_courses===1?'':'s'} and ${dash.total_students} student${dash.total_students===1?'':'s'}. Your courses have earned ${fmt(dash.total_earnings || 0)}.`;
+    document.getElementById('statRevenue').textContent = fmt(dash.total_earnings || 0);
+    document.getElementById('statStudents').textContent = (dash.total_students || 0).toLocaleString();
+    document.getElementById('statCourseCount').textContent = dash.total_courses || 0;
+    document.getElementById('sbMyCoursesCount').textContent = dash.total_courses || 0;
+
+    const courses = dash.courses || [];
+    const avgRating = courses.length ? (courses.reduce((s,c)=>s+c.rating,0) / courses.length).toFixed(1) : '–';
+    document.getElementById('statRating').textContent = avgRating;
+
+    document.getElementById('myCoursesRows').innerHTML = courses.map(c => `
+      <div class="table-row">
+        <div class="course-info">
+          <div class="course-thumb-sm">${c.emoji || '📚'}</div>
+          <div>
+            <div class="course-name-cell">${c.title}</div>
+            <span class="course-status-badge badge-${c.status === 'published' ? 'published' : 'draft'}">${c.status}</span>
+          </div>
+        </div>
+        <div class="table-cell bold">${c.students_count.toLocaleString()}</div>
+        <div class="table-cell bold">${c.price === 0 ? 'Free' : fmt(c.price)}</div>
+        <div class="table-cell">⭐ ${c.rating || '–'}</div>
+        <div class="table-actions">
+          <a href="edit-course.html?course_id=${c.id}" class="tbl-btn">Edit</a>
+          <a href="course-analytics.html?course_id=${c.id}" class="tbl-btn">Stats</a>
+        </div>
+      </div>`).join('') || '<div style="padding:1.5rem;color:rgba(13,13,15,.4);font-size:.85rem">You haven\'t created any courses yet. <a href="create-course.html" style="color:var(--rust)">Create one →</a></div>';
+
+    // Recent enrollments — pull students across this instructor's courses
+    let recent = [];
+    for (const c of courses.slice(0, 5)) {
+      try {
+        const s = await instructorApi.students(c.id);
+        (s.students || []).forEach(st => recent.push({ ...st, courseTitle: c.title }));
+      } catch (err) { /* skip */ }
+    }
+    recent.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    recent = recent.slice(0, 4);
+
+    document.getElementById('enrollmentList').innerHTML = recent.map((r, i) => {
+      const name = `${r.first_name} ${r.last_name}`;
+      const initials = name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+      return `
+      <div class="enrollment-item">
+        <div class="enroll-avatar" style="background:${gradients[i % gradients.length]}">${initials}</div>
+        <div class="enroll-info">
+          <div class="enroll-name">${name}</div>
+          <div class="enroll-course">${r.courseTitle}</div>
+        </div>
+        <span style="font-size:.72rem;color:rgba(13,13,15,.3)">${(r.created_at||'').slice(0,10)}</span>
+      </div>`;
+    }).join('') || '<div style="padding:1rem;color:rgba(13,13,15,.4);font-size:.85rem">No enrollments yet.</div>';
+  }
+
+  load();
+
+  // ── Sidebar ───────────────────────────────────────────────
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  const sidebar      = document.getElementById('sidebar');
+  const overlay      = document.getElementById('sidebarOverlay');
+  hamburgerBtn?.addEventListener('click', () => { sidebar.classList.toggle('open'); overlay.classList.toggle('open'); });
+  overlay?.addEventListener('click', () => { sidebar.classList.remove('open'); overlay.classList.remove('open'); });
+
+  // ── User dropdown ─────────────────────────────────────────
+  const userMenuBtn  = document.getElementById('userMenuBtn');
+  const userDropdown = document.getElementById('userDropdown');
+  userMenuBtn?.addEventListener('click', e => { e.stopPropagation(); userDropdown?.classList.toggle('open'); });
+  document.addEventListener('click', () => userDropdown?.classList.remove('open'));
+
+  // ── Populate nav user info ────────────────────────────────
+  const navName = document.querySelector('.nav-user-name');
+  const navAvatar = document.querySelector('.nav-user .avatar');
+  if (navName) navName.textContent = me.first_name || 'Instructor';
+  if (navAvatar) navAvatar.textContent = ((me.first_name?.[0]||'I') + (me.last_name?.[0]||'')).toUpperCase();
+
+  // ── Bar chart hover tooltips (illustrative trend, not live data) ──
+  const months = ['Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
+  document.querySelectorAll('.chart-bar').forEach((bar, i) => {
+    bar.style.cursor = 'default';
+    bar.title = months[i];
+  });
+</script>
+</body>
+</html>

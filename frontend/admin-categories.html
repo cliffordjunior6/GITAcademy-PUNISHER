@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Categories — GITAcademy Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--ink:#0d0d0f;--cream:#f5f0e8;--gold:#e8c547;--moss:#2d4a3e;--rust:#c4522a;--error:#e05555;--success:#2d7a4f;--dark:#161618;--darker:#111113;--font-display:'Fraunces',Georgia,serif;--font-body:'DM Sans',system-ui,sans-serif;--nav-h:56px;--sidebar-w:220px;--radius-sm:8px;--radius-md:12px;--radius-lg:18px;--radius-xl:24px}
+    body{font-family:var(--font-body);background:var(--darker);color:rgba(245,240,232,.85);min-height:100vh;overflow-x:hidden}
+    a{text-decoration:none;color:inherit}
+    button{cursor:pointer;font-family:inherit;border:none;background:none}
+
+    .navbar{position:sticky;top:0;z-index:500;height:var(--nav-h);background:var(--dark);border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;padding:0 1.25rem;gap:1rem}
+    .nav-logo{font-family:var(--font-display);font-size:1.3rem;font-weight:900;color:var(--cream);letter-spacing:-.03em}
+    .nav-logo span{color:var(--rust)}
+    .nav-admin-badge{background:rgba(196,82,42,.2);color:#fca5a5;font-size:.62rem;font-weight:700;padding:.15rem .55rem;border-radius:100px;letter-spacing:.06em;text-transform:uppercase}
+    .nav-right{margin-left:auto;display:flex;align-items:center;gap:.65rem}
+    .nav-user{display:flex;align-items:center;gap:.5rem;padding:.25rem .4rem .25rem .7rem;border-radius:100px;border:1px solid rgba(255,255,255,.1);cursor:pointer}
+    .nav-user-name{font-size:.82rem;color:rgba(245,240,232,.7)}
+    .avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--rust),#f97316);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:white;flex-shrink:0}
+    .page-wrap{display:flex;min-height:calc(100vh - var(--nav-h))}
+    .sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--dark);border-right:1px solid rgba(255,255,255,.06);padding:1rem .65rem;display:flex;flex-direction:column;gap:.1rem;position:sticky;top:var(--nav-h);height:calc(100vh - var(--nav-h));overflow-y:auto}
+    .sidebar-section{font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,240,232,.22);padding:.4rem .6rem;margin-top:.4rem}
+    .sidebar-link{display:flex;align-items:center;gap:.55rem;padding:.55rem .7rem;border-radius:var(--radius-sm);font-size:.83rem;font-weight:500;color:rgba(245,240,232,.45);transition:.15s}
+    .sidebar-link:hover{background:rgba(255,255,255,.06);color:rgba(245,240,232,.85)}
+    .sidebar-link.active{background:rgba(196,82,42,.15);color:#fca5a5}
+    .main{flex:1;padding:2rem;overflow-x:hidden}
+    .page-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.75rem;flex-wrap:wrap;gap:1rem}
+    .page-eyebrow{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(196,82,42,.8);margin-bottom:.3rem}
+    .page-title{font-family:var(--font-display);font-size:2rem;font-weight:900;letter-spacing:-.03em;color:var(--cream)}
+    .btn-new{background:var(--rust);color:white;border:none;padding:.65rem 1.35rem;border-radius:100px;font-size:.85rem;font-weight:600;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:.4rem}
+    .btn-new:hover{background:#b04424}
+
+    /* SEARCH */
+    .toolbar{display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem;flex-wrap:wrap}
+    .search-wrap{position:relative;flex:1;max-width:300px}
+    .search-icon{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);color:rgba(245,240,232,.3);pointer-events:none}
+    .search-input{width:100%;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.08);border-radius:100px;padding:.45rem 1rem .45rem 2.2rem;font-size:.82rem;color:var(--cream);font-family:var(--font-body);outline:none;transition:.2s}
+    .search-input:focus{border-color:rgba(196,82,42,.4)}
+    .search-input::placeholder{color:rgba(245,240,232,.25)}
+
+    /* CATEGORIES GRID */
+    .cats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem}
+    .cat-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:var(--radius-xl);padding:1.25rem;transition:.2s}
+    .cat-card:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12)}
+    .cat-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+    .cat-icon-wrap{width:48px;height:48px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+    .cat-status{font-size:.65rem;font-weight:700;padding:.15rem .55rem;border-radius:100px;letter-spacing:.04em;text-transform:uppercase}
+    .status-active{background:rgba(74,222,128,.1);color:#4ade80}
+    .status-hidden{background:rgba(255,255,255,.06);color:rgba(245,240,232,.35)}
+    .cat-name{font-size:1rem;font-weight:700;color:rgba(245,240,232,.9);margin-bottom:.25rem}
+    .cat-slug{font-size:.72rem;color:rgba(245,240,232,.3);margin-bottom:.85rem;font-family:monospace}
+    .cat-stats{display:flex;gap:1rem;margin-bottom:1rem}
+    .cat-stat{font-size:.75rem;color:rgba(245,240,232,.4)}
+    .cat-stat strong{color:rgba(245,240,232,.75);font-weight:700}
+    .cat-actions{display:flex;gap:.5rem}
+    .cat-btn{flex:1;font-size:.75rem;font-weight:600;padding:.4rem;border-radius:var(--radius-sm);text-align:center;cursor:pointer;transition:.15s;border:1px solid;font-family:inherit}
+    .cat-btn.edit{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1);color:rgba(245,240,232,.55)}
+    .cat-btn.edit:hover{background:rgba(255,255,255,.1);color:var(--cream)}
+    .cat-btn.toggle{background:rgba(74,222,128,.08);border-color:rgba(74,222,128,.15);color:#4ade80}
+    .cat-btn.toggle:hover{background:rgba(74,222,128,.15)}
+    .cat-btn.del{background:rgba(248,113,113,.06);border-color:rgba(248,113,113,.15);color:#f87171}
+    .cat-btn.del:hover{background:rgba(248,113,113,.12)}
+
+    /* MODAL */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:900;display:none;align-items:center;justify-content:center;padding:1.5rem}
+    .modal-overlay.open{display:flex}
+    .modal{background:#1e1e20;border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-xl);padding:1.75rem;width:100%;max-width:440px;box-shadow:0 24px 60px rgba(0,0,0,.4)}
+    .modal-title{font-family:var(--font-display);font-size:1.3rem;font-weight:700;color:var(--cream);margin-bottom:1.5rem;letter-spacing:-.02em}
+    .form-group{margin-bottom:1rem}
+    .form-label{display:block;font-size:.78rem;font-weight:600;color:rgba(245,240,232,.5);margin-bottom:.4rem}
+    .form-input{width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);border-radius:var(--radius-md);padding:.75rem 1rem;font-size:.875rem;color:var(--cream);font-family:inherit;outline:none;transition:.2s}
+    .form-input:focus{border-color:rgba(196,82,42,.5);background:rgba(255,255,255,.09)}
+    .form-input::placeholder{color:rgba(245,240,232,.25)}
+    .emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:.35rem;margin-top:.5rem}
+    .emoji-btn{font-size:1.3rem;text-align:center;padding:.35rem;border-radius:var(--radius-sm);cursor:pointer;transition:.15s;border:2px solid transparent;background:none}
+    .emoji-btn:hover,.emoji-btn.selected{background:rgba(255,255,255,.08);border-color:rgba(196,82,42,.4)}
+    .modal-actions{display:flex;gap:.65rem;margin-top:1.5rem}
+    .btn-save{flex:1;background:var(--rust);color:white;border:none;padding:.75rem;border-radius:var(--radius-md);font-size:.875rem;font-weight:600;cursor:pointer;font-family:inherit;transition:.2s}
+    .btn-save:hover{background:#b04424}
+    .btn-cancel{background:rgba(255,255,255,.06);color:rgba(245,240,232,.5);border:1.5px solid rgba(255,255,255,.1);padding:.75rem 1.25rem;border-radius:var(--radius-md);font-size:.875rem;font-weight:500;cursor:pointer;font-family:inherit;transition:.2s}
+    .btn-cancel:hover{color:var(--cream)}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--success);color:white;padding:.7rem 1.2rem;border-radius:var(--radius-md);font-size:.82rem;font-weight:600;transform:translateY(60px);opacity:0;transition:.3s;z-index:999}
+    .toast.show{transform:translateY(0);opacity:1}
+
+    @media(max-width:1024px){.cats-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:768px){.sidebar{display:none}.main{padding:1.25rem}.cats-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="learnhub_responsive.html" class="nav-logo">GIT<span>Academy</span></a>
+  <span class="nav-admin-badge">Admin</span>
+  <div class="nav-right">
+    <div class="nav-user">
+      <span class="nav-user-name" id="navUserName">AKEY CLIFFORD JUNIOR</span>
+      <div class="avatar" id="navAvatar">ACJ</div>
+    </div>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <aside class="sidebar">
+    <div class="sidebar-section">Overview</div>
+    <a href="admin-dashboard.html" class="sidebar-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+    <div class="sidebar-section">Manage</div>
+    <a href="admin-users.html" class="sidebar-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Users</a>
+    <a href="admin-courses.html" class="sidebar-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Courses</a>
+    <a href="admin-reviews.html" class="sidebar-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Reviews</a>
+    <a href="admin-payments.html" class="sidebar-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Payments</a>
+    <a href="admin-categories.html" class="sidebar-link active"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Categories</a>
+    <a href="admin-settings.html" class="sidebar-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings</a>
+    <a href="profile.html" class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>My Profile</a>
+    <a href="login.html" class="sidebar-link" id="sidebarLogout" style="margin-top:auto;color:rgba(248,113,113,.6)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Log Out</a>
+  </aside>
+
+  <main class="main">
+    <div class="page-hdr">
+      <div>
+        <div class="page-eyebrow">Content</div>
+        <h1 class="page-title">Categories</h1>
+      </div>
+      <button class="btn-new" onclick="openModal()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Category
+      </button>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-wrap">
+        <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input class="search-input" type="text" id="catSearch" placeholder="Search categories…"/>
+      </div>
+    </div>
+
+    <div class="cats-grid" id="catsGrid">
+      <!-- Categories rendered by JS -->
+    </div>
+  </main>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">Add Category</div>
+    <div class="form-group">
+      <label class="form-label">Category Name</label>
+      <input class="form-input" type="text" id="catName" placeholder="e.g. Web Development"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Slug (auto-generated)</label>
+      <input class="form-input" type="text" id="catSlug" placeholder="web-development" style="font-family:monospace"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <input class="form-input" type="text" id="catDesc" placeholder="Short description…"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Icon Emoji</label>
+      <div class="emoji-grid" id="emojiGrid">
+        <!-- Generated by JS -->
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveCategory()">Save Category</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+  import { adminApi } from './api.js';
+  import { redirectIfNotLoggedIn, getUser, logout } from './auth.js';
+
+  redirectIfNotLoggedIn('login.html');
+  document.getElementById('sidebarLogout')?.addEventListener('click', e => { e.preventDefault(); logout(); });
+  const me = getUser();
+  if (!me || me.role !== 'admin') window.location.href = 'dashboard.html';
+
+  let categories = [];
+  const emojis = ['💻','📊','🎨','💼','📣','📷','🎵','💰','💪','🌍','🧠','🔧','🚀','⚡','🎓','🔬','🎯','📚','🌐','🏗️','🎭','🏋️'];
+  let selectedEmoji = '📁';
+  let editingId = null;
+
+  async function loadCategories() {
+    try {
+      const data = await adminApi.categories();
+      categories = data.categories || [];
+    } catch (err) {
+      categories = [];
+    }
+    renderCategories(categories);
+  }
+
+  function renderCategories(list) {
+    const grid = document.getElementById('catsGrid');
+    grid.innerHTML = list.map(cat => `
+      <div class="cat-card" data-id="${cat.id}">
+        <div class="cat-hdr">
+          <div class="cat-icon-wrap" style="background:rgba(255,255,255,.05)">${cat.emoji}</div>
+          <span class="cat-status ${cat.is_active ? 'status-active' : 'status-hidden'}">${cat.is_active ? 'Active' : 'Hidden'}</span>
+        </div>
+        <div class="cat-name">${cat.name}</div>
+        <div class="cat-slug">/${cat.slug}</div>
+        <div class="cat-stats">
+          <div class="cat-stat">${cat.description || 'No description'}</div>
+        </div>
+        <div class="cat-actions">
+          <button class="cat-btn edit" data-edit="${cat.id}">Edit</button>
+          <button class="cat-btn toggle" data-toggle="${cat.id}">${cat.is_active ? 'Hide' : 'Show'}</button>
+          <button class="cat-btn del" data-del="${cat.id}">Delete</button>
+        </div>
+      </div>`).join('') || '<p style="color:rgba(245,240,232,.4);font-size:.85rem">No categories yet.</p>';
+
+    grid.querySelectorAll('[data-edit]').forEach(btn => btn.addEventListener('click', () => openModal(parseInt(btn.dataset.edit))));
+    grid.querySelectorAll('[data-toggle]').forEach(btn => btn.addEventListener('click', () => toggleCategory(parseInt(btn.dataset.toggle))));
+    grid.querySelectorAll('[data-del]').forEach(btn => btn.addEventListener('click', () => deleteCategory(parseInt(btn.dataset.del), btn)));
+  }
+
+  // Emoji grid
+  const emojiGrid = document.getElementById('emojiGrid');
+  emojis.forEach(e => {
+    const btn = document.createElement('button');
+    btn.className = 'emoji-btn';
+    btn.textContent = e;
+    btn.type = 'button';
+    btn.onclick = () => { document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected')); btn.classList.add('selected'); selectedEmoji = e; };
+    emojiGrid.appendChild(btn);
+  });
+
+  // Slug auto-gen
+  document.getElementById('catName').addEventListener('input', function() {
+    document.getElementById('catSlug').value = this.value.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+  });
+
+  // Search
+  document.getElementById('catSearch').addEventListener('input', function() {
+    const q = this.value.toLowerCase();
+    renderCategories(categories.filter(c => c.name.toLowerCase().includes(q) || c.slug.includes(q)));
+  });
+
+  window.openModal = function (id = null) {
+    editingId = id;
+    document.getElementById('modalTitle').textContent = id ? 'Edit Category' : 'Add Category';
+    if (id) {
+      const cat = categories.find(c => c.id === id);
+      document.getElementById('catName').value  = cat.name;
+      document.getElementById('catSlug').value  = cat.slug;
+      document.getElementById('catDesc').value  = cat.description || '';
+      selectedEmoji = cat.emoji;
+    } else {
+      document.getElementById('catName').value = '';
+      document.getElementById('catSlug').value = '';
+      document.getElementById('catDesc').value = '';
+      selectedEmoji = '📁';
+    }
+    document.getElementById('modalOverlay').classList.add('open');
+  };
+
+  window.closeModal = function () { document.getElementById('modalOverlay').classList.remove('open'); };
+
+  window.saveCategory = async function () {
+    const name = document.getElementById('catName').value.trim();
+    if (!name) return;
+    const payload = { name, emoji: selectedEmoji, description: document.getElementById('catDesc').value.trim() };
+    try {
+      if (editingId) {
+        await adminApi.updateCategory(editingId, payload);
+        showToast('Category updated ✓');
+      } else {
+        await adminApi.createCategory(payload);
+        showToast('Category created ✓');
+      }
+      closeModal();
+      loadCategories();
+    } catch (err) {
+      showToast('Could not save category: ' + (err.data?.message || err.message));
+    }
+  };
+
+  async function toggleCategory(id) {
+    try {
+      await adminApi.toggleCategory(id);
+      await loadCategories();
+      const cat = categories.find(c => c.id === id);
+      showToast(cat?.is_active ? 'Category shown ✓' : 'Category hidden');
+    } catch (err) {
+      showToast('Could not update category.');
+    }
+  }
+
+  async function deleteCategory(id, btn) {
+    if (!confirm('Delete this category? Courses will be uncategorised.')) return;
+    const card = btn.closest('.cat-card');
+    card.style.opacity = '0'; card.style.transform = 'scale(.95)'; card.style.transition = '.25s';
+    try {
+      await adminApi.deleteCategory(id);
+      setTimeout(loadCategories, 250);
+      showToast('Category deleted');
+    } catch (err) {
+      showToast('Could not delete category.');
+    }
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  if (me) {
+    document.getElementById('navUserName').textContent = me.first_name || 'Admin';
+    document.getElementById('navAvatar').textContent = ((me.first_name?.[0]||'A')+(me.last_name?.[0]||'D')).toUpperCase();
+  }
+
+  loadCategories();
+</script>
+</body>
+</html>

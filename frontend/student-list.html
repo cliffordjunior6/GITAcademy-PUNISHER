@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Students — GITAcademy Instructor</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--ink:#0d0d0f;--cream:#f5f0e8;--gold:#e8c547;--moss:#2d4a3e;--rust:#c4522a;--smoke:#f0ece4;--error:#e05555;--success:#2d7a4f;--dark:#161618;--darker:#111113;--font-display:'Fraunces',Georgia,serif;--font-body:'DM Sans',system-ui,sans-serif;--nav-h:56px;--sidebar-w:240px;--radius-sm:8px;--radius-md:12px;--radius-lg:18px;--radius-xl:24px;--shadow-sm:0 2px 8px rgba(13,13,15,.12)}
+    html{scroll-behavior:smooth}
+    body{font-family:var(--font-body);background:var(--darker);color:rgba(245,240,232,.85);min-height:100vh;overflow-x:hidden}
+    a{text-decoration:none;color:inherit}
+    button{cursor:pointer;font-family:inherit;border:none;background:none}
+
+    .navbar{position:sticky;top:0;z-index:500;height:var(--nav-h);background:var(--dark);border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;padding:0 1.25rem;gap:1rem}
+    .nav-logo{font-family:var(--font-display);font-size:1.3rem;font-weight:900;color:var(--cream);letter-spacing:-.03em}
+    .nav-logo span{color:var(--rust)}
+    .nav-badge-instructor{background:rgba(124,58,237,.2);color:#c4b5fd;font-size:.65rem;font-weight:700;padding:.15rem .55rem;border-radius:100px;letter-spacing:.06em;text-transform:uppercase}
+    .nav-right{display:flex;align-items:center;gap:.65rem;margin-left:auto}
+    .nav-icon-btn{width:34px;height:34px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:rgba(245,240,232,.5);transition:.2s;position:relative}
+    .nav-icon-btn:hover{background:rgba(255,255,255,.08)}
+    .nav-badge{position:absolute;top:4px;right:4px;width:7px;height:7px;background:var(--rust);border-radius:50%}
+    .nav-user{display:flex;align-items:center;gap:.5rem;padding:.25rem .4rem .25rem .7rem;border-radius:100px;border:1px solid rgba(255,255,255,.1);cursor:pointer}
+    .nav-user-name{font-size:.82rem;font-weight:500;color:rgba(245,240,232,.7)}
+    .avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,var(--rust));display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:white;flex-shrink:0}
+
+    .page-wrap{display:flex;min-height:calc(100vh - var(--nav-h))}
+    .sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--dark);border-right:1px solid rgba(255,255,255,.06);padding:1.25rem .75rem;display:flex;flex-direction:column;gap:.15rem;position:sticky;top:var(--nav-h);height:calc(100vh - var(--nav-h));overflow-y:auto}
+    .sidebar-section{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,240,232,.25);padding:.5rem .6rem;margin-top:.5rem}
+    .sidebar-link{display:flex;align-items:center;gap:.6rem;padding:.6rem .75rem;border-radius:var(--radius-md);font-size:.85rem;font-weight:500;color:rgba(245,240,232,.5);transition:.15s}
+    .sidebar-link:hover{background:rgba(255,255,255,.06);color:rgba(245,240,232,.85)}
+    .sidebar-link.active{background:rgba(124,58,237,.15);color:#c4b5fd}
+
+    .main{flex:1;padding:2rem;overflow-x:hidden}
+    .page-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.75rem;flex-wrap:wrap;gap:1rem}
+    .page-eyebrow{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(124,58,237,.8);margin-bottom:.3rem}
+    .page-title{font-family:var(--font-display);font-size:2rem;font-weight:900;letter-spacing:-.03em;color:var(--cream)}
+
+    /* STATS */
+    .stats-row{display:flex;gap:1rem;margin-bottom:1.75rem;flex-wrap:wrap}
+    .stat-pill{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:var(--radius-lg);padding:.85rem 1.25rem;display:flex;align-items:center;gap:.75rem;flex:1;min-width:140px}
+    .stat-pill-num{font-family:var(--font-display);font-size:1.4rem;font-weight:900;color:var(--cream);letter-spacing:-.03em}
+    .stat-pill-label{font-size:.72rem;color:rgba(245,240,232,.35);font-weight:500}
+
+    /* TOOLBAR */
+    .toolbar{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem;flex-wrap:wrap}
+    .search-wrap{flex:1;min-width:200px;max-width:320px;position:relative}
+    .search-input{width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.08);border-radius:100px;padding:.5rem 1rem .5rem 2.2rem;font-size:.85rem;color:var(--cream);font-family:var(--font-body);outline:none;transition:.2s}
+    .search-input:focus{background:rgba(255,255,255,.09);border-color:rgba(124,58,237,.4)}
+    .search-input::placeholder{color:rgba(245,240,232,.28)}
+    .search-icon{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);color:rgba(245,240,232,.3);pointer-events:none}
+    .filter-select{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.08);border-radius:100px;padding:.45rem 1.5rem .45rem .85rem;font-size:.82rem;font-family:var(--font-body);color:rgba(245,240,232,.65);outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .6rem center}
+    .btn-export{background:rgba(124,58,237,.2);color:#c4b5fd;border:1px solid rgba(124,58,237,.3);padding:.45rem 1rem;border-radius:100px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:inherit;transition:.2s;display:flex;align-items:center;gap:.4rem}
+    .btn-export:hover{background:rgba(124,58,237,.3)}
+
+    /* TABLE */
+    .table-wrap{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-xl);overflow:hidden}
+    .table-header{display:grid;grid-template-columns:2fr 1.5fr 1fr 1fr 1fr 100px;gap:1rem;padding:.75rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.06);font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(245,240,232,.3)}
+    .table-row{display:grid;grid-template-columns:2fr 1.5fr 1fr 1fr 1fr 100px;gap:1rem;padding:.9rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.04);align-items:center;transition:.15s}
+    .table-row:last-child{border-bottom:none}
+    .table-row:hover{background:rgba(255,255,255,.03)}
+    .student-cell{display:flex;align-items:center;gap:.75rem}
+    .student-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--moss),#4ade80);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:white;flex-shrink:0}
+    .student-name{font-size:.875rem;font-weight:600;color:rgba(245,240,232,.85)}
+    .student-email{font-size:.72rem;color:rgba(245,240,232,.35)}
+    .cell{font-size:.82rem;color:rgba(245,240,232,.6)}
+    .progress-mini-wrap{height:4px;background:rgba(255,255,255,.08);border-radius:100px;overflow:hidden;width:80px;margin-bottom:3px}
+    .progress-mini-bar{height:4px;border-radius:100px;background:#a78bfa}
+    .progress-pct{font-size:.68rem;color:rgba(245,240,232,.35)}
+    .badge-active{background:rgba(74,222,128,.12);color:#4ade80;font-size:.65rem;font-weight:700;padding:.15rem .55rem;border-radius:100px}
+    .badge-inactive{background:rgba(255,255,255,.07);color:rgba(245,240,232,.4);font-size:.65rem;font-weight:700;padding:.15rem .55rem;border-radius:100px}
+    .row-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);color:rgba(245,240,232,.55);font-size:.72rem;font-weight:600;padding:.3rem .7rem;border-radius:6px;cursor:pointer;font-family:inherit;transition:.15s}
+    .row-btn:hover{background:rgba(255,255,255,.1);color:var(--cream)}
+
+    /* PAGINATION */
+    .pagination{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-top:1px solid rgba(255,255,255,.06)}
+    .pg-info{font-size:.78rem;color:rgba(245,240,232,.3)}
+    .pg-btns{display:flex;gap:.35rem}
+    .pg-btn{width:32px;height:32px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:600;color:rgba(245,240,232,.4);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);cursor:pointer;transition:.15s}
+    .pg-btn:hover{background:rgba(255,255,255,.1)}
+    .pg-btn.active{background:rgba(124,58,237,.3);color:#c4b5fd;border-color:rgba(124,58,237,.4)}
+
+    @media(max-width:1024px){.table-header,.table-row{grid-template-columns:2fr 1fr 1fr 100px}.table-header>*:nth-child(2),.table-row>*:nth-child(2),.table-header>*:nth-child(5),.table-row>*:nth-child(5){display:none}}
+    @media(max-width:768px){.sidebar{display:none}.main{padding:1.25rem}.table-header,.table-row{grid-template-columns:2fr 1fr 80px}.table-header>*:nth-child(3),.table-row>*:nth-child(3),.table-header>*:nth-child(4),.table-row>*:nth-child(4){display:none}}
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="learnhub_responsive.html" class="nav-logo">GIT<span>Academy</span></a>
+  <span class="nav-badge-instructor">Instructor</span>
+  <div class="nav-right">
+    <a href="notifications.html" class="nav-icon-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="nav-badge"></span></a>
+    <div class="nav-user">
+      <span class="nav-user-name" id="navUserName">ATO SIAW QUARSHIE</span>
+      <div class="avatar" id="navAvatar">ASQ</div>
+    </div>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <aside class="sidebar">
+    <div class="sidebar-section">Instructor</div>
+    <a href="instructor-dashboard.html" class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+    <a href="create-course.html" class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Create Course</a>
+    <a href="edit-course.html" class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>My Courses</a>
+    <a href="student-list.html" class="sidebar-link active"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Students</a>
+    <a href="course-analytics.html" class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Analytics</a>
+    <a href="instructor-earnings.html" class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Earnings</a>
+    <div class="sidebar-section">Account</div>
+    <a href="profile.html" class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profile</a>
+    <a href="edit-profile.html" class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings</a>
+    <a href="login.html" class="sidebar-link" id="sidebarLogout" style="margin-top:auto;color:rgba(224,85,85,.6)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Log Out</a>
+  </aside>
+
+  <main class="main">
+    <div class="page-hdr">
+      <div>
+        <div class="page-eyebrow">Instructor</div>
+        <h1 class="page-title">My Students</h1>
+      </div>
+    </div>
+
+    <div class="stats-row" id="statsRow">
+      <div class="stat-pill"><div><div class="stat-pill-num" id="statTotalStudents">–</div><div class="stat-pill-label">Total Students</div></div></div>
+      <div class="stat-pill"><div><div class="stat-pill-num" style="color:#4ade80" id="statCompleted">–</div><div class="stat-pill-label">Completed</div></div></div>
+      <div class="stat-pill"><div><div class="stat-pill-num" id="statAvgProgress">–</div><div class="stat-pill-label">Avg. Progress</div></div></div>
+      <div class="stat-pill"><div><div class="stat-pill-num" id="statCourseCount">–</div><div class="stat-pill-label">Your Courses</div></div></div>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-wrap">
+        <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input class="search-input" type="text" id="studentSearch" placeholder="Search students…"/>
+      </div>
+      <select class="filter-select" id="courseFilter">
+        <option value="">All Courses</option>
+      </select>
+      <button class="btn-export" onclick="exportCSV()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export CSV
+      </button>
+    </div>
+
+    <div class="table-wrap">
+      <div class="table-header">
+        <div>Student</div>
+        <div>Course</div>
+        <div>Progress</div>
+        <div>Enrolled</div>
+        <div>Status</div>
+        <div>Actions</div>
+      </div>
+
+      <div id="studentRows"></div>
+
+      <div class="pagination">
+        <div class="pg-info" id="pgInfo">Loading students…</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script type="module">
+  import { instructorApi } from './api.js';
+  import { redirectIfNotLoggedIn, getUser, logout } from './auth.js';
+
+  redirectIfNotLoggedIn('login.html');
+  const me = getUser();
+  if (!me || (me.role !== 'instructor' && me.role !== 'admin')) window.location.href = 'dashboard.html';
+  if (me) {
+    document.getElementById('navUserName').textContent = me.first_name || 'Instructor';
+    document.getElementById('navAvatar').textContent = ((me.first_name?.[0]||'I')+(me.last_name?.[0]||'')).toUpperCase();
+  }
+  document.getElementById('sidebarLogout')?.addEventListener('click', e => { e.preventDefault(); logout(); });
+
+  const gradients = ['linear-gradient(135deg,#2d4a3e,#c4522a)','linear-gradient(135deg,#7c3aed,#a855f7)','linear-gradient(135deg,var(--rust),#f97316)','linear-gradient(135deg,var(--moss),#16a34a)','linear-gradient(135deg,#0891b2,#0e7490)','linear-gradient(135deg,#b45309,#d97706)'];
+  let allStudents = [];
+
+  async function load() {
+    let courses = [];
+    try { courses = (await instructorApi.courses()).courses || []; } catch (err) { courses = []; }
+
+    document.getElementById('statCourseCount').textContent = courses.length;
+
+    const filterSelect = document.getElementById('courseFilter');
+    courses.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      opt.textContent = c.title;
+      filterSelect.appendChild(opt);
+    });
+
+    allStudents = [];
+    for (const c of courses) {
+      try {
+        const s = await instructorApi.students(c.id);
+        (s.students || []).forEach(st => allStudents.push({ ...st, courseId: c.id, courseTitle: c.title }));
+      } catch (err) { /* skip */ }
+    }
+
+    document.getElementById('statTotalStudents').textContent = allStudents.length;
+    document.getElementById('statCompleted').textContent = allStudents.filter(s => s.status === 'completed').length;
+    const avgP = allStudents.length ? Math.round(allStudents.reduce((s,r)=>s+r.progress_pct,0)/allStudents.length) : 0;
+    document.getElementById('statAvgProgress').textContent = avgP + '%';
+
+    render();
+  }
+
+  function render() {
+    const q = document.getElementById('studentSearch').value.toLowerCase();
+    const courseFilterVal = document.getElementById('courseFilter').value;
+    const list = allStudents
+      .filter(s => !courseFilterVal || String(s.courseId) === courseFilterVal)
+      .filter(s => !q || `${s.first_name} ${s.last_name} ${s.email}`.toLowerCase().includes(q));
+
+    document.getElementById('pgInfo').textContent = `Showing ${list.length} of ${allStudents.length} students`;
+
+    document.getElementById('studentRows').innerHTML = list.map((s, i) => {
+      const name = `${s.first_name} ${s.last_name}`;
+      const initials = name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+      const statusLabel = s.status === 'completed' ? 'Completed' : s.status === 'refunded' ? 'Refunded' : 'Active';
+      const barColor = s.status === 'completed' ? 'background:#4ade80' : '';
+      return `
+      <div class="table-row">
+        <div class="student-cell"><div class="student-avatar" style="background:${gradients[i % gradients.length]}">${initials}</div><div><div class="student-name">${name}</div><div class="student-email">${s.email}</div></div></div>
+        <div class="cell">${s.courseTitle}</div>
+        <div><div class="progress-mini-wrap"><div class="progress-mini-bar" style="width:${s.progress_pct}%;${barColor}"></div></div><div class="progress-pct">${s.progress_pct}%${s.status==='completed'?' ✓':''}</div></div>
+        <div class="cell">${(s.created_at||'').slice(0,10)}</div>
+        <div><span class="${s.status==='completed'?'badge-active':'badge-active'}" style="${s.status==='completed'?'background:rgba(74,222,128,.12);color:#4ade80':''}">${statusLabel}</span></div>
+        <div><button class="row-btn" data-name="${name}">Message</button></div>
+      </div>`;
+    }).join('') || '<div style="padding:2rem;text-align:center;color:rgba(245,240,232,.4);font-size:.85rem">No students match this filter.</div>';
+
+    document.querySelectorAll('[data-name]').forEach(btn => {
+      btn.addEventListener('click', () => alert(`Messaging isn't wired up in this demo — would message ${btn.dataset.name}.`));
+    });
+  }
+
+  document.getElementById('studentSearch').addEventListener('input', render);
+  document.getElementById('courseFilter').addEventListener('change', render);
+
+  window.exportCSV = function () {
+    const rows = [['Name','Email','Course','Progress','Enrolled','Status']];
+    document.querySelectorAll('#studentRows .table-row').forEach(row => {
+      const cells = row.querySelectorAll('.student-name,.student-email,.cell,.progress-pct');
+      if (cells.length) rows.push([...cells].map(c => c.textContent.trim()));
+    });
+    const csv = rows.map(r => r.join(',')).join('\n');
+    const a = document.createElement('a');
+    a.href = 'data:text/csv,' + encodeURIComponent(csv);
+    a.download = 'students.csv';
+    a.click();
+  };
+
+  load();
+</script>
+</body>
+</html>

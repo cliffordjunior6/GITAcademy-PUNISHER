@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin — Users | GITAcademy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --ink:#0d0d0f;--cream:#f5f0e8;--gold:#e8c547;--moss:#2d4a3e;
+      --rust:#c4522a;--paper:#faf8f3;--smoke:#f0ece4;--dark:#161618;
+      --error:#e05555;--success:#2d7a4f;--warning:#d97706;
+      --font-display:'Fraunces',Georgia,serif;--font-body:'DM Sans',system-ui,sans-serif;
+      --nav-h:60px;--sidebar-w:220px;
+      --shadow-sm:0 2px 8px rgba(13,13,15,.08);
+      --radius-sm:6px;--radius-md:10px;--radius-lg:16px;--radius-xl:20px;
+    }
+    body{font-family:var(--font-body);background:#0f0f11;color:rgba(245,240,232,.85);overflow-x:hidden;min-height:100vh}
+    a{text-decoration:none;color:inherit}
+    button{cursor:pointer;font-family:inherit;border:none;background:none}
+
+    /* SHARED NAVBAR */
+    .navbar{position:sticky;top:0;z-index:500;height:var(--nav-h);background:var(--dark);border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;padding:0 1.25rem;gap:1rem}
+    .nav-logo{font-family:var(--font-display);font-size:1.25rem;font-weight:900;color:var(--cream);letter-spacing:-.03em}
+    .nav-logo span{color:var(--rust)}
+    .admin-badge{background:rgba(224,85,85,.15);border:1px solid rgba(224,85,85,.25);color:#f87171;font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.22rem .6rem;border-radius:100px}
+    .nav-right{display:flex;align-items:center;gap:.65rem;margin-left:auto}
+    .nav-icon{width:34px;height:34px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;color:rgba(245,240,232,.4);transition:.2s}
+    .nav-icon:hover{background:rgba(255,255,255,.07);color:rgba(245,240,232,.85)}
+    .admin-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#e05555,#c43030);display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:700;color:white}
+    .admin-user{display:flex;align-items:center;gap:.5rem;padding:.3rem .5rem .3rem .8rem;border-radius:100px;border:1px solid rgba(255,255,255,.1);cursor:pointer}
+    .admin-user-name{font-size:.8rem;font-weight:500;color:rgba(245,240,232,.7)}
+    .hamburger{display:none;flex-direction:column;gap:4px;padding:4px}
+    .hamburger span{display:block;width:20px;height:1.5px;background:rgba(245,240,232,.7);border-radius:2px}
+
+    /* SIDEBAR */
+    .page-wrap{display:flex;min-height:calc(100vh - var(--nav-h))}
+    .sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--dark);border-right:1px solid rgba(255,255,255,.06);padding:1rem .65rem;display:flex;flex-direction:column;gap:.15rem;position:sticky;top:var(--nav-h);height:calc(100vh - var(--nav-h));overflow-y:auto}
+    .sidebar-section{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,240,232,.2);padding:.6rem .65rem .25rem;margin-top:.4rem}
+    .sidebar-link{display:flex;align-items:center;gap:.6rem;padding:.55rem .65rem;border-radius:var(--radius-md);font-size:.82rem;font-weight:500;color:rgba(245,240,232,.45);transition:.15s;text-decoration:none}
+    .sidebar-link:hover{background:rgba(255,255,255,.06);color:rgba(245,240,232,.85)}
+    .sidebar-link.active{background:rgba(255,255,255,.1);color:var(--cream)}
+    .sidebar-count{margin-left:auto;background:var(--rust);color:white;font-size:.6rem;font-weight:700;padding:.1rem .4rem;border-radius:100px}
+    .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:400}
+
+    /* MAIN */
+    .main{flex:1;padding:1.75rem;overflow-x:hidden}
+
+    /* PAGE HEADER */
+    .page-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem}
+    .page-title{font-family:var(--font-display);font-size:1.7rem;font-weight:900;color:var(--cream);letter-spacing:-.03em}
+    .page-actions{display:flex;align-items:center;gap:.65rem;flex-wrap:wrap}
+    .search-box{display:flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:100px;padding:.45rem 1rem;transition:.2s}
+    .search-box:focus-within{border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.09)}
+    .search-box input{background:none;border:none;outline:none;font-size:.82rem;color:rgba(245,240,232,.75);font-family:inherit;width:180px}
+    .search-box input::placeholder{color:rgba(245,240,232,.25)}
+    .btn-action{display:flex;align-items:center;gap:.4rem;padding:.5rem 1.1rem;border-radius:100px;font-size:.8rem;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit}
+    .btn-primary-dark{background:var(--gold);color:var(--ink);border:none}
+    .btn-primary-dark:hover{background:#f0d258;transform:translateY(-1px)}
+    .btn-ghost-dark{background:rgba(255,255,255,.06);color:rgba(245,240,232,.7);border:1px solid rgba(255,255,255,.1)}
+    .btn-ghost-dark:hover{background:rgba(255,255,255,.1);color:var(--cream)}
+
+    /* FILTER TABS */
+    .filter-tabs{display:flex;gap:.35rem;margin-bottom:1.25rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:100px;padding:.25rem;width:fit-content}
+    .filter-tab{padding:.4rem .9rem;border-radius:100px;font-size:.78rem;font-weight:600;color:rgba(245,240,232,.4);cursor:pointer;transition:.15s;background:none;border:none;font-family:inherit}
+    .filter-tab:hover{color:rgba(245,240,232,.8)}
+    .filter-tab.active{background:rgba(255,255,255,.1);color:var(--cream)}
+
+    /* TABLE */
+    .table-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:var(--radius-xl);overflow:hidden}
+    .table-header{display:grid;padding:.7rem 1.25rem;background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.06);font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(245,240,232,.25)}
+    .table-row{display:grid;padding:.85rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.04);align-items:center;transition:.15s}
+    .table-row:last-child{border-bottom:none}
+    .table-row:hover{background:rgba(255,255,255,.03)}
+    .cell{font-size:.82rem;color:rgba(245,240,232,.6)}
+    .cell.bold{font-weight:600;color:rgba(245,240,232,.85)}
+    .cell.mono{font-family:monospace;font-size:.75rem;color:rgba(245,240,232,.4)}
+
+    /* User cell */
+    .user-cell{display:flex;align-items:center;gap:.65rem}
+    .user-mini-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:700;color:var(--cream);flex-shrink:0}
+    .user-name{font-size:.82rem;font-weight:600;color:rgba(245,240,232,.85);margin-bottom:.05rem}
+    .user-email{font-size:.7rem;color:rgba(245,240,232,.3)}
+
+    /* Badges */
+    .badge{font-size:.62rem;font-weight:700;padding:.15rem .5rem;border-radius:100px;text-transform:uppercase;white-space:nowrap}
+    .badge-success{background:rgba(74,222,128,.12);color:#4ade80}
+    .badge-warning{background:rgba(251,191,36,.12);color:#fbbf24}
+    .badge-error{background:rgba(248,113,113,.12);color:#f87171}
+    .badge-info{background:rgba(96,165,250,.12);color:#93c5fd}
+    .badge-muted{background:rgba(255,255,255,.07);color:rgba(245,240,232,.4)}
+
+    /* Row actions */
+    .row-actions{display:flex;gap:.3rem}
+    .row-btn{width:28px;height:28px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.06);color:rgba(245,240,232,.4);transition:.15s;border:none;cursor:pointer}
+    .row-btn:hover{background:rgba(255,255,255,.12);color:var(--cream)}
+    .row-btn.danger:hover{background:rgba(248,113,113,.15);color:#f87171}
+
+    /* Pagination */
+    .pagination{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-top:1px solid rgba(255,255,255,.06);flex-wrap:wrap;gap:.75rem}
+    .pagination-info{font-size:.75rem;color:rgba(245,240,232,.3)}
+    .pagination-btns{display:flex;gap:.3rem}
+    .pg-btn{width:32px;height:32px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:600;color:rgba(245,240,232,.45);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);cursor:pointer;transition:.15s}
+    .pg-btn:hover{background:rgba(255,255,255,.09);color:var(--cream)}
+    .pg-btn.active{background:rgba(255,255,255,.12);color:var(--cream);border-color:rgba(255,255,255,.2)}
+    .pg-btn.disabled{opacity:.3;cursor:not-allowed}
+
+    /* RESPONSIVE */
+    @media(max-width:768px){
+      .sidebar{position:fixed;left:-100%;top:var(--nav-h);z-index:450;transition:.3s;height:calc(100vh - var(--nav-h))}
+      .sidebar.open{left:0}
+      .sidebar-overlay.open{display:block}
+      .hamburger{display:flex}
+      .main{padding:1.25rem}
+      .admin-user-name{display:none}
+      .search-box input{width:120px}
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <button class="hamburger" id="hamburgerBtn"><span></span><span></span><span></span></button>
+  <a href="learnhub_responsive.html" class="nav-logo">GIT<span>Academy</span></a>
+  <span class="admin-badge">Admin</span>
+  <div class="nav-right">
+    <a href="admin-settings.html#messages" class="nav-icon" style="text-decoration:none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></a>
+    <div class="admin-user">
+      <span class="admin-user-name" id="navUserName">Admin</span>
+      <div class="admin-avatar" id="navAvatar">--</div>
+    </div>
+  </div>
+</nav>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="page-wrap">
+
+  <aside class="sidebar" id="sidebar">
+    <a href="admin-dashboard.html" class="sidebar-link">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard
+    </a>
+    <div class="sidebar-section">Manage</div>
+    <a href="admin-users.html" class="sidebar-link active" id="usersLink">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Users<span class="sidebar-count">3</span>
+    </a>
+    <a href="admin-courses.html" class="sidebar-link" id="coursesLink">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Courses
+    </a>
+    <a href="admin-payments.html" class="sidebar-link" id="paymentsLink">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Payments
+    </a>
+    <div class="sidebar-section">System</div>
+    <a href="admin-settings.html" class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings</a>
+    <a href="profile.html" class="sidebar-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>My Profile</a>
+    <a href="login.html" class="sidebar-link" id="sidebarLogout" style="margin-top:auto;color:rgba(248,113,113,.6)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Log Out</a>
+  </aside>
+
+  <main class="main" id="mainContent">
+    <!-- Content injected by JS -->
+  </main>
+</div>
+
+<script type="module">
+  import { adminApi } from './api.js';
+  import { redirectIfNotLoggedIn, getUser, logout } from './auth.js';
+
+  redirectIfNotLoggedIn('login.html');
+  document.getElementById('sidebarLogout')?.addEventListener('click', e => { e.preventDefault(); logout(); });
+  const me = getUser();
+  if (me) {
+    document.getElementById('navUserName').textContent = (me.first_name + ' ' + me.last_name).trim() || 'Admin';
+    document.getElementById('navAvatar').textContent = ((me.first_name?.[0]||'')+(me.last_name?.[0]||'')).toUpperCase() || 'A';
+  }
+  if (!me || me.role !== 'admin') { window.location.href = 'dashboard.html'; }
+
+  // Shared nav
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  hamburgerBtn.addEventListener('click', () => { sidebar.classList.toggle('open'); overlay.classList.toggle('open'); });
+  overlay.addEventListener('click', () => { sidebar.classList.remove('open'); overlay.classList.remove('open'); });
+
+  // Detect which page we are
+  const path = window.location.pathname.split('/').pop() || 'admin-users.html';
+  const isUsers = path.includes('users') || path === '';
+  const isCourses = path.includes('courses');
+  const isPayments = path.includes('payments');
+
+  document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+  if (isUsers) document.getElementById('usersLink').classList.add('active');
+  if (isCourses) document.getElementById('coursesLink').classList.add('active');
+  if (isPayments) document.getElementById('paymentsLink').classList.add('active');
+
+  const titles = { users:'Manage Users', courses:'Manage Courses', payments:'Payment Transactions' };
+  const key = isUsers ? 'users' : isCourses ? 'courses' : 'payments';
+  document.title = titles[key] + ' — Admin | GITAcademy';
+
+  const main = document.getElementById('mainContent');
+  let currentData = [];
+  const fmt = (n) => '₵' + Number(n).toLocaleString('en-GH', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+  const initials = (name) => (name || '').split(' ').map(n=>n[0]).filter(Boolean).join('').slice(0,2).toUpperCase();
+  const gradients = ['linear-gradient(135deg,#2d4a3e,#c4522a)','linear-gradient(135deg,#c4522a,#e8c547)','linear-gradient(135deg,#1a237e,#7c4dff)','linear-gradient(135deg,#880e4f,#e91e63)','linear-gradient(135deg,#e65100,#ff9800)','linear-gradient(135deg,#004d40,#00bfa5)'];
+
+  // ═══════════════ USERS VIEW ═══════════════
+  async function renderUsers() {
+    let users = [];
+    try { users = (await adminApi.users({})).users || []; } catch (err) { users = []; }
+    currentData = users;
+
+    main.innerHTML = `
+    <div class="page-hdr">
+      <div class="page-title">Users</div>
+      <div class="page-actions">
+        <div class="search-box">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="userSearch" placeholder="Search users…"/>
+        </div>
+        <button class="btn-action btn-ghost-dark" onclick="exportCSV()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export
+        </button>
+      </div>
+    </div>
+    <div class="filter-tabs">
+      <button class="filter-tab active" data-role="">All (${users.length})</button>
+      <button class="filter-tab" data-role="student">Students</button>
+      <button class="filter-tab" data-role="instructor">Instructors</button>
+      <button class="filter-tab" data-role="__suspended">Suspended</button>
+    </div>
+    <div class="table-card">
+      <div class="table-header" style="grid-template-columns:2.5fr 1.2fr 1fr 1fr 1fr 90px">
+        <div>User</div><div>Role</div><div>Joined</div><div>Status</div><div></div><div>Actions</div>
+      </div>
+      <div id="userRows"></div>
+      <div class="pagination">
+        <span class="pagination-info" id="userPageInfo">Showing ${users.length} of ${users.length} users</span>
+      </div>
+    </div>`;
+
+    function draw(list) {
+      document.getElementById('userRows').innerHTML = list.map(u => {
+        const name = `${u.first_name} ${u.last_name}`;
+        const color = gradients[u.id % gradients.length];
+        const roleLabel = u.role.charAt(0).toUpperCase() + u.role.slice(1);
+        return `
+        <div class="table-row" style="grid-template-columns:2.5fr 1.2fr 1fr 1fr 1fr 90px">
+          <div class="user-cell">
+            <div class="user-mini-avatar" style="background:${color}">${initials(name)}</div>
+            <div><div class="user-name">${name}</div><div class="user-email">${u.email}</div></div>
+          </div>
+          <div class="cell"><span class="badge ${u.role==='instructor'?'badge-info':u.role==='admin'?'badge-warning':'badge-muted'}">${roleLabel}</span></div>
+          <div class="cell">${(u.created_at||'').slice(0,10)}</div>
+          <div class="cell"><span class="badge ${u.status==='active'?'badge-success':'badge-error'}">${u.status}</span></div>
+          <div class="cell"></div>
+          <div class="row-actions">
+            <button class="row-btn" data-suspend="${u.id}" title="${u.status==='suspended'?'Reactivate':'Suspend'}">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+            </button>
+            <button class="row-btn danger" data-delete-user="${u.id}" title="Delete"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
+          </div>
+        </div>`;
+      }).join('') || '<div style="padding:2rem;text-align:center;color:rgba(245,240,232,.4);font-size:.85rem">No users found.</div>';
+
+      document.querySelectorAll('[data-suspend]').forEach(btn => btn.addEventListener('click', async () => {
+        await adminApi.suspendUser(btn.dataset.suspend);
+        renderUsers();
+      }));
+      document.querySelectorAll('[data-delete-user]').forEach(btn => btn.addEventListener('click', async () => {
+        if (!confirm('Delete this user? This cannot be undone.')) return;
+        await adminApi.deleteUser(btn.dataset.deleteUser);
+        renderUsers();
+      }));
+    }
+    draw(users);
+
+    document.getElementById('userSearch').addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase();
+      draw(users.filter(u => (`${u.first_name} ${u.last_name} ${u.email}`).toLowerCase().includes(q)));
+    });
+    main.querySelectorAll('.filter-tab').forEach(tab => tab.addEventListener('click', () => {
+      main.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const r = tab.dataset.role;
+      if (!r) draw(users);
+      else if (r === '__suspended') draw(users.filter(u => u.status === 'suspended'));
+      else draw(users.filter(u => u.role === r));
+    }));
+  }
+
+  // ═══════════════ COURSES VIEW ═══════════════
+  async function renderCourses() {
+    let courses = [];
+    try { courses = (await adminApi.courses({})).courses || []; } catch (err) { courses = []; }
+    currentData = courses;
+
+    main.innerHTML = `
+    <div class="page-hdr">
+      <div class="page-title">Courses</div>
+      <div class="page-actions">
+        <div class="search-box"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input type="text" id="courseSearch" placeholder="Search courses…"/></div>
+      </div>
+    </div>
+    <div class="filter-tabs">
+      <button class="filter-tab active" data-status="">All (${courses.length})</button>
+      <button class="filter-tab" data-status="published">Published</button>
+      <button class="filter-tab" data-status="draft">Pending / Draft</button>
+      <button class="filter-tab" data-status="archived">Rejected / Archived</button>
+    </div>
+    <div class="table-card">
+      <div class="table-header" style="grid-template-columns:2.5fr 1.2fr 1fr 1fr 1fr 130px">
+        <div>Course</div><div>Instructor</div><div>Students</div><div>Price</div><div>Status</div><div>Actions</div>
+      </div>
+      <div id="courseRows"></div>
+      <div class="pagination"><span class="pagination-info">Showing ${courses.length} of ${courses.length} courses</span></div>
+    </div>`;
+
+    function draw(list) {
+      document.getElementById('courseRows').innerHTML = list.map(c => `
+        <div class="table-row" style="grid-template-columns:2.5fr 1.2fr 1fr 1fr 1fr 130px">
+          <div class="user-cell"><span style="font-size:1.4rem;flex-shrink:0">${c.emoji||'📚'}</span><div class="user-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px">${c.title}</div></div>
+          <div class="cell">${c.instructor?.name || ''}</div>
+          <div class="cell bold">${c.students_count}</div>
+          <div class="cell bold" style="${c.price===0?'color:#4ade80':''}">${c.price===0?'Free':fmt(c.price)}</div>
+          <div class="cell"><span class="badge ${c.status==='published'?'badge-success':c.status==='draft'?'badge-warning':'badge-error'}">${c.status}</span></div>
+          <div class="row-actions">
+            <button class="row-btn" data-approve="${c.id}" title="Approve/Publish"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></button>
+            <button class="row-btn" data-feature="${c.id}" title="Toggle Featured">${c.is_featured ? '★' : '☆'}</button>
+            <button class="row-btn danger" data-reject="${c.id}" title="Reject/Archive"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></button>
+          </div>
+        </div>`).join('') || '<div style="padding:2rem;text-align:center;color:rgba(245,240,232,.4);font-size:.85rem">No courses found.</div>';
+
+      document.querySelectorAll('[data-approve]').forEach(btn => btn.addEventListener('click', async () => { await adminApi.approveCourse(btn.dataset.approve); renderCourses(); }));
+      document.querySelectorAll('[data-reject]').forEach(btn => btn.addEventListener('click', async () => { await adminApi.rejectCourse(btn.dataset.reject); renderCourses(); }));
+      document.querySelectorAll('[data-feature]').forEach(btn => btn.addEventListener('click', async () => {
+        await fetch(`/api/admin/courses/${btn.dataset.feature}/featured`, { method:'PATCH', headers:{Authorization:'Bearer '+localStorage.getItem('lh_token')} });
+        renderCourses();
+      }));
+    }
+    draw(courses);
+
+    document.getElementById('courseSearch').addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase();
+      draw(courses.filter(c => c.title.toLowerCase().includes(q)));
+    });
+    main.querySelectorAll('.filter-tab').forEach(tab => tab.addEventListener('click', () => {
+      main.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const s = tab.dataset.status;
+      draw(s ? courses.filter(c => c.status === s) : courses);
+    }));
+  }
+
+  // ═══════════════ PAYMENTS VIEW ═══════════════
+  async function renderPayments() {
+    let payments = [];
+    try { payments = (await adminApi.payments({})).payments || []; } catch (err) { payments = []; }
+    currentData = payments;
+
+    const totalPaid = payments.filter(p=>p.status==='paid').reduce((s,p)=>s+Number(p.total),0);
+    const successful = payments.filter(p=>p.status==='paid').length;
+    const refunded = payments.filter(p=>p.status==='refunded').length;
+
+    main.innerHTML = `
+    <div class="page-hdr">
+      <div class="page-title">Payments</div>
+      <div class="page-actions">
+        <div class="search-box"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input type="text" id="paySearch" placeholder="Search transactions…"/></div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.25rem">
+      <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:1.2rem 1.4rem"><div style="font-size:.68rem;font-weight:600;color:rgba(245,240,232,.3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem">Total Revenue (GHS)</div><div style="font-family:var(--font-display);font-size:1.8rem;font-weight:700;color:var(--cream)">${fmt(totalPaid)}</div></div>
+      <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:1.2rem 1.4rem"><div style="font-size:.68rem;font-weight:600;color:rgba(245,240,232,.3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem">Successful</div><div style="font-family:var(--font-display);font-size:1.8rem;font-weight:700;color:#4ade80">${successful}</div></div>
+      <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:1.2rem 1.4rem"><div style="font-size:.68rem;font-weight:600;color:rgba(245,240,232,.3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem">Refunds</div><div style="font-family:var(--font-display);font-size:1.8rem;font-weight:700;color:#f87171">${refunded}</div></div>
+    </div>
+    <div class="table-card">
+      <div class="table-header" style="grid-template-columns:1.2fr 1.8fr 1fr 1fr 1fr 1fr 80px">
+        <div>Order</div><div>Customer</div><div>Amount</div><div>Method</div><div>Date</div><div>Status</div><div></div>
+      </div>
+      <div id="payRows"></div>
+      <div class="pagination"><span class="pagination-info">Showing ${payments.length} of ${payments.length} transactions</span></div>
+    </div>`;
+
+    function draw(list) {
+      document.getElementById('payRows').innerHTML = list.map(p => `
+        <div class="table-row" style="grid-template-columns:1.2fr 1.8fr 1fr 1fr 1fr 1fr 80px">
+          <div class="cell mono">#${p.order_number}</div>
+          <div class="user-cell"><div><div class="user-name">${p.first_name} ${p.last_name}</div><div class="user-email">${p.email}</div></div></div>
+          <div class="cell bold">${fmt(p.total)}</div>
+          <div class="cell" style="font-size:.75rem">${p.payment_method} · ${p.currency}</div>
+          <div class="cell">${(p.created_at||'').slice(0,10)}</div>
+          <div class="cell"><span class="badge ${p.status==='paid'?'badge-success':p.status==='refunded'?'badge-info':'badge-error'}">${p.status}</span></div>
+          <div class="row-actions">
+            ${p.status==='paid' ? `<button class="row-btn danger" data-refund="${p.id}" title="Refund"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><polyline points="3 3 3 8 8 8"/></svg></button>` : ''}
+          </div>
+        </div>`).join('') || '<div style="padding:2rem;text-align:center;color:rgba(245,240,232,.4);font-size:.85rem">No transactions found.</div>';
+
+      document.querySelectorAll('[data-refund]').forEach(btn => btn.addEventListener('click', async () => {
+        if (!confirm('Refund this order? The student\'s enrollment will be revoked.')) return;
+        await adminApi.refundPayment(btn.dataset.refund);
+        renderPayments();
+      }));
+    }
+    draw(payments);
+
+    document.getElementById('paySearch').addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase();
+      draw(payments.filter(p => (`${p.first_name} ${p.last_name} ${p.email} ${p.order_number}`).toLowerCase().includes(q)));
+    });
+  }
+
+  window.exportCSV = function () {
+    if (!currentData.length) { alert('Nothing to export yet.'); return; }
+    let rows;
+    if (key === 'users') {
+      rows = [['Name','Email','Role','Status','Joined']];
+      currentData.forEach(u => rows.push([u.first_name+' '+u.last_name, u.email, u.role, u.status, (u.created_at||'').slice(0,10)]));
+    } else if (key === 'courses') {
+      rows = [['Title','Instructor','Category','Price','Status','Students']];
+      currentData.forEach(c => rows.push([c.title, c.instructor?.name||'', c.category||'', c.price, c.status, c.students_count||0]));
+    } else {
+      rows = [['Order Number','Student','Total','Currency','Status','Date']];
+      currentData.forEach(p => rows.push([p.order_number, (p.first_name||'')+' '+(p.last_name||''), p.total, p.currency, p.status, (p.created_at||'').slice(0,10)]));
+    }
+    const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const a = document.createElement('a');
+    a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+    a.download = key + '-export.csv';
+    a.click();
+  };
+
+  if (isUsers || (!isCourses && !isPayments)) renderUsers();
+  if (isCourses) renderCourses();
+  if (isPayments) renderPayments();
+</script>
+</body>
+</html>

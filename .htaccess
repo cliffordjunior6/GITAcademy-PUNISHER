@@ -1,0 +1,43 @@
+# Real Apache/.htaccess config for shared hosting (cPanel, Hostinger,
+# Namecheap, etc.) — the simplest real way to put this online: no server
+# to configure, no SSH, just upload these files through the hosting
+# provider's File Manager or FTP and it works.
+#
+# This does the same job as deploy/nginx.conf, in the format shared hosts
+# actually support. Requires PHP 8+ with mod_rewrite enabled — every
+# normal PHP hosting plan has this by default.
+
+RewriteEngine On
+
+# Never serve secrets or internal files
+<FilesMatch "^\.env|^\.git">
+    Require all denied
+</FilesMatch>
+RewriteRule ^_legacy-laravel-scaffold/ - [F,L]
+RewriteRule ^api/(bootstrap|env|mailer|paystack|seed|schema)\.(php|sql)$ - [F,L]
+
+# Everything under /api goes to the real backend
+RewriteCond %{REQUEST_URI} ^/api
+RewriteRule ^api/?(.*)$ api/index.php [L,QSA]
+
+# Real uploaded video files and every other static asset are served
+# directly — only fall back to index.html for unmatched routes
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+RewriteRule ^$ index.html [L]
+
+# Allow real video uploads through PHP (matches UPLOADS_MAX_MB in .env).
+# Wrapped in IfModule because some hosts run PHP via FPM/CGI instead of
+# mod_php, where these directives in .htaccess cause a 500 error instead
+# of being ignored — see api/bootstrap.php for a host-agnostic fallback.
+<IfModule mod_php.c>
+    php_value upload_max_filesize 200M
+    php_value post_max_size 210M
+    php_value max_execution_time 120
+</IfModule>
+<IfModule mod_php8.c>
+    php_value upload_max_filesize 200M
+    php_value post_max_size 210M
+    php_value max_execution_time 120
+</IfModule>

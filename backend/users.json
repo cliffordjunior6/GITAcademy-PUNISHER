@@ -1,0 +1,210 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "first_name": "Justice",
+      "last_name": "Elorm",
+      "email": "justiceelorm@example.com",
+      "role": "student",
+      "avatar": null,
+      "bio": "Self-taught developer from Accra, Ghana. Passionate about machine learning and building products that solve real problems in Africa.",
+      "location": "Accra, Ghana",
+      "website": "https://justiceelorm.dev",
+      "tagline": "Frontend Developer · ML Enthusiast",
+      "joined": "2026-01-15",
+      "streak_days": 5,
+      "hours_learned": 42,
+      "enrolled_courses": [1, 2, 3, 8],
+      "completed_courses": [5],
+      "stats": {
+        "active_courses": 4,
+        "hours_learned": 42,
+        "certificates": 2,
+        "streak_days": 5
+      },
+      "certificates": [
+        {
+          "id": "cert-001",
+          "course_id": 5,
+          "course_title": "JavaScript Complete 2024",
+          "issued_at": "2026-03-10",
+          "credential_id": "LH-CERT-2024-001847",
+          "instructor": "Sarah Williams"
+        },
+        {
+          "id": "cert-002",
+          "course_id": 10,
+          "course_title": "HTML & CSS Fundamentals",
+          "issued_at": "2026-01-20",
+          "credential_id": "LH-CERT-2024-000312",
+          "instructor": "WebCraft Pro"
+        }
+      ],
+      "achievements": [
+        { "id": "ach-001", "icon": "🔥", "title": "5-Day Streak",         "description": "Learned for 5 days in a row",            "earned_at": "2024-03-27", "is_new": true  },
+        { "id": "ach-002", "icon": "⚡", "title": "Fast Learner",          "description": "Completed a course in under a week",      "earned_at": "2024-03-10", "is_new": false },
+        { "id": "ach-003", "icon": "🎓", "title": "First Certificate",     "description": "Earned your first LearnHub certificate",  "earned_at": "2024-01-20", "is_new": false },
+        { "id": "ach-004", "icon": "💬", "title": "Community Contributor", "description": "Asked 5 Q&A questions",                  "earned_at": "2024-02-14", "is_new": false },
+        { "id": "ach-005", "icon": "🛒", "title": "Enrolled in 4 Courses", "description": "Building a strong curriculum",           "earned_at": "2024-03-20", "is_new": true  }
+      ],
+      "recent_activity": [
+        { "type": "completed",   "description": "Completed 'Data Preprocessing in Python' lesson", "created_at": "2024-03-27T14:30:00Z" },
+        { "type": "enrolled",    "description": "Enrolled in UI/UX Design Bootcamp",               "created_at": "2024-03-25T10:15:00Z" },
+        { "type": "reviewed",    "description": "Left a 5-star review on Machine Learning A-Z",    "created_at": "2024-03-22T16:45:00Z" },
+        { "type": "certificate", "description": "Earned certificate for JavaScript Complete 2024", "created_at": "2024-03-10T09:00:00Z" },
+        { "type": "completed",   "description": "Completed 'Feature Scaling' lesson",              "created_at": "2024-03-08T11:20:00Z" }
+      ],
+      "enrolled_course_details": [
+        { "course_id": 1, "progress_pct": 68, "current_lesson": 42, "last_accessed": "2024-03-27T14:30:00Z" },
+        { "course_id": 2, "progress_pct": 22, "current_lesson": 15, "last_accessed": "2024-03-20T09:15:00Z" },
+        { "course_id": 3, "progress_pct": 10, "current_lesson":  4, "last_accessed": "2024-03-25T18:00:00Z" },
+        { "course_id": 8, "progress_pct": 45, "current_lesson": 18, "last_accessed": "2024-03-18T12:30:00Z" }
+      ],
+      "wishlist": [4, 6, 10],
+      "notifications_unread": 4,
+      "social": {
+        "twitter":  "@justiceelorm_dev",
+        "linkedin": "https://linkedin.com/in/amakofi",
+        "github":   "justiceelorm",
+        "youtube":  ""
+      }
+    },
+    {
+      "id": 2,
+      "first_name": "ATO SIAW",
+      "last_name": "QUARSHIE",
+      "email": "atosiaw@example.com",
+      "role": "instructor",
+      "avatar": null,
+      "bio": "PhD in Computer Science from MIT. 15+ years in machine learning research and industry. Former Google Brain researcher. Co-author of 3 NeurIPS papers.",
+      "location": "San Francisco, USA",
+      "website": "https://profatosiaw.com",
+      "tagline": "Machine Learning Researcher & Educator",
+      "joined": "2026-03-01",
+      "instructor_stats": {
+        "total_students":   48200,
+        "total_courses":    12,
+        "avg_rating":       4.9,
+        "total_revenue":    18240,
+        "monthly_revenue":  3840,
+        "total_reviews":    12400,
+        "completion_rate":  61
+      },
+      "courses": [1, 10],
+      "social": {
+        "twitter":  "@proatosiaw",
+        "linkedin": "https://linkedin.com/in/proatosiaw",
+        "github":   "atosiaw-ml",
+        "youtube":  "https://youtube.com/@proatosiaw"
+      }
+    },
+    {
+      "id": 3,
+      "first_name": "Emeka",
+      "last_name": "Faith",
+      "email": "emeka@example.com",
+      "role": "student",
+      "avatar": null,
+      "bio": "Software engineer from Lagos, Nigeria. Building skills in data science and cloud computing.",
+      "location": "Lagos, Nigeria",
+      "website": "",
+      "tagline": "Software Engineer · Data Science Student",
+      "joined": "2026-02-10",
+      "streak_days": 2,
+      "hours_learned": 18,
+      "enrolled_courses": [1, 8],
+      "completed_courses": [],
+      "stats": {
+        "active_courses": 2,
+        "hours_learned": 18,
+        "certificates": 0,
+        "streak_days": 2
+      },
+      "certificates": [],
+      "achievements": [
+        { "id": "ach-001", "icon": "🎓", "title": "First Enrollment", "description": "Enrolled in your first course", "earned_at": "2024-02-10", "is_new": false }
+      ],
+      "recent_activity": [
+        { "type": "enrolled", "description": "Enrolled in Machine Learning A-Z", "created_at": "2024-02-10T11:00:00Z" }
+      ],
+      "enrolled_course_details": [
+        { "course_id": 1, "progress_pct": 22, "current_lesson": 15, "last_accessed": "2024-03-18T09:15:00Z" },
+        { "course_id": 8, "progress_pct":  8, "current_lesson":  4, "last_accessed": "2024-03-10T14:00:00Z" }
+      ],
+      "wishlist": [2, 9],
+      "notifications_unread": 1,
+      "social": {
+        "twitter":  "@emeka_codes",
+        "linkedin": "https://linkedin.com/in/emekafaith",
+        "github":   "emekafaith",
+        "youtube":  ""
+      }
+    },
+    {
+      "id": 4,
+      "first_name": "Fatima",
+      "last_name": "North",
+      "email": "fatima@example.com",
+      "role": "student",
+      "avatar": null,
+      "bio": "UX designer from Ouagadougou, Burkina Faso. Learning to code to build better products for African users.",
+      "location": "Ouagadougou, Burkina Faso",
+      "website": "",
+      "tagline": "UX Designer · Learning to Code",
+      "joined": "2026-03-15",
+      "streak_days": 3,
+      "hours_learned": 9,
+      "enrolled_courses": [1],
+      "completed_courses": [],
+      "stats": {
+        "active_courses": 1,
+        "hours_learned": 9,
+        "certificates": 0,
+        "streak_days": 3
+      },
+      "certificates": [],
+      "achievements": [
+        { "id": "ach-001", "icon": "🔥", "title": "3-Day Streak", "description": "Learned for 3 days in a row", "earned_at": "2024-03-27", "is_new": true }
+      ],
+      "recent_activity": [
+        { "type": "enrolled", "description": "Enrolled in Machine Learning A-Z", "created_at": "2024-03-15T08:30:00Z" }
+      ],
+      "enrolled_course_details": [
+        { "course_id": 1, "progress_pct": 45, "current_lesson": 28, "last_accessed": "2024-03-27T10:00:00Z" }
+      ],
+      "wishlist": [3, 7],
+      "notifications_unread": 0,
+      "social": {
+        "twitter":  "",
+        "linkedin": "https://linkedin.com/in/fatimanorth",
+        "github":   "",
+        "youtube":  ""
+      }
+    },
+    {
+      "id": 99,
+      "first_name": "AKEY",
+      "last_name": "CLIFFORD JUNIOR",
+      "email": "cliffordjunior@GITAcademy.com",
+      "role": "admin",
+      "avatar": null,
+      "bio": "Platform administrator for GITAcademy.",
+      "location": "Accra, Ghana",
+      "joined": "2026-01-01",
+      "admin_stats": {
+        "total_users":      2100000,
+        "total_courses":    8412,
+        "total_revenue":    284000,
+        "pending_reviews":  248,
+        "open_tickets":     14,
+        "active_sessions":  4821
+      },
+      "social": {}
+    }
+  ],
+  "demo_credentials": {
+    "student":    { "email": "justiceelorm@example.com",    "password": "password", "role": "student"    },
+    "instructor": { "email": "atosiaw@example.com",  "password": "password", "role": "instructor" },
+    "admin":      { "email": "cliffordjunior@GITAcademy.com", "password": "admin123", "role": "admin", "admin_code": "ADMIN2024" }
+  }
+}

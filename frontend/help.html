@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" id="helpPage">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Help Centre — GITAcademy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--ink:#0d0d0f;--cream:#f5f0e8;--gold:#e8c547;--moss:#2d4a3e;--rust:#c4522a;--paper:#faf8f3;--smoke:#f0ece4;--font-display:'Fraunces',Georgia,serif;--font-body:'DM Sans',system-ui,sans-serif;--nav-h:64px;--radius-md:12px;--radius-lg:18px;--radius-xl:24px;--shadow-sm:0 2px 8px rgba(13,13,15,.06);--shadow-md:0 4px 20px rgba(13,13,15,.1)}
+    body{font-family:var(--font-body);background:var(--smoke);color:var(--ink);min-height:100vh}
+    a{text-decoration:none;color:inherit}
+    button{cursor:pointer;font-family:inherit;border:none;background:none}
+    .navbar{position:sticky;top:0;z-index:500;height:var(--nav-h);background:var(--cream);border-bottom:1px solid rgba(13,13,15,.08);display:flex;align-items:center;padding:0 2rem;gap:1.5rem}
+    .nav-logo{font-family:var(--font-display);font-size:1.4rem;font-weight:900;color:var(--ink);letter-spacing:-.03em}
+    .nav-logo span{color:var(--rust)}
+    .nav-right{display:flex;align-items:center;gap:.75rem;margin-left:auto}
+    .btn-ghost{background:none;border:1.5px solid rgba(13,13,15,.18);padding:.5rem 1.2rem;border-radius:100px;font-size:.85rem;font-weight:500;color:var(--ink);transition:.2s;font-family:inherit}
+    .btn-ghost:hover{background:var(--ink);color:var(--cream)}
+    .btn-primary{background:var(--ink);color:var(--cream);border:none;padding:.5rem 1.4rem;border-radius:100px;font-size:.85rem;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit}
+    .btn-primary:hover{background:var(--rust)}
+    .hero{background:var(--ink);padding:4rem 2rem;text-align:center;position:relative;overflow:hidden}
+    .hero-blob{position:absolute;border-radius:50%;pointer-events:none}
+    .hero-blob-1{width:400px;height:400px;background:radial-gradient(circle,rgba(45,74,62,.45),transparent 70%);top:-150px;left:-80px}
+    .hero-blob-2{width:350px;height:350px;background:radial-gradient(circle,rgba(232,197,71,.1),transparent 70%);top:-120px;right:-60px}
+    .hero-inner{position:relative;z-index:1;max-width:620px;margin:0 auto}
+    .hero-eyebrow{font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,240,232,.4);margin-bottom:.75rem}
+    .hero-title{font-family:var(--font-display);font-size:clamp(2.2rem,5vw,3.8rem);font-weight:900;color:var(--cream);letter-spacing:-.03em;margin-bottom:1.25rem;line-height:1}
+    .hero-title em{font-style:italic;font-weight:300;color:var(--gold)}
+    .help-search{max-width:500px;margin:0 auto;display:flex;background:white;border-radius:100px;padding:.35rem .35rem .35rem 1.3rem;box-shadow:0 8px 30px rgba(13,13,15,.25)}
+    .help-search input{flex:1;border:none;outline:none;font-size:.9rem;font-family:var(--font-body);color:var(--ink);background:transparent}
+    .help-search input::placeholder{color:rgba(13,13,15,.35)}
+    .help-search-btn{background:var(--ink);color:var(--cream);border:none;padding:.65rem 1.3rem;border-radius:100px;font-size:.85rem;font-weight:600;cursor:pointer;font-family:inherit}
+    .container{max-width:1050px;margin:0 auto;padding:0 2rem}
+    .section{padding:4rem 0}
+    .section-title{font-family:var(--font-display);font-size:clamp(1.6rem,3vw,2.2rem);font-weight:900;letter-spacing:-.03em;margin-bottom:.5rem}
+    .section-sub{font-size:.875rem;color:rgba(13,13,15,.45);margin-bottom:2rem}
+    /* Categories */
+    .help-cats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:3rem}
+    .help-cat{background:white;border-radius:var(--radius-xl);padding:1.75rem;border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);transition:.2s;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;gap:.65rem}
+    .help-cat:hover{box-shadow:var(--shadow-md);transform:translateY(-3px);border-color:rgba(45,74,62,.2)}
+    .hc-icon{font-size:2rem}
+    .hc-title{font-family:var(--font-display);font-size:1.05rem;font-weight:700;letter-spacing:-.02em}
+    .hc-sub{font-size:.78rem;color:rgba(13,13,15,.45);line-height:1.5}
+    .hc-count{font-size:.72rem;font-weight:600;color:var(--rust);margin-top:auto}
+    /* Articles */
+    .articles-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+    .article-item{background:white;border-radius:var(--radius-lg);padding:1.1rem 1.3rem;border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:.85rem;transition:.2s;cursor:pointer}
+    .article-item:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+    .article-icon{font-size:1.2rem;flex-shrink:0}
+    .article-title{font-size:.875rem;font-weight:600;margin-bottom:.15rem}
+    .article-meta{font-size:.72rem;color:rgba(13,13,15,.35)}
+    /* Still need help */
+    .still-help{background:var(--ink);border-radius:var(--radius-xl);padding:2.5rem;text-align:center;margin-top:3rem;position:relative;overflow:hidden}
+    .sh-blob{position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(232,197,71,.1),transparent 70%);top:-100px;right:-80px;pointer-events:none}
+    .sh-title{font-family:var(--font-display);font-size:1.6rem;font-weight:900;color:var(--cream);margin-bottom:.6rem;position:relative;z-index:1}
+    .sh-sub{font-size:.875rem;color:rgba(245,240,232,.45);margin-bottom:1.5rem;position:relative;z-index:1}
+    .sh-actions{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;position:relative;z-index:1}
+    .btn-sh{display:inline-flex;align-items:center;gap:.4rem;padding:.75rem 1.5rem;border-radius:100px;font-size:.875rem;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit}
+    .btn-sh-gold{background:var(--gold);color:var(--ink);border:none}
+    .btn-sh-gold:hover{background:#f0d258}
+    .btn-sh-outline{background:transparent;color:rgba(245,240,232,.7);border:1.5px solid rgba(255,255,255,.15)}
+    .btn-sh-outline:hover{border-color:rgba(255,255,255,.4);color:var(--cream)}
+    footer{background:var(--ink);color:var(--cream);padding:2rem;margin-top:0}
+    .footer-bottom{max-width:1050px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;font-size:.78rem;color:rgba(245,240,232,.25)}
+    .footer-bottom a{color:rgba(245,240,232,.25);transition:.15s}.footer-bottom a:hover{color:var(--cream)}
+    @media(max-width:768px){.help-cats{grid-template-columns:1fr 1fr}.articles-grid{grid-template-columns:1fr}.container{padding:0 1.25rem}.hero{padding:3rem 1.25rem}}
+    @media(max-width:480px){.help-cats{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="learnhub_responsive.html" class="nav-logo">GIT<span>Academy</span></a>
+  <div class="nav-right">
+    <a href="login.html" class="btn-ghost">Log in</a>
+    <a href="register.html" class="btn-primary">Sign up</a>
+  </div>
+</nav>
+<div class="hero">
+  <div class="hero-blob hero-blob-1"></div>
+  <div class="hero-blob hero-blob-2"></div>
+  <div class="hero-inner">
+    <p class="hero-eyebrow">Help Centre</p>
+    <h1 class="hero-title">How can we <em>help?</em></h1>
+    <div class="help-search">
+      <input type="text" placeholder="Search for answers…"/>
+      <button class="help-search-btn">Search</button>
+    </div>
+  </div>
+</div>
+<div class="section">
+  <div class="container">
+    <h2 class="section-title">Browse by Topic</h2>
+    <p class="section-sub">200+ articles to help you get the most out of LearnHub.</p>
+    <div class="help-cats">
+      <div class="help-cat"><div class="hc-icon">🎓</div><div class="hc-title">Getting Started</div><p class="hc-sub">How to create an account, enroll in courses and navigate the platform.</p><span class="hc-count">24 articles →</span></div>
+      <div class="help-cat"><div class="hc-icon">💳</div><div class="hc-title">Billing & Payments</div><p class="hc-sub">Managing subscriptions, refunds, payment methods and receipts.</p><span class="hc-count">18 articles →</span></div>
+      <div class="help-cat"><div class="hc-icon">📹</div><div class="hc-title">Course Playback</div><p class="hc-sub">Video quality, offline viewing, captions and player controls.</p><span class="hc-count">15 articles →</span></div>
+      <div class="help-cat"><div class="hc-icon">🏆</div><div class="hc-title">Certificates</div><p class="hc-sub">How to earn, download and share your GITAcademy certificates.</p><span class="hc-count">8 articles →</span></div>
+      <div class="help-cat"><div class="hc-icon">🧑‍🏫</div><div class="hc-title">Become an Instructor</div><p class="hc-sub">How to create and publish your first course on GITAcademy.</p><span class="hc-count">22 articles →</span></div>
+      <div class="help-cat"><div class="hc-icon">🔐</div><div class="hc-title">Account & Security</div><p class="hc-sub">Password, two-factor authentication, privacy and account settings.</p><span class="hc-count">12 articles →</span></div>
+    </div>
+    <h2 class="section-title">Popular Articles</h2>
+    <p class="section-sub">The most viewed help articles this week.</p>
+    <div class="articles-grid">
+    
+        [❓] 'How do I access my courses after purchase?'  ,'Getting Started · 2 min read'.
+        [💰] 'How do I get a refund?'  ,'Billing · 3 min read'.
+        [📥] 'Can I download videos for offline viewing?'  ,'Course Playback · 2 min read'.
+        [🔒] 'How do I reset my password?'  ,'Account · 1 min read'.
+        [🏆] 'How do I download my certificate?'  ,'Certificates · 2 min read'.
+        [🧑‍🏫] 'How do I become an instructor?'  ,'Instructors · 5 min read'.
+        [📱] 'Does LearnHub work on mobile?'  ,'Getting Started · 1 min read'.
+        [🌍] 'What languages are courses available in?'  ,'Courses · 2 min read'.
+      ].map(([icon,title,meta]) => `<div class="article-item"><span class="article-icon">${icon}</span><div><div class="article-title">${title}</div><div class="article-meta">${meta}</div></div></div>`).join('')}
+    </div>
+    <div class="still-help">
+      <div class="sh-blob"></div>
+      <h3 class="sh-title">Still need help?</h3>
+      <p class="sh-sub">Our support team is available 24/7 to answer your questions.</p>
+      <div class="sh-actions">
+        <a href="contact.html" class="btn-sh btn-sh-gold">💬 Start Live Chat</a>
+        <a href="contact.html" class="btn-sh btn-sh-outline">📧 Send Email</a>
+      </div>
+    </div>
+  </div>
+</div>
+<footer><div class="footer-bottom"><span>© 2026  GITAcademy. All rights reserved.</span><div style="display:flex;gap:1.5rem"><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a><a href="contact.html">Contact</a></div></div></footer>
+
+<script>
+  // ── Help search ───────────────────────────────────────────
+  const helpSearchInput = document.querySelector('.help-search input');
+  const helpSearchBtn   = document.querySelector('.help-search-btn');
+
+  function doHelpSearch() {
+    const q = helpSearchInput?.value?.trim();
+    if (q) window.location.href = 'course-list.html?q=' + encodeURIComponent(q);
+  }
+  helpSearchInput?.addEventListener('keydown', e => { if (e.key === 'Enter') doHelpSearch(); });
+  helpSearchBtn?.addEventListener('click', doHelpSearch);
+
+  // ── Category card clicks ──────────────────────────────────
+  const categoryMap = {
+    'Getting Started':    'getting-started',
+    'Billing':            'billing',
+    'Course Playback':    'playback',
+    'Certificates':       'certificates',
+    'Become an Instructor':'instructor',
+    'Account':            'account',
+  };
+  document.querySelectorAll('.help-cat').forEach(card => {
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', function() {
+      const title = this.querySelector('.hc-title')?.textContent || '';
+      const slug  = categoryMap[title] || '';
+      if (slug) window.location.href = 'help.html?cat=' + slug;
+    });
+  });
+
+  // ── Article item clicks ───────────────────────────────────
+  document.querySelectorAll('.article-item').forEach(item => {
+    item.style.cursor = 'pointer';
+    item.addEventListener('click', function() {
+      const title = this.querySelector('.article-title')?.textContent || '';
+      window.location.href = 'help.html?article=' + encodeURIComponent(title);
+    });
+  });
+
+  // ── Live article filter from search ──────────────────────
+  helpSearchInput?.addEventListener('input', function() {
+    const q = this.value.toLowerCase().trim();
+    if (!q) {
+      document.querySelectorAll('.article-item').forEach(i => i.style.display = '');
+      return;
+    }
+    document.querySelectorAll('.article-item').forEach(item => {
+      const text = item.textContent.toLowerCase();
+      item.style.display = text.includes(q) ? '' : 'none';
+    });
+  });
+
+  // ── Scroll reveal ─────────────────────────────────────────
+  if ('IntersectionObserver' in window) {
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'translateY(0)';
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.help-cat, .article-item').forEach(el => {
+      el.style.opacity    = '0';
+      el.style.transform  = 'translateY(16px)';
+      el.style.transition = 'opacity .4s ease, transform .4s ease';
+      obs.observe(el);
+    });
+  }
+
+  // ── User nav populate ─────────────────────────────────────
+  try {
+    const user = JSON.parse(localStorage.getItem('lh_user'));
+    if (user) {
+      const n = document.querySelector('.nav-user-name');
+      const a = document.querySelector('.nav-user .avatar');
+      if (n) n.textContent = user.first_name || 'You';
+      if (a) a.textContent = ((user.first_name?.[0]||'') + (user.last_name?.[0]||'')).toUpperCase() || 'U';
+    }
+  } catch(_) {}
+</script>
+</body>
+</html>

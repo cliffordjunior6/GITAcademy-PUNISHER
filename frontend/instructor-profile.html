@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Instructor — GITAcademy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --ink:#0d0d0f;--cream:#f5f0e8;--gold:#e8c547;--moss:#2d4a3e;
+      --rust:#c4522a;--paper:#faf8f3;--smoke:#f0ece4;--mist:#e8e3db;
+      --error:#e05555;--success:#2d7a4f;
+      --font-display:'Fraunces',Georgia,serif;--font-body:'DM Sans',system-ui,sans-serif;
+      --nav-h:64px;
+      --shadow-sm:0 2px 8px rgba(13,13,15,.06);--shadow-md:0 4px 20px rgba(13,13,15,.1);--shadow-lg:0 12px 40px rgba(13,13,15,.14);
+      --radius-sm:8px;--radius-md:12px;--radius-lg:18px;--radius-xl:24px;
+    }
+    body{font-family:var(--font-body);background:var(--smoke);color:var(--ink);min-height:100vh}
+    a{text-decoration:none;color:inherit}
+    button{cursor:pointer;font-family:inherit;border:none;background:none}
+
+    .navbar{position:sticky;top:0;z-index:500;height:var(--nav-h);background:var(--cream);border-bottom:1px solid rgba(13,13,15,.08);display:flex;align-items:center;padding:0 2rem;gap:1.5rem}
+    .nav-logo{font-family:var(--font-display);font-size:1.4rem;font-weight:900;color:var(--ink);letter-spacing:-.03em}
+    .nav-logo span{color:var(--rust)}
+    .nav-right{margin-left:auto;display:flex;align-items:center;gap:.75rem}
+    .btn-ghost{background:none;border:1.5px solid rgba(13,13,15,.18);padding:.5rem 1.2rem;border-radius:100px;font-size:.85rem;font-weight:500;color:var(--ink);transition:.2s}
+    .btn-ghost:hover{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+
+    .hero{background:linear-gradient(135deg,var(--moss),#1a2f26);color:var(--cream);padding:3.5rem 2rem}
+    .hero-inner{max-width:1000px;margin:0 auto;display:flex;gap:2rem;align-items:center;flex-wrap:wrap}
+    .instr-avatar{width:110px;height:110px;border-radius:50%;background:linear-gradient(135deg,var(--rust),var(--gold));display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:2.4rem;font-weight:700;color:var(--ink);flex-shrink:0}
+    .instr-name{font-family:var(--font-display);font-size:2.1rem;font-weight:900;letter-spacing:-.02em;margin-bottom:.3rem}
+    .instr-role{font-size:1rem;color:rgba(245,240,232,.7);margin-bottom:1rem}
+    .instr-stats{display:flex;gap:1.75rem;flex-wrap:wrap}
+    .instr-stat-num{font-family:var(--font-display);font-size:1.3rem;font-weight:800}
+    .instr-stat-label{font-size:.75rem;color:rgba(245,240,232,.55);text-transform:uppercase;letter-spacing:.04em}
+
+    .content{max-width:1000px;margin:0 auto;padding:2.5rem 2rem 4rem}
+    .section-title{font-family:var(--font-display);font-size:1.3rem;font-weight:800;margin-bottom:1.1rem}
+
+    .courses-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.25rem}
+    .course-card{background:var(--paper);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-sm);transition:.2s}
+    .course-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+    .course-thumb{height:120px;display:flex;align-items:center;justify-content:center;font-size:2.4rem}
+    .course-body{padding:1rem 1.1rem 1.1rem}
+    .course-cat{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--rust);margin-bottom:.25rem}
+    .course-title{font-family:var(--font-display);font-size:.98rem;font-weight:700;line-height:1.25;margin-bottom:.35rem}
+    .course-meta{display:flex;align-items:center;gap:.4rem;font-size:.78rem;color:rgba(13,13,15,.5);margin-bottom:.6rem}
+    .course-price{font-family:var(--font-display);font-weight:800;font-size:1rem}
+    .course-price.free{color:var(--success)}
+
+    .empty{text-align:center;padding:3rem;color:rgba(13,13,15,.4);font-size:.9rem}
+    .loading{text-align:center;padding:4rem;color:rgba(13,13,15,.4)}
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="learnhub_responsive.html" class="nav-logo">GIT<span>Academy</span></a>
+  <div class="nav-right">
+    <a href="course-list.html" class="btn-ghost">Browse Courses</a>
+  </div>
+</nav>
+
+<div id="loadingState" class="loading">Loading instructor…</div>
+
+<div id="pageContent" style="display:none">
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="instr-avatar" id="instrAvatar">--</div>
+      <div>
+        <div class="instr-name" id="instrName">Instructor</div>
+        <div class="instr-role" id="instrRole"></div>
+        <div class="instr-stats">
+          <div><div class="instr-stat-num" id="instrRating">–</div><div class="instr-stat-label">Rating</div></div>
+          <div><div class="instr-stat-num" id="instrStudents">–</div><div class="instr-stat-label">Students</div></div>
+          <div><div class="instr-stat-num" id="instrCourseCount">–</div><div class="instr-stat-label">Courses</div></div>
+          <div><div class="instr-stat-num" id="instrReviews">–</div><div class="instr-stat-label">Reviews</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="section-title">Courses by this instructor</div>
+    <div class="courses-grid" id="coursesGrid"></div>
+  </div>
+</div>
+
+<script type="module">
+  import { instructorsApi } from './api.js';
+  import { getParam } from './utils.js';
+
+  const fmt = (n) => '₵' + Number(n).toLocaleString('en-GH');
+
+  async function load() {
+    const id = getParam('id');
+    if (!id) {
+      document.getElementById('loadingState').textContent = 'No instructor specified.';
+      return;
+    }
+
+    let instr;
+    try {
+      instr = await instructorsApi.get(id);
+    } catch (err) {
+      document.getElementById('loadingState').textContent = 'Instructor not found.';
+      return;
+    }
+
+    document.title = `${instr.name} — GITAcademy`;
+    document.getElementById('instrAvatar').textContent = instr.name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+    document.getElementById('instrName').textContent = instr.name;
+    document.getElementById('instrRole').textContent = instr.title || 'Instructor at GITAcademy';
+    document.getElementById('instrRating').textContent = instr.rating || '–';
+    document.getElementById('instrStudents').textContent = instr.students_count.toLocaleString();
+    document.getElementById('instrCourseCount').textContent = instr.courses_count;
+    document.getElementById('instrReviews').textContent = instr.reviews_count.toLocaleString();
+
+    const grid = document.getElementById('coursesGrid');
+    grid.innerHTML = instr.courses.map(c => `
+      <a href="course-details.html?id=${c.id}" class="course-card">
+        <div class="course-thumb" style="background:${c.thumbnail_bg || '#f0ece4'}">${c.emoji || '📚'}</div>
+        <div class="course-body">
+          <div class="course-cat">${c.category || ''}</div>
+          <div class="course-title">${c.title}</div>
+          <div class="course-meta"><span>★ ${(c.rating||0).toFixed(1)}</span><span>· ${(c.students_count||0).toLocaleString()} students</span></div>
+          <div class="course-price ${c.price===0?'free':''}">${c.price===0?'Free':fmt(c.price)}</div>
+        </div>
+      </a>`).join('') || '<p class="empty">This instructor has no published courses yet.</p>';
+
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('pageContent').style.display = 'block';
+  }
+
+  load();
+</script>
+</body>
+</html>

@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GITAcademy — Knowledge Unlocked</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink: #0d0d0f;
+      --cream: #f5f0e8;
+      --gold: #e8c547;
+      --moss: #2d4a3e;
+      --rust: #c4522a;
+      --paper: #faf8f3;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', Georgia, sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      overflow-x: hidden;
+    }
+
+    /* ══════════════════════════════
+       NAV
+    ══════════════════════════════ */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.1rem 2.5rem;
+      background: var(--cream);
+      border-bottom: 1px solid rgba(13,13,15,0.08);
+      position: sticky;
+      top: 0;
+      z-index: 200;
+    }
+
+    .logo {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 1.45rem;
+      font-weight: 900;
+      color: var(--ink);
+      letter-spacing: -0.03em;
+      flex-shrink: 0;
+    }
+    .logo span { color: var(--rust); }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: rgba(13,13,15,0.5);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--ink); }
+
+    .nav-actions { display: flex; gap: 0.7rem; align-items: center; }
+
+    /* hamburger — hidden on desktop */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+    .hamburger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--ink);
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    /* mobile nav drawer */
+    .mobile-nav {
+      display: none;
+      flex-direction: column;
+      background: var(--cream);
+      border-bottom: 1px solid rgba(13,13,15,0.08);
+      padding: 1rem 2rem 1.5rem;
+      gap: 1rem;
+    }
+    .mobile-nav.open { display: flex; }
+    .mobile-nav a {
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 500;
+      color: rgba(13,13,15,0.6);
+      padding: 0.4rem 0;
+      border-bottom: 1px solid rgba(13,13,15,0.06);
+    }
+    .mobile-nav .mobile-btns {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    .btn-ghost {
+      background: none;
+      border: 1.5px solid rgba(13,13,15,0.2);
+      padding: 0.5rem 1.3rem;
+      border-radius: 100px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--ink);
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .btn-ghost:hover { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+
+    .btn-primary {
+      background: var(--ink);
+      color: var(--cream);
+      border: 1.5px solid var(--ink);
+      padding: 0.5rem 1.4rem;
+      border-radius: 100px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .btn-primary:hover { background: var(--rust); border-color: var(--rust); }
+
+    /* ══════════════════════════════
+       HERO — TWO COLUMNS on desktop
+    ══════════════════════════════ */
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr;
+      min-height: calc(100vh - 62px);
+      width: 100%;
+    }
+
+    /* LEFT */
+    .hero-left {
+      background: var(--cream);
+      padding: 5rem 3rem 5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      max-width: 780px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--moss);
+      color: var(--cream);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.4rem 1rem;
+      border-radius: 100px;
+      margin-bottom: 1.8rem;
+      width: fit-content;
+    }
+    .eyebrow-dot {
+      width: 6px; height: 6px;
+      background: var(--gold);
+      border-radius: 50%;
+      animation: blink 2s infinite;
+    }
+    @keyframes blink {
+      0%,100%{ opacity:1; } 50%{ opacity:0.3; }
+    }
+
+    .hero-title {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: clamp(2.8rem, 4vw, 5.2rem);
+      font-weight: 900;
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.5rem;
+    }
+    .hero-title em {
+      font-style: italic;
+      font-weight: 300;
+      color: var(--rust);
+    }
+
+    .hero-sub {
+      font-size: 1rem;
+      font-weight: 300;
+      line-height: 1.7;
+      color: rgba(13,13,15,0.6);
+      max-width: 400px;
+      margin-bottom: 2.3rem;
+    }
+
+    .hero-cta {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 3rem;
+    }
+
+    .btn-hero {
+      background: var(--ink);
+      color: var(--cream);
+      border: none;
+      padding: 0.85rem 1.9rem;
+      border-radius: 100px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.25s;
+      font-family: inherit;
+    }
+    .btn-hero:hover { background: var(--rust); transform: translateY(-2px); box-shadow: 0 10px 26px rgba(196,82,42,0.28); }
+
+    .btn-watch {
+      background: none;
+      border: none;
+      font-size: 0.85rem;
+      color: rgba(13,13,15,0.5);
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: color 0.2s;
+    }
+    .btn-watch:hover { color: var(--ink); }
+
+    .hero-stats {
+      display: flex;
+      gap: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(13,13,15,0.1);
+      flex-wrap: wrap;
+    }
+    .stat-num {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 0.2rem;
+    }
+    .stat-label { font-size: 0.75rem; color: rgba(13,13,15,0.45); }
+
+
+
+    /* ══════════════════════════════
+       MARQUEE
+    ══════════════════════════════ */
+    .marquee-wrap {
+      background: var(--moss);
+      padding: 0.8rem 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .marquee-track {
+      display: inline-flex;
+      animation: marquee 22s linear infinite;
+    }
+    .marquee-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: rgba(245,240,232,0.6);
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0 2rem;
+    }
+    .mdot { color: var(--gold); }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ══════════════════════════════
+       ANIMATIONS
+    ══════════════════════════════ */
+    .fade { animation: fadeUp 0.6s ease both; }
+    .d1 { animation-delay: 0.05s; }
+    .d2 { animation-delay: 0.15s; }
+    .d3 { animation-delay: 0.25s; }
+    .d4 { animation-delay: 0.35s; }
+    .d5 { animation-delay: 0.45s; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ══════════════════════════════
+       TABLET  (max 1024px)
+    ══════════════════════════════ */
+    @media (max-width: 1024px) {
+      .hero { min-height: auto; }
+      .hero-left { padding: 3.5rem 2rem; }
+      .nav-links { gap: 1.2rem; }
+    }
+
+    /* ══════════════════════════════
+       MOBILE  (max 768px)
+    ══════════════════════════════ */
+    @media (max-width: 768px) {
+
+      /* NAV */
+      nav { padding: 1rem 1.25rem; }
+      .nav-links { display: none; }
+      .nav-actions { display: none; }
+      .hamburger { display: flex; }
+
+      /* HERO — single column */
+      .hero {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+
+      .hero-left {
+        padding: 2.5rem 1.25rem 2rem;
+        text-align: center;
+        align-items: center;
+      }
+
+      .hero-title { font-size: clamp(2.4rem, 10vw, 3.2rem); }
+
+      .hero-sub {
+        font-size: 0.95rem;
+        max-width: 100%;
+        text-align: center;
+      }
+
+      .hero-cta {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 2rem;
+      }
+
+      .btn-hero { width: 100%; justify-content: center; }
+
+      .hero-stats {
+        justify-content: center;
+        gap: 1.5rem;
+        text-align: center;
+      }
+
+      /* Marquee slightly bigger text on mobile */
+      .marquee-item { font-size: 0.7rem; padding: 0 1.5rem; }
+    }
+
+    /* ══════════════════════════════
+       SMALL PHONES  (max 400px)
+    ══════════════════════════════ */
+    @media (max-width: 400px) {
+      .hero-title { font-size: 2.2rem; }
+      .hero-stats { gap: 1rem; }
+      .stat-num { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="logo">GIT<span>Academy</span></div>
+
+    <ul class="nav-links">
+      <li><a href="course-list.html">Courses</a></li>
+      <li><a href="category-list.html">Categories</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <a href="login.html" class="btn-ghost">Log in</a>
+      <a href="register.html" class="btn-primary" style="text-decoration:none;">Get started free</a>
+    </div>
+
+    <!-- Hamburger (mobile only) -->
+    <button class="hamburger" id="menuBtn" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- MOBILE NAV DRAWER -->
+  <div class="mobile-nav" id="mobileNav">
+    <a href="course-list.html">Courses</a>
+    <a href="category-list.html">Categories</a>
+    <div class="mobile-btns">
+      <a href="login.html" class="btn-ghost" style="flex:1;text-decoration:none;text-align:center;">Log in</a>
+      <a href="register.html" class="btn-primary" style="flex:1;text-decoration:none;text-align:center;">Get started free</a>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+
+    <!-- LEFT -->
+    <div class="hero-left">
+      <div class="eyebrow fade d1">
+        <span class="eyebrow-dot"></span>
+        New courses every week
+      </div>
+
+      <h1 class="hero-title fade d2">
+        Learn<br>
+        anything,<br>
+        <em>anywhere.</em>
+      </h1>
+
+      <p class="hero-sub fade d3">
+        Join 2 million learners mastering in-demand skills — from data science and design to business and creative arts.
+      </p>
+
+      <div class="hero-cta fade d4">
+        <a href="register.html" class="btn-hero" style="text-decoration:none;">
+          Start learning free
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+            <path d="M2 7.5h11M9 3.5l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+        <a href="course-list.html" class="btn-watch" style="text-decoration:none;">▶&nbsp; Browse courses</a>
+      </div>
+
+      <div class="hero-stats fade d5">
+        <div>
+          <div class="stat-num">2M+</div>
+          <div class="stat-label">Active learners</div>
+        </div>
+        <div>
+          <div class="stat-num">8,400</div>
+          <div class="stat-label">Courses</div>
+        </div>
+        <div>
+          <div class="stat-num">98%</div>
+          <div class="stat-label">Satisfaction</div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <span class="marquee-item"><span class="mdot">✦</span> Python Programming</span>
+      <span class="marquee-item"><span class="mdot">✦</span> Web Development</span>
+      <span class="marquee-item"><span class="mdot">✦</span> Graphic Design</span>
+      <span class="marquee-item"><span class="mdot">✦</span> Digital Marketing</span>
+      <span class="marquee-item"><span class="mdot">✦</span> Machine Learning</span>
+      <span class="marquee-item"><span class="mdot">✦</span> Business Strategy</span>
+      <span class="marquee-item"><span class="mdot">✦</span> Photography</span>
+      <span class="marquee-item"><span class="mdot">✦</span> Video Editing</span>
+      <span class="marquee-item"><span class="mdot">✦</span> Python Programming</span>
+      <span class="marquee-item"><span class="mdot">✦</span> Web Development</span>
+      <span class="marquee-item"><span class="mdot">✦</span> Graphic Design</span>
+      <span class="marquee-item"><span class="mdot">✦</span> Digital Marketing</span>
+      <span class="marquee-item"><span class="mdot">✦</span> Machine Learning</span>
+      <span class="marquee-item"><span class="mdot">✦</span> Business Strategy</span>
+      <span class="marquee-item"><span class="mdot">✦</span> Photography</span>
+      <span class="marquee-item"><span class="mdot">✦</span> Video Editing</span>
+    </div>
+  </div>
+
+  <script>
+    // Hamburger toggle
+    const btn = document.getElementById('menuBtn');
+    const nav = document.getElementById('mobileNav');
+    btn.addEventListener('click', () => {
+      nav.classList.toggle('open');
+    });
+  </script>
+
+</body>
+</html>

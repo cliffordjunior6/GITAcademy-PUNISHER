@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Browse Courses — GITAcademy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --ink:#0d0d0f;--cream:#f5f0e8;--gold:#e8c547;--moss:#2d4a3e;
+      --rust:#c4522a;--paper:#faf8f3;--smoke:#f0ece4;--mist:#e8e3db;
+      --font-display:'Fraunces',Georgia,serif;
+      --font-body:'DM Sans',system-ui,sans-serif;
+      --nav-h:64px;
+      --shadow-sm:0 2px 8px rgba(13,13,15,.06);
+      --shadow-md:0 4px 20px rgba(13,13,15,.1);
+      --shadow-lg:0 12px 40px rgba(13,13,15,.14);
+      --radius-sm:8px;--radius-md:12px;--radius-lg:18px;--radius-xl:24px;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:var(--font-body);background:var(--cream);color:var(--ink);overflow-x:hidden}
+    a{text-decoration:none;color:inherit}
+    img{max-width:100%;display:block}
+    button{cursor:pointer;font-family:inherit;border:none;background:none}
+    ul{list-style:none}
+
+    /* ══ NAVBAR ══ */
+    .navbar{position:sticky;top:0;z-index:500;height:var(--nav-h);background:var(--cream);border-bottom:1px solid rgba(13,13,15,.08);display:flex;align-items:center;padding:0 2rem;gap:1.5rem}
+    .nav-logo{font-family:var(--font-display);font-size:1.4rem;font-weight:900;color:var(--ink);letter-spacing:-.03em;flex-shrink:0}
+    .nav-logo span{color:var(--rust)}
+    .nav-links{display:flex;align-items:center;gap:.25rem}
+    .nav-link{font-size:.875rem;font-weight:500;color:rgba(13,13,15,.55);padding:.4rem .8rem;border-radius:var(--radius-md);transition:.15s}
+    .nav-link:hover,.nav-link.active{color:var(--ink);background:var(--smoke)}
+    .nav-search{flex:1;max-width:420px;position:relative;margin:0 auto}
+    .nav-search input{width:100%;background:var(--smoke);border:1.5px solid transparent;border-radius:100px;padding:.5rem 1rem .5rem 2.5rem;font-size:.875rem;color:var(--ink);outline:none;transition:.2s;font-family:var(--font-body)}
+    .nav-search input:focus{background:white;border-color:var(--moss);box-shadow:0 0 0 3px rgba(45,74,62,.08)}
+    .nav-search input::placeholder{color:rgba(13,13,15,.4)}
+    .nav-search-icon{position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:rgba(13,13,15,.4);pointer-events:none}
+    .nav-actions{display:flex;align-items:center;gap:.75rem;margin-left:auto;flex-shrink:0}
+    .btn-ghost{background:none;border:1.5px solid rgba(13,13,15,.18);padding:.5rem 1.2rem;border-radius:100px;font-size:.85rem;font-weight:500;color:var(--ink);transition:.2s;font-family:inherit}
+    .btn-ghost:hover{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+    .btn-primary{background:var(--ink);color:var(--cream);border:none;padding:.5rem 1.4rem;border-radius:100px;font-size:.85rem;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit;display:inline-flex;align-items:center;gap:.4rem}
+    .btn-primary:hover{background:var(--rust)}
+    .nav-icon-btn{width:38px;height:38px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;color:rgba(13,13,15,.6);transition:.2s;position:relative}
+    .nav-icon-btn:hover{background:var(--smoke);color:var(--ink)}
+    .nav-badge{position:absolute;top:5px;right:5px;width:8px;height:8px;background:var(--rust);border-radius:50%;border:2px solid var(--cream)}
+    .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--moss),var(--rust));display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:var(--cream);flex-shrink:0}
+    .nav-user{display:flex;align-items:center;gap:.5rem;padding:.3rem .5rem .3rem .85rem;border-radius:100px;border:1.5px solid rgba(13,13,15,.1);cursor:pointer;transition:.2s;background:none}
+    .nav-user:hover{border-color:var(--ink);background:var(--smoke)}
+    .nav-user-name{font-size:.82rem;font-weight:500;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .nav-user-wrap{position:relative}
+    .user-dropdown{position:absolute;top:calc(100% + 8px);right:0;background:white;border:1px solid rgba(13,13,15,.08);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:.5rem;min-width:200px;opacity:0;pointer-events:none;transform:translateY(-8px);transition:.2s;z-index:600}
+    .user-dropdown.open{opacity:1;pointer-events:all;transform:translateY(0)}
+    .dropdown-item{display:flex;align-items:center;gap:.6rem;padding:.6rem .75rem;border-radius:var(--radius-sm);font-size:.875rem;font-weight:500;color:rgba(13,13,15,.7);transition:.15s}
+    .dropdown-item:hover{background:var(--smoke);color:var(--ink)}
+    .dropdown-item.danger{color:#e05555}
+    .dropdown-item.danger:hover{background:rgba(224,85,85,.08)}
+    .dropdown-sep{height:1px;background:rgba(13,13,15,.06);margin:.4rem 0}
+    .hamburger{display:none;flex-direction:column;gap:5px;padding:4px}
+    .hamburger span{display:block;width:22px;height:2px;background:var(--ink);border-radius:2px;transition:.3s}
+    .mobile-menu{display:none;position:fixed;inset:0;top:var(--nav-h);background:var(--cream);z-index:450;padding:1.5rem;flex-direction:column;gap:.5rem;overflow-y:auto}
+    .mobile-menu.open{display:flex}
+    .mobile-menu .nav-link{padding:.75rem 1rem;font-size:1rem}
+    .mobile-menu-actions{display:flex;gap:.75rem;margin-top:1rem}
+
+    /* ══ HERO ══ */
+    .hero{background:var(--ink);padding:5rem 2rem;position:relative;overflow:hidden;text-align:center}
+    .hero-blob{position:absolute;border-radius:50%;pointer-events:none}
+    .hero-blob-1{width:600px;height:600px;background:radial-gradient(circle,rgba(45,74,62,.5),transparent 70%);top:-200px;left:-100px}
+    .hero-blob-2{width:500px;height:500px;background:radial-gradient(circle,rgba(232,197,71,.1),transparent 70%);top:-150px;right:-100px}
+    .hero-blob-3{width:300px;height:300px;background:radial-gradient(circle,rgba(196,82,42,.08),transparent 70%);bottom:-100px;left:40%}
+    .hero-inner{position:relative;z-index:1;max-width:700px;margin:0 auto}
+    .hero-eyebrow{display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:rgba(245,240,232,.7);font-size:.72rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:.4rem 1rem;border-radius:100px;margin-bottom:1.5rem}
+    .hero-dot{width:6px;height:6px;background:var(--gold);border-radius:50%;animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+    .hero-title{font-family:var(--font-display);font-size:clamp(2.5rem,6vw,5rem);font-weight:900;color:var(--cream);line-height:.95;letter-spacing:-.03em;margin-bottom:1.2rem}
+    .hero-title em{font-style:italic;font-weight:300;color:var(--gold)}
+    .hero-sub{font-size:1.05rem;color:rgba(245,240,232,.55);font-weight:300;max-width:500px;margin:0 auto 2.5rem;line-height:1.7}
+    .hero-search{max-width:540px;margin:0 auto;display:flex;gap:.75rem;background:white;border-radius:100px;padding:.4rem .4rem .4rem 1.4rem;box-shadow:0 8px 30px rgba(13,13,15,.25)}
+    .hero-search input{flex:1;border:none;outline:none;font-size:.95rem;font-family:var(--font-body);color:var(--ink);background:transparent}
+    .hero-search input::placeholder{color:rgba(13,13,15,.35)}
+    .btn-search{background:var(--ink);color:var(--cream);border:none;padding:.7rem 1.6rem;border-radius:100px;font-size:.875rem;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit;display:flex;align-items:center;gap:.4rem;flex-shrink:0}
+    .btn-search:hover{background:var(--rust)}
+    .hero-stats{display:flex;align-items:center;justify-content:center;gap:2.5rem;margin-top:2.5rem;flex-wrap:wrap}
+    .hero-stat-num{font-family:var(--font-display);font-size:1.6rem;font-weight:700;color:var(--cream);line-height:1}
+    .hero-stat-label{font-size:.75rem;color:rgba(245,240,232,.4);margin-top:.2rem}
+    .hero-stat-sep{width:1px;height:32px;background:rgba(255,255,255,.1)}
+
+    /* ══ MARQUEE ══ */
+    .marquee-strip{background:var(--moss);padding:.75rem 0;overflow:hidden;white-space:nowrap}
+    .marquee-track{display:inline-flex;animation:marquee 22s linear infinite}
+    .marquee-item{display:inline-flex;align-items:center;gap:.5rem;color:rgba(245,240,232,.6);font-size:.75rem;font-weight:400;letter-spacing:.08em;text-transform:uppercase;padding:0 2rem}
+    .mdot{color:var(--gold)}
+    @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+    /* ══ SECTIONS ══ */
+    .section{padding:4.5rem 2rem}
+    .section-sm{padding:3rem 2rem}
+    .container{max-width:1200px;margin:0 auto}
+    .section-hdr{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:2rem;gap:1rem}
+    .section-hdr-left{}
+    .section-eyebrow{font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--rust);margin-bottom:.4rem}
+    .section-title{font-family:var(--font-display);font-size:clamp(1.8rem,3vw,2.5rem);font-weight:900;letter-spacing:-.03em;line-height:1}
+    .section-link{font-size:.85rem;font-weight:600;color:var(--rust);transition:.2s;white-space:nowrap;display:flex;align-items:center;gap:.3rem}
+    .section-link:hover{opacity:.7}
+
+    /* ══ CATEGORIES ══ */
+    .categories-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:1rem}
+    .cat-card{background:white;border-radius:var(--radius-lg);padding:1.2rem .75rem;text-align:center;border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);transition:.2s;cursor:pointer}
+    .cat-card:hover{box-shadow:var(--shadow-md);transform:translateY(-3px);border-color:var(--moss)}
+    .cat-icon{font-size:1.8rem;margin-bottom:.6rem}
+    .cat-name{font-size:.78rem;font-weight:600;line-height:1.3}
+    .cat-count{font-size:.68rem;color:rgba(13,13,15,.4);margin-top:.2rem}
+
+    /* ══ COURSE CARDS ══ */
+    .courses-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem}
+    .course-card{background:white;border-radius:var(--radius-lg);border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);overflow:hidden;transition:.2s;display:flex;flex-direction:column}
+    .course-card:hover{box-shadow:var(--shadow-md);transform:translateY(-3px)}
+    .course-thumb{height:140px;background:var(--smoke);display:flex;align-items:center;justify-content:center;font-size:3.2rem;position:relative;overflow:hidden}
+    .course-badge{position:absolute;top:.6rem;left:.6rem;background:var(--rust);color:white;font-size:.62rem;font-weight:700;padding:.2rem .6rem;border-radius:100px;text-transform:uppercase;letter-spacing:.05em}
+    .course-badge.new{background:var(--moss)}
+    .course-badge.free{background:var(--success,#2d7a4f)}
+    .course-body{padding:1rem;flex:1;display:flex;flex-direction:column}
+    .course-cat{font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--moss);margin-bottom:.4rem}
+    .course-title{font-size:.9rem;font-weight:600;line-height:1.35;margin-bottom:.5rem;flex:1}
+    .course-instructor{font-size:.75rem;color:rgba(13,13,15,.45);margin-bottom:.6rem}
+    .course-meta{display:flex;align-items:center;gap:.5rem;font-size:.75rem;color:rgba(13,13,15,.45);margin-bottom:.75rem;flex-wrap:wrap}
+    .course-stars{color:var(--gold);font-size:.75rem}
+    .course-rating-num{font-weight:600;color:var(--ink)}
+    .course-reviews{color:rgba(13,13,15,.4)}
+    .course-footer{display:flex;align-items:center;justify-content:space-between;margin-top:auto}
+    .course-price{font-family:var(--font-display);font-size:1.1rem;font-weight:700}
+    .course-price.free{color:#2d7a4f}
+    .course-price-old{font-size:.78rem;color:rgba(13,13,15,.35);text-decoration:line-through;margin-left:.3rem}
+    .btn-enroll{background:var(--smoke);color:var(--ink);border:none;padding:.45rem 1rem;border-radius:100px;font-size:.78rem;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit}
+    .btn-enroll:hover{background:var(--ink);color:var(--cream)}
+
+    /* ══ FEATURED BANNER ══ */
+    .featured-banner{background:var(--ink);border-radius:var(--radius-xl);padding:3rem 3.5rem;display:grid;grid-template-columns:1fr auto;align-items:center;gap:2rem;position:relative;overflow:hidden;margin-bottom:0}
+    .fb-blob{position:absolute;border-radius:50%;pointer-events:none}
+    .fb-blob-1{width:350px;height:350px;background:radial-gradient(circle,rgba(232,197,71,.12),transparent 70%);top:-120px;right:-80px}
+    .fb-blob-2{width:250px;height:250px;background:radial-gradient(circle,rgba(196,82,42,.1),transparent 70%);bottom:-80px;left:40%}
+    .fb-eyebrow{display:inline-flex;align-items:center;gap:.4rem;background:rgba(232,197,71,.15);border:1px solid rgba(232,197,71,.2);color:var(--gold);font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:.3rem .85rem;border-radius:100px;margin-bottom:1rem}
+    .fb-title{font-family:var(--font-display);font-size:clamp(1.6rem,3vw,2.6rem);font-weight:900;color:var(--cream);line-height:1.05;letter-spacing:-.03em;margin-bottom:.75rem}
+    .fb-title em{font-style:italic;font-weight:300;color:var(--gold)}
+    .fb-sub{font-size:.9rem;color:rgba(245,240,232,.5);font-weight:300;max-width:450px;line-height:1.65;margin-bottom:1.5rem}
+    .fb-tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.8rem}
+    .fb-tag{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:rgba(245,240,232,.65);font-size:.75rem;font-weight:500;padding:.3rem .75rem;border-radius:100px}
+    .fb-actions{display:flex;gap:.75rem;flex-wrap:wrap}
+    .btn-gold{background:var(--gold);color:var(--ink);border:none;padding:.8rem 1.8rem;border-radius:100px;font-size:.9rem;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit;display:inline-flex;align-items:center;gap:.4rem}
+    .btn-gold:hover{background:#f0d258;transform:translateY(-2px);box-shadow:0 10px 28px rgba(232,197,71,.25)}
+    .btn-outline-light{background:transparent;color:var(--cream);border:1.5px solid rgba(255,255,255,.2);padding:.8rem 1.8rem;border-radius:100px;font-size:.9rem;font-weight:500;cursor:pointer;transition:.2s;font-family:inherit;display:inline-flex;align-items:center;gap:.4rem}
+    .btn-outline-light:hover{border-color:rgba(255,255,255,.5);background:rgba(255,255,255,.06)}
+    .fb-image{font-size:8rem;position:relative;z-index:1;flex-shrink:0}
+
+    /* ══ INSTRUCTORS ══ */
+    .instructors-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem}
+    .instructor-card{background:white;border-radius:var(--radius-lg);padding:1.5rem;text-align:center;border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);transition:.2s}
+    .instructor-card:hover{box-shadow:var(--shadow-md);transform:translateY(-3px)}
+    .instructor-avatar{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,var(--moss),var(--rust));display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:1.4rem;font-weight:700;color:var(--cream);margin:0 auto .85rem}
+    .instructor-name{font-weight:700;font-size:.95rem;margin-bottom:.2rem}
+    .instructor-role{font-size:.78rem;color:rgba(13,13,15,.45);margin-bottom:.6rem}
+    .instructor-meta{display:flex;align-items:center;justify-content:center;gap:.75rem;font-size:.75rem;color:rgba(13,13,15,.45)}
+    .instructor-meta span{display:flex;align-items:center;gap:.3rem}
+
+    /* ══ TESTIMONIALS ══ */
+    .testimonials-section{background:var(--smoke)}
+    .testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}
+    .testimonial-card{background:white;border-radius:var(--radius-lg);padding:1.5rem;border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm)}
+    .testi-stars{color:var(--gold);font-size:.85rem;letter-spacing:1px;margin-bottom:.85rem}
+    .testi-text{font-size:.9rem;line-height:1.7;color:rgba(13,13,15,.7);font-style:italic;margin-bottom:1.1rem;font-family:var(--font-display);font-weight:300}
+    .testi-author{display:flex;align-items:center;gap:.75rem}
+    .testi-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--moss),var(--rust));display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:var(--cream);flex-shrink:0}
+    .testi-name{font-size:.875rem;font-weight:600}
+    .testi-role{font-size:.75rem;color:rgba(13,13,15,.4)}
+
+    /* ══ CTA SECTION ══ */
+    .cta-section{text-align:center;padding:6rem 2rem;background:var(--cream)}
+    .cta-title{font-family:var(--font-display);font-size:clamp(2rem,5vw,3.8rem);font-weight:900;letter-spacing:-.03em;margin-bottom:1rem;line-height:1}
+    .cta-title em{font-style:italic;font-weight:300;color:var(--rust)}
+    .cta-sub{font-size:1rem;color:rgba(13,13,15,.55);max-width:480px;margin:0 auto 2.5rem;line-height:1.7}
+    .cta-actions{display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap}
+    .btn-cta{background:var(--ink);color:var(--cream);border:none;padding:1rem 2.5rem;border-radius:100px;font-size:1rem;font-weight:600;cursor:pointer;transition:.25s;font-family:inherit;display:inline-flex;align-items:center;gap:.5rem}
+    .btn-cta:hover{background:var(--rust);transform:translateY(-2px);box-shadow:0 12px 32px rgba(196,82,42,.25)}
+
+    /* ══ FOOTER ══ */
+    footer{background:var(--ink);color:var(--cream);padding:4rem 2rem 2rem}
+    .footer-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;padding-bottom:3rem;border-bottom:1px solid rgba(255,255,255,.08)}
+    .footer-brand .nav-logo{font-size:1.5rem;margin-bottom:1rem;display:block}
+    .footer-brand p{font-size:.85rem;color:rgba(245,240,232,.45);line-height:1.7;max-width:280px}
+    .footer-col-title{font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,240,232,.4);margin-bottom:1.1rem}
+    .footer-links{display:flex;flex-direction:column;gap:.6rem}
+    .footer-links a{font-size:.85rem;color:rgba(245,240,232,.55);transition:.15s}
+    .footer-links a:hover{color:var(--cream)}
+    .footer-bottom{max-width:1200px;margin:1.5rem auto 0;display:flex;align-items:center;justify-content:space-between;font-size:.78rem;color:rgba(245,240,232,.3);flex-wrap:wrap;gap:1rem}
+    .footer-bottom a{color:rgba(245,240,232,.3);transition:.15s}
+    .footer-bottom a:hover{color:rgba(245,240,232,.7)}
+
+    /* ══ FADE ══ */
+    .fade{animation:fadeUp .6s ease both}
+    .d1{animation-delay:.05s}.d2{animation-delay:.15s}.d3{animation-delay:.25s}.d4{animation-delay:.35s}.d5{animation-delay:.45s}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+    /* ══ RESPONSIVE ══ */
+    @media(max-width:1100px){
+      .courses-grid{grid-template-columns:repeat(3,1fr)}
+      .categories-grid{grid-template-columns:repeat(4,1fr)}
+      .instructors-grid{grid-template-columns:repeat(2,1fr)}
+      .footer-grid{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:768px){
+      .nav-links,.nav-search{display:none}
+      .hamburger{display:flex}
+      .nav-actions .btn-ghost,.nav-actions .btn-primary{display:none}
+      .nav-actions .nav-icon-btn{display:flex}
+      .hero{padding:3.5rem 1.25rem}
+      .hero-search{flex-direction:column;border-radius:var(--radius-lg);padding:.75rem;gap:.5rem}
+      .hero-search input{padding:.5rem .5rem .5rem .25rem}
+      .btn-search{width:100%;justify-content:center}
+      .section{padding:3rem 1.25rem}
+      .courses-grid{grid-template-columns:repeat(2,1fr)}
+      .categories-grid{grid-template-columns:repeat(4,1fr)}
+      .instructors-grid{grid-template-columns:repeat(2,1fr)}
+      .testimonials-grid{grid-template-columns:1fr}
+      .featured-banner{grid-template-columns:1fr;text-align:center;padding:2rem 1.5rem}
+      .fb-image{display:none}
+      .fb-tags{justify-content:center}
+      .fb-actions{justify-content:center}
+      .footer-grid{grid-template-columns:1fr 1fr;gap:2rem}
+      .footer-brand{grid-column:1/-1}
+      .hero-stats{gap:1.5rem}
+      .hero-stat-sep{display:none}
+    }
+    @media(max-width:480px){
+      .courses-grid{grid-template-columns:1fr}
+      .categories-grid{grid-template-columns:repeat(2,1fr)}
+      .hero-title{font-size:2.4rem}
+      .footer-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ NAVBAR ══ -->
+<nav class="navbar">
+  <button class="hamburger" id="hamburgerBtn" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <a href="learnhub_responsive.html" class="nav-logo">GIT<span>Academy</span></a>
+  <ul class="nav-links">
+    <li><a href="home.html" class="nav-link active">Browse</a></li>
+    <li><a href="category-list.html" class="nav-link">Categories</a></li>
+    <li><a href="#instructors" class="nav-link">Instructors</a></li>
+    <li><a href="about.html" class="nav-link">About</a></li>
+  </ul>
+  <div class="nav-search">
+    <svg class="nav-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" placeholder="Search for anything…" id="navSearchInput"/>
+  </div>
+  <div class="nav-actions">
+    <a href="cart.html" class="nav-icon-btn" title="Cart" style="text-decoration:none">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      <span class="nav-badge" id="navCartBadge" style="display:none"></span>
+    </a>
+    <a href="login.html" class="btn-ghost" id="guestLoginBtn">Log in</a>
+    <a href="register.html" class="btn-primary" id="guestSignupBtn">Get started free</a>
+    <div class="nav-user-wrap" id="userWrap" style="display:none">
+      <button class="nav-user" id="userMenuBtn">
+        <span class="nav-user-name" id="navUserName">Account</span>
+        <div class="avatar" id="navAvatar">--</div>
+      </button>
+      <div class="user-dropdown" id="userDropdown">
+        <a href="my-courses.html" class="dropdown-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          My Courses
+        </a>
+        <a href="saved.html" class="dropdown-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          Saved
+        </a>
+        <a href="certificates.html" class="dropdown-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg>
+          Certificates
+        </a>
+        <a href="cart.html" class="dropdown-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          Cart
+        </a>
+        <a href="profile.html" class="dropdown-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Profile
+        </a>
+        <a href="category-list.html" class="dropdown-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Categories
+        </a>
+        <a href="edit-profile.html" class="dropdown-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Settings
+        </a>
+        <a href="course-list.html" class="dropdown-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          Browse Courses
+        </a>
+        <div class="dropdown-sep"></div>
+        <a href="login.html" class="dropdown-item danger" id="logoutBtn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Log Out
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="home.html" class="nav-link active">Browse Courses</a>
+  <a href="category-list.html" class="nav-link">Categories</a>
+  <a href="#instructors" class="nav-link">Instructors</a>
+  <a href="about.html" class="nav-link">About</a>
+  <a href="dashboard.html" class="nav-link">My Dashboard</a>
+  <div class="mobile-menu-actions">
+    <a href="login.html" class="btn-ghost" style="flex:1;text-align:center">Log in</a>
+    <a href="register.html" class="btn-primary" style="flex:1;text-align:center">Sign up</a>
+  </div>
+</div>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="hero-blob hero-blob-1"></div>
+  <div class="hero-blob hero-blob-2"></div>
+  <div class="hero-blob hero-blob-3"></div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow fade d1"><span class="hero-dot"></span> 8,400+ courses available</div>
+    <h1 class="hero-title fade d2">Learn anything,<br><em>ANYWHERE.</em></h1>
+    <p class="hero-sub fade d3">Skills for your present and future. Get started with us, stay sharp. From design to data science — all in one place.</p>
+    <div class="hero-search fade d4">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(13,13,15,.4)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search for courses, skills, or instructors…" id="heroSearch"/>
+      <button class="btn-search" onclick="window.location='course-list.html'">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        Search
+      </button>
+    </div>
+    <div class="hero-stats fade d5">
+      <div>
+        <div class="hero-stat-num">2M+</div>
+        <div class="hero-stat-label">Active Learners</div>
+      </div>
+      <div class="hero-stat-sep"></div>
+      <div>
+        <div class="hero-stat-num">8,400</div>
+        <div class="hero-stat-label">Courses</div>
+      </div>
+      <div class="hero-stat-sep"></div>
+      <div>
+        <div class="hero-stat-num">500+</div>
+        <div class="hero-stat-label">Instructors</div>
+      </div>
+      <div class="hero-stat-sep"></div>
+      <div>
+        <div class="hero-stat-num">98%</div>
+        <div class="hero-stat-label">Satisfaction</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ MARQUEE ══ -->
+<div class="marquee-strip">
+  <div class="marquee-track">
+    <span class="marquee-item"><span class="mdot">✦</span> Python</span>
+    <span class="marquee-item"><span class="mdot">✦</span> Web Development</span>
+    <span class="marquee-item"><span class="mdot">✦</span> UI/UX Design</span>
+    <span class="marquee-item"><span class="mdot">✦</span> Data Science</span>
+    <span class="marquee-item"><span class="mdot">✦</span> Machine Learning</span>
+    <span class="marquee-item"><span class="mdot">✦</span> Photography</span>
+    <span class="marquee-item"><span class="mdot">✦</span> Business Strategy</span>
+    <span class="marquee-item"><span class="mdot">✦</span> Video Editing</span>
+    <span class="marquee-item"><span class="mdot">✦</span> Digital Marketing</span>
+    <span class="marquee-item"><span class="mdot">✦</span> Cybersecurity</span>
+    <span class="marquee-item"><span class="mdot">✦</span> Python</span>
+    <span class="marquee-item"><span class="mdot">✦</span> Web Development</span>
+    <span class="marquee-item"><span class="mdot">✦</span> UI/UX Design</span>
+    <span class="marquee-item"><span class="mdot">✦</span> Data Science</span>
+    <span class="marquee-item"><span class="mdot">✦</span> Machine Learning</span>
+    <span class="marquee-item"><span class="mdot">✦</span> Photography</span>
+    <span class="marquee-item"><span class="mdot">✦</span> Business Strategy</span>
+    <span class="marquee-item"><span class="mdot">✦</span> Video Editing</span>
+    <span class="marquee-item"><span class="mdot">✦</span> Digital Marketing</span>
+    <span class="marquee-item"><span class="mdot">✦</span> Cybersecurity</span>
+  </div>
+</div>
+
+<!-- ══ CATEGORIES ══ -->
+<section class="section">
+  <div class="container">
+    <div class="section-hdr">
+      <div class="section-hdr-left">
+        <div class="section-eyebrow">Explore Topics</div>
+        <h2 class="section-title">Browse by Category</h2>
+      </div>
+      <a href="category-list.html" class="section-link">All categories →</a>
+    </div>
+    <div class="categories-grid">
+      <a href="course-list.html?cat=development" class="cat-card">
+        <div class="cat-icon">💻</div>
+        <div class="cat-name">Development</div>
+        <div class="cat-count">1,240 courses</div>
+      </a>
+      <a href="course-list.html?cat=design" class="cat-card">
+        <div class="cat-icon">🎨</div>
+        <div class="cat-name">Design</div>
+        <div class="cat-count">820 courses</div>
+      </a>
+      <a href="course-list.html?cat=data" class="cat-card">
+        <div class="cat-icon">📊</div>
+        <div class="cat-name">Data Science</div>
+        <div class="cat-count">640 courses</div>
+      </a>
+      <a href="course-list.html?cat=business" class="cat-card">
+        <div class="cat-icon">💼</div>
+        <div class="cat-name">Business</div>
+        <div class="cat-count">530 courses</div>
+      </a>
+      <a href="course-list.html?cat=marketing" class="cat-card">
+        <div class="cat-icon">📢</div>
+        <div class="cat-name">Marketing</div>
+        <div class="cat-count">410 courses</div>
+      </a>
+      <a href="course-list.html?cat=photography" class="cat-card">
+        <div class="cat-icon">📸</div>
+        <div class="cat-name">Photography</div>
+        <div class="cat-count">280 courses</div>
+      </a>
+      <a href="course-list.html?cat=music" class="cat-card">
+        <div class="cat-icon">🎵</div>
+        <div class="cat-name">Music</div>
+        <div class="cat-count">190 courses</div>
+      </a>
+      <a href="course-list.html?cat=health" class="cat-card">
+        <div class="cat-icon">🏋️</div>
+        <div class="cat-name">Health</div>
+        <div class="cat-count">320 courses</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FEATURED BANNER ══ -->
+<section class="section-sm" style="background:var(--smoke)">
+  <div class="container">
+    <div class="featured-banner">
+      <div class="fb-blob fb-blob-1"></div>
+      <div class="fb-blob fb-blob-2"></div>
+      <div style="position:relative;z-index:1">
+        <div class="fb-eyebrow">🔥 Course of the Month</div>
+        <h2 class="fb-title">Machine Learning<br><em>A-Z</em> with Python</h2>
+        <p class="fb-sub">The most complete ML course on the platform. Cover everything from regression to neural networks with real-world projects.</p>
+        <div class="fb-tags">
+          <span class="fb-tag">45 hours</span>
+          <span class="fb-tag">Beginner–Advanced</span>
+          <span class="fb-tag">Certificate included</span>
+          <span class="fb-tag">4.9 ★ (12,400 reviews)</span>
+        </div>
+        <div class="fb-actions">
+          <a href="course-list.html" class="btn-gold">Browse Courses</a>
+          <a href="course-list.html" class="btn-outline-light">See What's Trending</a>
+        </div>
+      </div>
+      <div class="fb-image">🤖</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TRENDING ══ -->
+<section class="section">
+  <div class="container">
+    <div class="section-hdr">
+      <div class="section-hdr-left">
+        <div class="section-eyebrow">What's Hot</div>
+        <h2 class="section-title">Trending Courses</h2>
+      </div>
+      <a href="course-list.html" class="section-link">View all →</a>
+    </div>
+    <div class="courses-grid" id="trendingGrid"></div>
+  </div>
+</section>
+
+<!-- ══ NEW ARRIVALS ══ -->
+<section class="section" style="background:var(--smoke)">
+  <div class="container">
+    <div class="section-hdr">
+      <div class="section-hdr-left">
+        <div class="section-eyebrow">Just Added</div>
+        <h2 class="section-title">New This Week</h2>
+      </div>
+      <a href="course-list.html?sort=newest" class="section-link">View all →</a>
+    </div>
+    <div class="courses-grid" id="newArrivalsGrid"></div>
+  </div>
+</section>
+
+<!-- ══ INSTRUCTORS ══ -->
+<section class="section" id="instructors">
+  <div class="container">
+    <div class="section-hdr">
+      <div class="section-hdr-left">
+        <div class="section-eyebrow">Meet the Experts</div>
+        <h2 class="section-title">Top Instructors</h2>
+      </div>
+      <a href="course-list.html" class="section-link">Browse their courses →</a>
+    </div>
+    <div class="instructors-grid" id="instructorsGrid"></div>
+  </div>
+</section>
+
+<!-- ══ TESTIMONIALS ══ -->
+<section class="section testimonials-section">
+  <div class="container">
+    <div class="section-hdr">
+      <div class="section-hdr-left">
+        <div class="section-eyebrow">Student Stories</div>
+        <h2 class="section-title">What Learners Say</h2>
+      </div>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"GITAcademy changed my career completely. I went from zero coding knowledge to landing a junior dev job in 8 months. The courses are practical and the instructors are world-class."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">JE</div>
+          <div><div class="testi-name">Justice Elorm</div><div class="testi-role">Frontend Developer, Accra</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"I completed the Data Science track while working full-time. The self-paced format was exactly what I needed. Now I'm a data analyst at a top firm in Lagos."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#c4522a,#e8c547)">EF</div>
+          <div><div class="testi-name">Emeka Faith</div><div class="testi-role">Data Analyst, Lagos</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"The UI/UX bootcamp was incredible. Within 3 months I had a portfolio strong enough to land freelance clients. Best investment I've made in my education."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#1a237e,#7c4dff)">FN</div>
+          <div><div class="testi-name">Fatima North</div><div class="testi-role">Freelance Designer, Dakar</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA ══ -->
+<section class="cta-section">
+  <div class="container" style="max-width:700px">
+    <h2 class="cta-title">Start learning<br><em>today.</em></h2>
+    <p class="cta-sub">Join over 2 million learners already building the skills that matter. Free to start, always.</p>
+    <div class="cta-actions">
+      <a href="register.html" class="btn-cta">
+        Get started for free
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8h12M10 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="course-list.html" class="btn-ghost" style="padding:1rem 2rem;font-size:1rem">Browse Courses</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="learnhub_responsive.html" class="nav-logo">GITAcademy<span style="color:var(--rust)">GITAcademy</span></a>
+      <p>The platform where curiosity becomes a career. Learn at your pace, earn certificates, and build the future you want.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Learn</div>
+      <div class="footer-links">
+        <a href="course-list.html">All Courses</a>
+        <a href="category-list.html">Categories</a>
+        <a href="home.html">Featured</a>
+        <a href="course-list.html?sort=newest">New Courses</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <div class="footer-links">
+        <a href="about.html">About Us</a>
+        <a href="contact.html">Contact</a>
+        <a href="help.html">Help Center</a>
+        <a href="#">Careers</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Legal</div>
+      <div class="footer-links">
+        <a href="terms.html">Terms of Service</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="#">Cookie Policy</a>
+        <a href="#">Accessibility</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 GITAcademy. All rights reserved.</span>
+    <div style="display:flex;gap:1.5rem">
+      <a href="terms.html">Terms</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+  import { coursesApi, userApi } from './api.js';
+  import { isLoggedIn, getUser, logout } from './auth.js';
+  import { cartApi } from './api.js';
+
+  // ── Navbar ───────────────────────────────────────────────
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  const mobileMenu   = document.getElementById('mobileMenu');
+  hamburgerBtn?.addEventListener('click', () => mobileMenu?.classList.toggle('open'));
+
+  const userMenuBtn  = document.getElementById('userMenuBtn');
+  const userDropdown = document.getElementById('userDropdown');
+  userMenuBtn?.addEventListener('click', e => { e.stopPropagation(); userDropdown?.classList.toggle('open'); });
+  document.addEventListener('click', () => userDropdown?.classList.remove('open'));
+
+  // ── Hero search ──────────────────────────────────────────
+  const heroSearch = document.getElementById('heroSearch');
+  function doSearch() {
+    const q = heroSearch?.value?.trim();
+    if (q) window.location.href = `course-list.html?q=${encodeURIComponent(q)}`;
+    else   window.location.href = 'course-list.html';
+  }
+  heroSearch?.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+  document.querySelector('.hero-search-btn')?.addEventListener('click', doSearch);
+
+  // Pre-fill hero search from URL param
+  const urlQ = new URLSearchParams(window.location.search).get('q');
+  if (urlQ && heroSearch) heroSearch.value = urlQ;
+
+  // ── Category card clicks ─────────────────────────────────
+  document.querySelectorAll('.category-card[data-slug], .cat-card[data-slug]').forEach(card => {
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', () => {
+      window.location.href = `course-list.html?cat=${encodeURIComponent(card.dataset.slug)}`;
+    });
+  });
+  // Also handle category grid items with href
+  document.querySelectorAll('.cat-item, .category-item').forEach(item => {
+    item.addEventListener('click', function(e) {
+      if (!e.target.closest('a')) {
+        const slug = this.dataset.slug || this.querySelector('[data-slug]')?.dataset.slug;
+        if (slug) window.location.href = `course-list.html?cat=${encodeURIComponent(slug)}`;
+      }
+    });
+  });
+
+  // ── Real course grids (Trending / New This Week) ─────────
+  function courseCardHTML(c) {
+    const stars = '★'.repeat(Math.round(c.rating || 0)) + '☆'.repeat(5 - Math.round(c.rating || 0));
+    const priceHTML = c.price === 0
+      ? '<span class="course-price free">Free</span>'
+      : `<span class="course-price">₵${c.price}</span>${c.original_price ? `<span class="course-price-old">₵${c.original_price}</span>` : ''}`;
+    const badge = c.is_featured ? '<span class="course-badge">Bestseller</span>' : '';
+    return `
+    <a href="course-details.html?id=${c.id}" class="course-card">
+      <div class="course-thumb" style="background:${c.thumbnail_bg || '#f0ece4'}">${badge}${c.emoji || '📚'}</div>
+      <div class="course-body">
+        <div class="course-cat">${c.category || ''}</div>
+        <div class="course-title">${c.title}</div>
+        <div class="course-instructor">by ${c.instructor?.name || ''}</div>
+        <div class="course-meta"><span class="course-stars">${stars}</span><span class="course-rating-num">${(c.rating||0).toFixed(1)}</span><span class="course-reviews">(${(c.reviews_count||0).toLocaleString()})</span></div>
+        <div class="course-footer"><div>${priceHTML}</div><button class="btn-enroll" type="button" data-course-id="${c.id}">Enroll</button></div>
+      </div>
+    </a>`;
+  }
+
+  function bindCourseCardActions(container) {
+    container.querySelectorAll('.btn-wishlist').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.preventDefault(); e.stopPropagation();
+        btn.classList.toggle('saved');
+        btn.textContent = btn.classList.contains('saved') ? '♥' : '♡';
+      });
+    });
+    container.querySelectorAll('.btn-enroll').forEach(btn => {
+      btn.addEventListener('click', async e => {
+        e.preventDefault(); e.stopPropagation();
+        if (!isLoggedIn()) { window.location.href = 'login.html'; return; }
+        try {
+          await cartApi.add(btn.dataset.courseId);
+          window.location.href = 'cart.html';
+        } catch (err) {
+          alert('Could not add course to cart: ' + (err.data?.message || err.message));
+        }
+      });
+    });
+  }
+
+  async function loadHomeCourses() {
+    let courses = [];
+    try { courses = (await coursesApi.list()).courses || []; } catch (err) { courses = []; }
+
+    const trendingGrid = document.getElementById('trendingGrid');
+    const newGrid = document.getElementById('newArrivalsGrid');
+
+    const trending = courses.slice(0, 4);
+    const newest = courses.slice(4, 8).length ? courses.slice(4, 8) : courses.slice(0, 4);
+
+    if (trendingGrid) {
+      trendingGrid.innerHTML = trending.map(courseCardHTML).join('') || '<p style="padding:1rem;color:rgba(13,13,15,.4)">No courses yet.</p>';
+      bindCourseCardActions(trendingGrid);
+    }
+    if (newGrid) {
+      newGrid.innerHTML = newest.map(courseCardHTML).join('') || '<p style="padding:1rem;color:rgba(13,13,15,.4)">No courses yet.</p>';
+      bindCourseCardActions(newGrid);
+    }
+  }
+
+  loadHomeCourses();
+
+  // Real instructors, derived from courses (dedup by instructor id)
+  async function loadInstructors() {
+    let courses = [];
+    try { courses = (await coursesApi.list()).courses || []; } catch (err) { courses = []; }
+    const seen = new Map();
+    courses.forEach(c => { if (c.instructor && !seen.has(c.instructor.id)) seen.set(c.instructor.id, c.instructor); });
+    const instructors = [...seen.values()].slice(0, 4);
+    const grid = document.getElementById('instructorsGrid');
+    if (!grid) return;
+    const gradients = ['linear-gradient(135deg,#2d4a3e,#c4522a)','linear-gradient(135deg,#c4522a,#e8c547)','linear-gradient(135deg,#1a237e,#7c4dff)','linear-gradient(135deg,#880e4f,#e91e63)'];
+    grid.innerHTML = instructors.map((ins, i) => `
+      <a href="instructor-profile.html?id=${ins.id}" class="instructor-card" style="text-decoration:none;color:inherit;display:block">
+        <div class="instructor-avatar" style="background:${gradients[i % gradients.length]}">${ins.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}</div>
+        <div class="instructor-name">${ins.name}</div>
+        <div class="instructor-role">${ins.title || 'Instructor'}</div>
+        <div class="instructor-meta">
+          <span>⭐ ${ins.rating || 0}</span>
+          <span>👥 ${(ins.students_count || 0).toLocaleString()} students</span>
+          <span>📚 ${ins.courses_count || 0} course${ins.courses_count===1?'':'s'}</span>
+        </div>
+      </a>`).join('') || '<p style="padding:1rem;color:rgba(13,13,15,.4)">No instructors yet.</p>';
+  }
+  loadInstructors();
+
+  // ── Testimonial auto-scroll ──────────────────────────────
+  const testimonialsTrack = document.querySelector('.testimonials-track');
+  let testimonialIndex = 0;
+  if (testimonialsTrack) {
+    const cards = testimonialsTrack.querySelectorAll('.testimonial-card');
+    setInterval(() => {
+      testimonialIndex = (testimonialIndex + 1) % Math.max(1, cards.length - 2);
+      const cardWidth = cards[0]?.offsetWidth + 24 || 320;
+      testimonialsTrack.scrollTo({ left: testimonialIndex * cardWidth, behavior: 'smooth' });
+    }, 5000);
+  }
+
+  // ── Scroll-reveal animations ─────────────────────────────
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.course-card, .category-card, .cat-card, .instructor-card').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+      el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+      observer.observe(el);
+    });
+  }
+
+  // ── Auth-aware nav state ──────────────────────────────────
+  if (isLoggedIn()) {
+    const me = getUser();
+    document.getElementById('guestLoginBtn').style.display = 'none';
+    document.getElementById('guestSignupBtn').style.display = 'none';
+    document.getElementById('userWrap').style.display = '';
+    if (me) {
+      document.getElementById('navUserName').textContent = me.first_name || 'You';
+      document.getElementById('navAvatar').textContent = ((me.first_name?.[0]||'') + (me.last_name?.[0]||'')).toUpperCase() || 'U';
+    }
+    document.getElementById('logoutBtn').addEventListener('click', e => { e.preventDefault(); logout(); });
+    cartApi.get().then(cart => {
+      document.getElementById('navCartBadge').style.display = (cart.items||[]).length ? '' : 'none';
+    }).catch(() => {});
+  }
+
+  // ── Nav search ─────────────────────────────────────────────
+  document.getElementById('navSearchInput')?.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && e.target.value.trim()) {
+      window.location.href = 'course-list.html?q=' + encodeURIComponent(e.target.value.trim());
+    }
+  });
+</script>
+</body>
+</html>

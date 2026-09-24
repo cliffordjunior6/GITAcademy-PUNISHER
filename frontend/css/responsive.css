@@ -1,0 +1,276 @@
+/* ============================================================
+   GITAcademy — responsive.css
+   All media query overrides — phone, tablet, laptop, desktop.
+   Always loaded LAST so these rules take precedence.
+
+   BREAKPOINTS
+   xs:  < 480px   small phones
+   sm:  < 600px   phones
+   md:  < 768px   large phones / small tablets
+   lg:  < 1024px  tablets / small laptops
+   xl:  < 1200px  laptops
+   2xl: ≥ 1200px  desktops (base styles)
+   ============================================================ */
+
+
+/* ══ XL — max 1200px (laptops) ═══════════════════════════════ */
+@media (max-width: 1200px) {
+  .stats-grid         { grid-template-columns: repeat(2, 1fr); }
+  .courses-grid-4     { grid-template-columns: repeat(3, 1fr); }
+  .team-grid          { grid-template-columns: repeat(3, 1fr); }
+  .related-grid       { grid-template-columns: repeat(3, 1fr); }
+  .footer-grid        { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+  .footer-brand       { grid-column: 1 / -1; }
+  .instructor-bottom-grid { grid-template-columns: 1fr; }
+  .charts-row         { grid-template-columns: 1fr; }
+  .course-hero-inner  { grid-template-columns: 1fr; gap: 2rem; }
+  .course-body        { grid-template-columns: 1fr; gap: 2rem; }
+  .enroll-card        { position: static; }
+  .course-sidebar     { display: none; }
+  .mobile-enroll-bar  { display: flex; }
+}
+
+
+/* ══ LG — max 1024px (tablets) ═══════════════════════════════ */
+@media (max-width: 1024px) {
+  .container, .container-sm, .container-lg { padding: 0 1.5rem; }
+  .section    { padding: 4rem 0; }
+  .section-lg { padding: 5rem 0; }
+  .grid-4             { grid-template-columns: repeat(2, 1fr); }
+  .courses-grid-4     { grid-template-columns: repeat(2, 1fr); }
+  .values-grid        { grid-template-columns: repeat(2, 1fr); }
+  .related-grid       { grid-template-columns: repeat(2, 1fr); }
+  .mission-grid       { grid-template-columns: 1fr; gap: 2.5rem; }
+  .checkout-body      { grid-template-columns: 1fr; }
+  .order-review       { position: static; }
+  .cart-body          { grid-template-columns: 1fr; }
+  .order-summary      { position: static; }
+  .bottom-grid        { grid-template-columns: 1fr; }
+
+  /* Sidebar → drawer */
+  .sidebar {
+    position: fixed;
+    left: -100%;
+    top: var(--nav-h, 64px);
+    z-index: 450;
+    transition: left .3s ease;
+    height: calc(100vh - var(--nav-h, 64px));
+  }
+  .sidebar.open { left: 0; }
+  .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(13,13,15,.6); z-index: 400; }
+  .sidebar-overlay.open { display: block; }
+
+  /* Admin / courses tables */
+  .courses-table .table-header,
+  .courses-table .table-row { grid-template-columns: 2fr 1fr 1fr 80px; }
+  .courses-table .table-header > *:nth-child(3),
+  .courses-table .table-row   > *:nth-child(3) { display: none; }
+
+  /* Course player */
+  .player-sidebar {
+    display: none;
+    position: fixed;
+    right: 0;
+    top: var(--player-nav-h, 56px);
+    bottom: 0;
+    z-index: 300;
+    width: 300px;
+  }
+  .player-sidebar.open { display: flex; }
+  .volume-wrap     { display: none; }
+  .lesson-nav-btns { display: none; }
+}
+
+
+/* ══ MD — max 768px (phones / small tablets) ═════════════════ */
+@media (max-width: 768px) {
+
+  /* Navbar */
+  .nav-links          { display: none; }
+  .nav-search         { display: none; }
+  .hamburger          { display: flex !important; }
+  .nav-actions .btn-ghost,
+  .nav-actions .btn-primary,
+  .nav-actions .btn-nav-primary,
+  .btn-new-course     { display: none; }
+  .nav-user-name      { display: none; }
+
+  /* Page padding */
+  .container, .container-sm, .container-lg,
+  .page-header, .page-body { padding-left: 1.25rem; padding-right: 1.25rem; }
+  .section    { padding: 3rem 0; }
+  .section-sm { padding: 2rem 0; }
+  .section-lg { padding: 3.5rem 0; }
+
+  /* Typography */
+  h1 { font-size: clamp(2rem, 7vw, 3rem); }
+  h2 { font-size: clamp(1.6rem, 6vw, 2.4rem); }
+
+  /* All grids → 1 col */
+  .grid-2, .grid-3, .grid-4,
+  .courses-grid-4, .courses-grid-3,
+  .values-grid, .team-grid,
+  .related-grid, .rec-grid { grid-template-columns: 1fr; }
+
+  /* Keep saved grid 2-col on mobile */
+  .saved-grid { grid-template-columns: 1fr 1fr; }
+
+  /* Hero */
+  .page-hero  { padding: 3rem 1.25rem; }
+  .hero-stats { gap: 1.25rem; }
+  .hs-sep     { display: none; }
+
+  /* Welcome banner */
+  .welcome-banner { flex-direction: column; align-items: flex-start; padding: 1.5rem; }
+  .wb-actions { width: 100%; }
+  .btn-wb-primary, .btn-wb-ghost { width: 100%; justify-content: center; }
+
+  /* Stats grid */
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: .75rem; }
+
+  /* Cart item */
+  .cart-item       { flex-wrap: wrap; }
+  .cart-item-thumb { width: 80px; height: 58px; }
+
+  /* Checkout */
+  .checkout-steps  { display: none; }
+  .form-grid-2     { grid-template-columns: 1fr; }
+  .form-group.full { grid-column: 1; }
+  .payment-tabs    { flex-wrap: wrap; }
+
+  /* Payment success / failed */
+  .success-actions,
+  .failed-actions  { flex-direction: column; }
+  .btn-start, .btn-dashboard,
+  .btn-retry, .btn-cart { width: 100%; justify-content: center; }
+
+  /* Course details */
+  .course-hero    { padding: 2rem 1.25rem; }
+  .learn-grid     { grid-template-columns: 1fr; }
+  .reviews-summary { flex-direction: column; align-items: flex-start; }
+
+  /* Course player */
+  .player-body    { flex-direction: column; }
+  .video-area     { min-height: 55vw; }
+  .player-nav .player-progress-wrap,
+  .player-nav .player-progress-label { display: none; }
+  .tabs-panel .tab-content { max-height: none; }
+
+  /* Instructor */
+  .stepper-bar    { padding: 0 .5rem; overflow-x: auto; }
+  .step-item      { padding: .85rem .75rem; }
+  .pricing-cards  { grid-template-columns: 1fr; }
+  .left-nav       { display: none; }
+
+  /* Admin tables */
+  .admin-table-header,
+  .admin-table-row { grid-template-columns: 1fr auto !important; }
+  .admin-table-header > *:not(:first-child):not(:last-child),
+  .admin-table-row   > *:not(:first-child):not(:last-child) { display: none; }
+
+  /* Footer */
+  .footer         { padding: 3rem 1.25rem 2rem; }
+  .footer-grid    { grid-template-columns: 1fr; gap: 2rem; }
+  .footer-brand   { grid-column: 1; }
+  .footer-bottom  { flex-direction: column; align-items: flex-start; gap: .65rem; }
+
+  /* Static pages */
+  .guide-grid     { grid-template-columns: 1fr; }
+  .contact-grid   { grid-template-columns: 1fr; }
+  .page-wrap      { grid-template-columns: 1fr; padding: 1.5rem 1.25rem; }
+  .toc            { display: none; }
+  .help-cats      { grid-template-columns: 1fr 1fr; }
+  .articles-grid  { grid-template-columns: 1fr; }
+  .cta-banner     { padding: 2.5rem 1.5rem; margin: 0 1.25rem; }
+  .sh-actions, .cta-actions { flex-direction: column; }
+  .btn-cta, .btn-sh { width: 100%; justify-content: center; }
+
+  /* Index */
+  .pages-grid     { grid-template-columns: 1fr; }
+  .assets-grid    { grid-template-columns: 1fr; }
+}
+
+
+/* ══ SM — max 600px ══════════════════════════════════════════ */
+@media (max-width: 600px) {
+  .container, .container-sm { padding-left: 1rem; padding-right: 1rem; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .related-section { padding: 0 1rem 5rem; }
+  .controls-row .ctrl-sep  { display: none; }
+  .player-nav-btn span     { display: none; }
+  .player-course-title     { display: none; }
+  .nav-badge-instructor,
+  .admin-badge             { display: none; }
+  .help-cats               { grid-template-columns: 1fr; }
+  .or-item                 { flex-wrap: wrap; gap: .5rem; }
+  .rec-grid                { grid-template-columns: 1fr 1fr; }
+  .saved-grid              { grid-template-columns: 1fr; }
+}
+
+
+/* ══ XS — max 480px (small phones) ══════════════════════════ */
+@media (max-width: 480px) {
+  .stats-grid  { grid-template-columns: 1fr; }
+  .related-grid, .rec-grid { grid-template-columns: 1fr; }
+  .help-cats   { grid-template-columns: 1fr; }
+  .team-grid   { grid-template-columns: 1fr 1fr; }
+  .wb-title    { font-size: 1.6rem; }
+  .course-title { font-size: 1.8rem !important; }
+  .btn-wb-primary, .btn-wb-ghost { font-size: .85rem; padding: .75rem 1.25rem; }
+  .cstep-label { display: none; }
+
+  /* Prevent iOS zoom on focus */
+  input[type="text"], input[type="email"],
+  input[type="password"], input[type="number"],
+  input[type="tel"], select, textarea { font-size: 16px !important; }
+
+  /* Hero search */
+  .help-search    { flex-direction: column; border-radius: var(--radius-lg) !important; }
+  .help-search-btn { border-radius: var(--radius-pill) !important; margin-top: .35rem; width: 100%; }
+
+  /* Mobile enroll bar */
+  .mobile-enroll-bar { padding: .75rem 1rem; }
+  .mobile-price      { font-size: 1.2rem; }
+  .btn-mobile-enroll { padding: .75rem 1.25rem; font-size: .85rem; }
+}
+
+
+/* ══ REDUCED MOTION ══════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .marquee-track { animation: none; }
+  .skeleton      { animation: none; background: rgba(13,13,15,.08); }
+}
+
+
+/* ══ TOUCH DEVICES ════════════════════════════════════════════ */
+@media (hover: none) and (pointer: coarse) {
+  .sidebar-link  { min-height: 44px; }
+  .nav-icon-btn, .nav-icon { min-width: 44px; min-height: 44px; }
+  .dropdown-item { min-height: 44px; }
+  .ctrl-btn      { width: 40px; height: 40px; }
+  /* Remove hover transforms on touch */
+  .course-card:hover,
+  .mini-course-card:hover,
+  .page-card:hover,
+  .stat-card:hover { transform: none; }
+}
+
+
+/* ══ PRINT ════════════════════════════════════════════════════ */
+@media print {
+  .navbar, .sidebar, .mobile-enroll-bar,
+  .player-nav, .hamburger,
+  button:not(.print-show) { display: none !important; }
+  body       { background: white; color: black; font-size: 11pt; }
+  .receipt-card { box-shadow: none; border: 1px solid #ccc; }
+  .toc       { display: none; }
+  a          { color: inherit; }
+  h1,h2,h3   { page-break-after: avoid; }
+  .page-break { page-break-before: always; }
+}

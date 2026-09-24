@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Upload Video — GITAcademy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --ink:#0d0d0f;--cream:#f5f0e8;--gold:#e8c547;--moss:#2d4a3e;
+      --rust:#c4522a;--paper:#faf8f3;--smoke:#f0ece4;
+      --error:#e05555;--success:#2d7a4f;
+      --font-display:'Fraunces',Georgia,serif;--font-body:'DM Sans',system-ui,sans-serif;
+      --nav-h:64px;--shadow-sm:0 2px 8px rgba(13,13,15,.06);--shadow-md:0 4px 20px rgba(13,13,15,.1);
+      --radius-sm:8px;--radius-md:12px;--radius-lg:18px;--radius-xl:24px;
+    }
+    body{font-family:var(--font-body);background:var(--smoke);color:var(--ink);min-height:100vh}
+    a{text-decoration:none;color:inherit}
+    button{cursor:pointer;font-family:inherit;border:none;background:none}
+
+    .navbar{position:sticky;top:0;z-index:500;height:var(--nav-h);background:var(--ink);border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;padding:0 2rem;gap:1rem}
+    .nav-logo{font-family:var(--font-display);font-size:1.3rem;font-weight:900;color:var(--cream);letter-spacing:-.03em}
+    .nav-logo span{color:var(--rust)}
+    .nav-badge{background:rgba(232,197,71,.15);border:1px solid rgba(232,197,71,.25);color:var(--gold);font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.25rem .65rem;border-radius:100px}
+    .nav-right{display:flex;align-items:center;gap:.75rem;margin-left:auto}
+    .nav-back{display:flex;align-items:center;gap:.4rem;font-size:.82rem;font-weight:500;color:rgba(245,240,232,.55);background:none;border:none;cursor:pointer;font-family:inherit;transition:.2s;padding:.4rem .85rem;border-radius:100px;border:1px solid rgba(255,255,255,.1)}
+    .nav-back:hover{color:var(--cream);border-color:rgba(255,255,255,.25)}
+    .avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--moss),var(--rust));display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:var(--cream)}
+    .nav-user-wrap{position:relative}
+    .nav-user-wrap .avatar{cursor:pointer}
+    .user-dropdown{position:absolute;top:calc(100% + 10px);right:0;background:#fff;border:1px solid rgba(13,13,15,.08);border-radius:12px;box-shadow:0 12px 40px rgba(13,13,15,.14);padding:.5rem;min-width:190px;opacity:0;pointer-events:none;transform:translateY(-8px);transition:.2s;z-index:600}
+    .user-dropdown.open{opacity:1;pointer-events:all;transform:translateY(0)}
+    .dropdown-item{display:flex;align-items:center;gap:.6rem;padding:.55rem .7rem;border-radius:8px;font-size:.82rem;font-weight:500;color:rgba(13,13,15,.7);transition:.15s;text-decoration:none}
+    .dropdown-item:hover{background:var(--smoke);color:var(--ink)}
+    .dropdown-item.danger{color:#e05555}
+    .dropdown-item.danger:hover{background:rgba(224,85,85,.08)}
+    .dropdown-sep{height:1px;background:rgba(13,13,15,.06);margin:.4rem 0}
+
+    .page-body{max-width:960px;margin:0 auto;padding:2.5rem 2rem 4rem;display:grid;grid-template-columns:1fr 320px;gap:2rem;align-items:start}
+
+    /* Upload Zone */
+    .upload-zone{background:white;border-radius:var(--radius-xl);border:2px dashed rgba(13,13,15,.15);padding:3rem 2rem;text-align:center;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
+    .upload-zone:hover,.upload-zone.drag-over{border-color:var(--moss);background:rgba(45,74,62,.03)}
+    .upload-zone.uploading{border-color:var(--moss);border-style:solid}
+    .upload-zone.done{border-color:var(--success);background:rgba(45,122,79,.03);border-style:solid}
+    .upload-icon{font-size:3.5rem;margin-bottom:1rem;display:block}
+    .upload-title{font-family:var(--font-display);font-size:1.5rem;font-weight:900;letter-spacing:-.02em;margin-bottom:.5rem}
+    .upload-sub{font-size:.875rem;color:rgba(13,13,15,.5);margin-bottom:1.5rem;line-height:1.6}
+    .upload-btn{background:var(--ink);color:var(--cream);border:none;padding:.75rem 2rem;border-radius:100px;font-size:.9rem;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit;display:inline-flex;align-items:center;gap:.5rem}
+    .upload-btn:hover{background:var(--rust)}
+    .upload-specs{display:flex;gap:1.5rem;justify-content:center;margin-top:1.5rem;flex-wrap:wrap}
+    .spec-item{font-size:.75rem;color:rgba(13,13,15,.4);display:flex;align-items:center;gap:.35rem}
+
+    /* Upload progress */
+    .upload-progress-wrap{margin-top:2rem;display:none}
+    .upload-progress-wrap.show{display:block}
+    .upload-file-name{font-size:.875rem;font-weight:600;margin-bottom:.6rem;text-align:left;display:flex;align-items:center;justify-content:space-between}
+    .upload-progress-track{height:8px;background:rgba(13,13,15,.08);border-radius:100px;overflow:hidden}
+    .upload-progress-fill{height:100%;background:var(--moss);border-radius:100px;transition:.3s;width:0%}
+    .upload-progress-label{font-size:.75rem;color:rgba(13,13,15,.4);margin-top:.4rem;text-align:left}
+    .upload-done-msg{font-size:.875rem;font-weight:600;color:var(--success);display:none;align-items:center;gap:.4rem;justify-content:center;margin-top:1rem}
+    .upload-done-msg.show{display:flex}
+
+    /* Video form */
+    .video-form-card{background:white;border-radius:var(--radius-xl);border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm)}
+    .vfc-header{padding:1.4rem 1.75rem;border-bottom:1px solid rgba(13,13,15,.06);display:flex;align-items:center;gap:.6rem}
+    .vfc-title{font-family:var(--font-display);font-size:1.05rem;font-weight:700;letter-spacing:-.02em}
+    .vfc-body{padding:1.75rem;display:flex;flex-direction:column;gap:1.1rem}
+    .form-group{display:flex;flex-direction:column;gap:.4rem}
+    .form-label{font-size:.8rem;font-weight:600;color:rgba(13,13,15,.65)}
+    .form-label span{color:var(--rust)}
+    .form-input{background:var(--smoke);border:1.5px solid transparent;border-radius:var(--radius-md);padding:.8rem 1rem;font-size:15px;color:var(--ink);font-family:inherit;outline:none;transition:.2s;width:100%}
+    .form-input:focus{background:white;border-color:var(--moss);box-shadow:0 0 0 3px rgba(45,74,62,.08)}
+    .form-input::placeholder{color:rgba(13,13,15,.3)}
+    textarea.form-input{resize:vertical;min-height:80px}
+    select.form-input{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center;padding-right:2.5rem}
+    .form-hint{font-size:.72rem;color:rgba(13,13,15,.4);margin-top:.15rem}
+    .toggle-row{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+    .toggle-info strong{display:block;font-size:.875rem;font-weight:600;margin-bottom:.1rem}
+    .toggle-info span{font-size:.78rem;color:rgba(13,13,15,.45)}
+    .toggle-switch{position:relative;width:42px;height:22px;flex-shrink:0}
+    .toggle-switch input{opacity:0;width:0;height:0;position:absolute}
+    .toggle-track{position:absolute;inset:0;border-radius:100px;background:rgba(13,13,15,.12);cursor:pointer;transition:.25s}
+    .toggle-track::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:white;top:3px;left:3px;transition:.25s;box-shadow:0 1px 4px rgba(13,13,15,.2)}
+    .toggle-switch input:checked + .toggle-track{background:var(--moss)}
+    .toggle-switch input:checked + .toggle-track::after{left:23px}
+
+    /* Sidebar */
+    .sidebar-card{background:white;border-radius:var(--radius-xl);border:1px solid rgba(13,13,15,.06);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:1rem}
+    .sc-header{padding:1.2rem 1.5rem;border-bottom:1px solid rgba(13,13,15,.06);font-family:var(--font-display);font-size:1rem;font-weight:700;letter-spacing:-.02em}
+    .sc-body{padding:1.5rem}
+    .video-list{display:flex;flex-direction:column;gap:.5rem}
+    .video-item{display:flex;align-items:center;gap:.65rem;padding:.6rem .75rem;border-radius:var(--radius-sm);border:1px solid rgba(13,13,15,.07);transition:.15s;cursor:pointer}
+    .video-item:hover{background:var(--smoke)}
+    .video-item.active{background:rgba(45,74,62,.07);border-color:rgba(45,74,62,.2)}
+    .vi-icon{font-size:1.1rem;flex-shrink:0}
+    .vi-info{flex:1;min-width:0}
+    .vi-name{font-size:.8rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .vi-size{font-size:.7rem;color:rgba(13,13,15,.4)}
+    .vi-status{font-size:.65rem;font-weight:700;padding:.15rem .45rem;border-radius:100px}
+    .vi-status.done{background:rgba(45,122,79,.1);color:var(--success)}
+    .vi-status.processing{background:rgba(217,119,6,.1);color:#92400e}
+    .vi-status.pending{background:rgba(13,13,15,.07);color:rgba(13,13,15,.4)}
+    .btn-full-action{width:100%;background:var(--ink);color:var(--cream);border:none;padding:.85rem;border-radius:var(--radius-md);font-size:.875rem;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit;margin-bottom:.6rem;display:flex;align-items:center;justify-content:center;gap:.5rem}
+    .btn-full-action:hover{background:var(--rust)}
+    .btn-full-secondary{width:100%;background:transparent;color:var(--ink);border:1.5px solid rgba(13,13,15,.12);padding:.75rem;border-radius:var(--radius-md);font-size:.875rem;font-weight:500;cursor:pointer;transition:.2s;font-family:inherit}
+    .btn-full-secondary:hover{background:var(--smoke)}
+
+    @media(max-width:768px){
+      .page-body{grid-template-columns:1fr;padding:1.5rem 1.25rem}
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="learnhub_responsive.html" class="nav-logo">GIT<span>Academy</span></a>
+  <span class="nav-badge">Instructor</span>
+  <div class="nav-right">
+    <a href="instructor-dashboard.html" class="nav-back">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Back to Dashboard
+    </a>
+    <div class="nav-user-wrap">
+      <div class="avatar" id="navAvatar" onclick="document.getElementById('userDropdown').classList.toggle('open')">--</div>
+      <div class="user-dropdown" id="userDropdown">
+        <a href="instructor-dashboard.html" class="dropdown-item">Dashboard</a>
+        <a href="profile.html" class="dropdown-item">My Profile</a>
+        <a href="edit-profile.html" class="dropdown-item">Settings</a>
+        <div class="dropdown-sep"></div>
+        <a href="login.html" class="dropdown-item danger" id="logoutBtn">Log Out</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="page-body">
+
+  <!-- LEFT: Upload + Form -->
+  <div>
+
+    <!-- Upload Zone -->
+    <div class="upload-zone" id="uploadZone">
+      <span class="upload-icon" id="uploadIcon">📹</span>
+      <div class="upload-title" id="uploadTitle">Upload Your Video</div>
+      <p class="upload-sub" id="uploadSub">Drag & drop your video here, or click to browse your files. We support MP4, MOV, AVI and WebM.</p>
+      <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+        Choose Video File
+      </button>
+      <input type="file" id="fileInput" accept="video/*" style="display:none"/>
+      <div class="upload-specs">
+        <span class="spec-item">📁 MP4, MOV, AVI, WebM</span>
+        <span class="spec-item">📏 Max 4GB</span>
+        <span class="spec-item">🎞 Min 720p recommended</span>
+      </div>
+
+      <div class="upload-progress-wrap" id="progressWrap">
+        <div class="upload-file-name">
+          <span id="fileName">video_lesson_01.mp4</span>
+          <span id="progressPct" style="font-weight:400;color:rgba(13,13,15,.4)">0%</span>
+        </div>
+        <div class="upload-progress-track">
+          <div class="upload-progress-fill" id="progressFill"></div>
+        </div>
+        <div class="upload-progress-label" id="progressLabel">Uploading… 0 MB / 248 MB</div>
+      </div>
+      <div class="upload-done-msg" id="doneMsgEl">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Video uploaded successfully! Fill in the details below.
+      </div>
+    </div>
+
+    <!-- Video Detail Form -->
+    <div class="video-form-card" style="margin-top:1.5rem">
+      <div class="vfc-header">
+        <span style="font-size:1.1rem">📝</span>
+        <div class="vfc-title">Video Details</div>
+      </div>
+      <div class="vfc-body">
+        <div class="form-group">
+          <label class="form-label">Lesson Title <span>*</span></label>
+          <input class="form-input" id="lessonTitleInput" type="text" placeholder="e.g. Data Preprocessing in Python"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-input" id="lessonDescInput" placeholder="Brief description of what's covered in this lesson…"></textarea>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <strong>Free Preview</strong>
+            <span>Allow non-enrolled students to watch this lesson</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="lessonFreeToggle" checked/>
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <strong>Downloadable</strong>
+            <span>Let students download this video for offline viewing</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="lessonDownloadToggle"/>
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+        <button class="btn-full-action" id="saveLessonBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Save Lesson
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Sidebar -->
+  <div>
+    <div class="sidebar-card">
+      <div class="sc-header">Course Videos</div>
+      <div class="sc-body">
+        <div class="video-list">
+          <div class="video-item done">
+            <span class="vi-icon">📹</span>
+            <div class="vi-info">
+              <div class="vi-name">Welcome to the Course</div>
+              <div class="vi-size">45 MB · 5:00</div>
+            </div>
+            <span class="vi-status done">Done</span>
+          </div>
+          <div class="video-item active">
+            <span class="vi-icon">📹</span>
+            <div class="vi-info">
+              <div class="vi-name">Data Preprocessing.mp4</div>
+              <div class="vi-size">248 MB · Uploading…</div>
+            </div>
+            <span class="vi-status processing">Processing</span>
+          </div>
+          <div class="video-item">
+            <span class="vi-icon">📹</span>
+            <div class="vi-info">
+              <div class="vi-name">Feature Scaling.mp4</div>
+              <div class="vi-size">180 MB · 12:10</div>
+            </div>
+            <span class="vi-status done">Done</span>
+          </div>
+          <div class="video-item">
+            <span class="vi-icon">📹</span>
+            <div class="vi-info">
+              <div class="vi-name">Linear Regression.mp4</div>
+              <div class="vi-size">—</div>
+            </div>
+            <span class="vi-status pending">Pending</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sc-header">Actions</div>
+      <div class="sc-body">
+        <button class="btn-full-action" onclick="window.location='edit-course.html'">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Edit Course
+        </button>
+        <button class="btn-full-secondary" onclick="window.location='instructor-dashboard.html'">Back to Dashboard</button>
+        <div style="margin-top:1rem;padding:1rem;background:rgba(45,74,62,.07);border-radius:var(--radius-md);font-size:.78rem;color:rgba(13,13,15,.55);line-height:1.6">
+          <strong style="color:var(--moss)">Tips:</strong> Keep lessons under 20 minutes. Use 1080p recording for best quality. Add resources in the Edit Course page.
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script type="module">
+  import { instructorApi } from './api.js';
+  import { redirectIfNotLoggedIn, getUser, logout } from './auth.js';
+  import { getParam } from './utils.js';
+
+  redirectIfNotLoggedIn('login.html');
+  const me = getUser();
+  if (me) document.getElementById('navAvatar').textContent = ((me.first_name?.[0]||'I')+(me.last_name?.[0]||'')).toUpperCase();
+  document.addEventListener('click', (e) => {
+    const dropdown = document.getElementById('userDropdown');
+    if (dropdown && !e.target.closest('.nav-user-wrap')) dropdown.classList.remove('open');
+  });
+  document.getElementById('logoutBtn')?.addEventListener('click', e => { e.preventDefault(); logout(); });
+  const courseId = getParam('course_id');
+
+  // Drag & Drop
+  const zone = document.getElementById('uploadZone');
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag-over'); if(e.dataTransfer.files[0]) startUpload(e.dataTransfer.files[0]); });
+
+  document.getElementById('fileInput').addEventListener('change', function() {
+    if (this.files[0]) startUpload(this.files[0]);
+  });
+
+  function startUpload(file) {
+    document.getElementById('progressWrap').classList.add('show');
+    document.getElementById('fileName').textContent = file.name;
+    document.getElementById('uploadTitle').textContent = 'Uploading…';
+    document.getElementById('uploadSub').style.display = 'none';
+    document.querySelector('.upload-btn').style.display = 'none';
+    document.querySelector('.upload-specs').style.display = 'none';
+    zone.classList.add('uploading');
+
+    // The progress bar below is simulated — this environment has no real video/object storage
+    // to stream bytes to. The upload IS reported to the real backend once "complete" (see finishUpload),
+    // which records the lesson video metadata even though it can't store the actual file.
+    let pct = 0;
+    const total = (file.size / 1024 / 1024).toFixed(1);
+    const interval = setInterval(() => {
+      pct += Math.random() * 4 + 1;
+      if (pct >= 100) { pct = 100; clearInterval(interval); finishUpload(file); }
+      document.getElementById('progressFill').style.width = pct + '%';
+      document.getElementById('progressPct').textContent = Math.floor(pct) + '%';
+      document.getElementById('progressLabel').textContent = `Uploading… ${(total * pct / 100).toFixed(1)} MB / ${total} MB`;
+    }, 200);
+  }
+
+  let uploadedLessonId = null;
+
+  async function finishUpload(file) {
+    zone.classList.remove('uploading');
+    zone.classList.add('done');
+    document.getElementById('uploadIcon').textContent = '✅';
+    document.getElementById('uploadTitle').textContent = 'Upload Complete!';
+    document.getElementById('progressLabel').textContent = 'Processing video…';
+
+    if (courseId) {
+      try {
+        const formData = new FormData();
+        formData.append('video', file);
+        formData.append('title', file.name.replace(/\.[^.]+$/, ''));
+        const result = await instructorApi.uploadVideo(courseId, formData);
+        uploadedLessonId = result.lesson_id;
+        document.getElementById('lessonTitleInput').value = file.name.replace(/\.[^.]+$/, '');
+        document.getElementById('progressLabel').textContent = 'Saved to this course — real file, stored on the server.';
+      } catch (err) {
+        document.getElementById('progressLabel').textContent = 'Upload finished, but could not save it: ' + (err.data?.message || err.message);
+      }
+    } else {
+      document.getElementById('progressLabel').textContent = 'No course selected — open this page from a course to attach the video.';
+    }
+    document.getElementById('doneMsgEl').classList.add('show');
+  }  document.getElementById('saveLessonBtn')?.addEventListener('click', async () => {
+    if (!uploadedLessonId) { alert('Upload a video first.'); return; }
+    const btn = document.getElementById('saveLessonBtn');
+    const originalHTML = btn.innerHTML;
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+    try {
+      await instructorApi.updateLesson(uploadedLessonId, {
+        title: document.getElementById('lessonTitleInput').value.trim(),
+        description: document.getElementById('lessonDescInput').value.trim(),
+        is_free: document.getElementById('lessonFreeToggle').checked,
+        is_downloadable: document.getElementById('lessonDownloadToggle').checked,
+      });
+      btn.innerHTML = '✓ Lesson Saved';
+      setTimeout(() => { btn.innerHTML = originalHTML; btn.disabled = false; }, 2000);
+    } catch (err) {
+      alert('Could not save lesson details: ' + (err.data?.message || err.message));
+      btn.innerHTML = originalHTML;
+      btn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>
+</html>

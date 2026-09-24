@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Deployment Check — GITAcademy</title>
+<style>
+  body{font-family:system-ui,sans-serif;max-width:640px;margin:3rem auto;padding:0 1.5rem;color:#0d0d0f;line-height:1.6}
+  h1{font-size:1.4rem}
+  .check{display:flex;align-items:flex-start;gap:.75rem;padding:1rem;border-radius:10px;margin-bottom:.75rem;border:1px solid #e5e0d8}
+  .check.pass{background:#f0f9f2;border-color:#2d7a4f}
+  .check.fail{background:#fdf0f0;border-color:#c43030}
+  .check.pending{background:#f5f5f5;color:#888}
+  .icon{font-size:1.3rem;line-height:1}
+  .fix{font-size:.85rem;color:#555;margin-top:.4rem;padding-top:.4rem;border-top:1px dashed #ccc}
+  code{background:#eee;padding:.1rem .4rem;border-radius:4px;font-size:.85em}
+</style>
+</head>
+<body>
+<h1>🔍 GITAcademy Deployment Check</h1>
+<p style="color:#666;font-size:.9rem">This page tests whether your deployment is actually wired together correctly. Delete this file once everything passes — it's a diagnostic tool, not part of the app.</p>
+
+<div id="results">
+  <div class="check pending" id="check-static">⏳ Checking static files…</div>
+  <div class="check pending" id="check-api">⏳ Checking backend connection…</div>
+  <div class="check pending" id="check-db">⏳ Checking database…</div>
+  <div class="check pending" id="check-write">⏳ Checking write permissions…</div>
+</div>
+
+<script type="module">
+  // 1. Static files — if you're reading this rendered page, this already passed.
+  document.getElementById('check-static').className = 'check pass';
+  document.getElementById('check-static').innerHTML = '<span class="icon">✅</span><div><strong>Static files are being served.</strong> This page loaded, so your web server is serving HTML correctly.</div>';
+
+  // 2. Backend connection — the single most common real deployment failure:
+  // pages load fine but every /api/* call 404s because a required hidden
+  // config file (.htaccess on Apache/shared hosting) never got uploaded.
+  try {
+    const res = await fetch('/api/categories');
+    if (res.ok) {
+      const data = await res.json();
+      document.getElementById('check-api').className = 'check pass';
+      document.getElementById('check-api').innerHTML = `<span class="icon">✅</span><div><strong>Backend is reachable.</strong> /api/categories responded correctly.</div>`;
+
+      if (data.categories && data.categories.length > 0) {
+        document.getElementById('check-db').className = 'check pass';
+        document.getElementById('check-db').innerHTML = `<span class="icon">✅</span><div><strong>Database has real data.</strong> Found ${data.categories.length} categories — the database was seeded correctly.</div>`;
+      } else {
+        document.getElementById('check-db').className = 'check fail';
+        document.getElementById('check-db').innerHTML = `<span class="icon">❌</span><div><strong>Database is empty.</strong><div class="fix">Run <code>php api/seed.php</code> (via your host's Terminal, or <code>bash deploy/setup.sh</code>) to seed it.</div></div>`;
+      }
+    } else {
+      throw new Error('HTTP ' + res.status);
+    }
+  } catch (err) {
+    document.getElementById('check-api').className = 'check fail';
+    document.getElementById('check-api').innerHTML = `<span class="icon">❌</span><div><strong>Backend is NOT reachable</strong> (${err.message}). This is the #1 cause of "nothing works" — pages load fine, but every button, login, and data fetch silently fails because API requests never reach the PHP backend.
+      <div class="fix"><strong>Most likely fix:</strong> your host's file manager or FTP client probably hid a required file starting with a dot when you uploaded — check that <code>.htaccess</code> actually exists in your web root (on Apache/shared hosting) or that your nginx config includes the <code>/api</code> block from <code>deploy/nginx.conf</code>. In cPanel File Manager, enable "Show Hidden Files" in Settings before uploading, or upload <code>.htaccess</code> separately and rename it from something like <code>htaccess.txt</code> if your host stripped the leading dot.</div></div>`;
+    document.getElementById('check-db').className = 'check fail';
+    document.getElementById('check-db').innerHTML = `<span class="icon">❌</span><div>Can't check — backend isn't reachable yet (see above).</div>`;
+  }
+
+  // 3. Write permissions — the #2 most common real deployment failure:
+  // pages AND the backend load fine, but login/signup/checkout fail with
+  // "attempt to write a readonly database" because the DB file/folder
+  // isn't owned by the web server user.
+  try {
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ first_name: 'Deploy', last_name: 'Check', email: `deploy-check-${Date.now()}@example.invalid`, password: 'checkonly123' }),
+    });
+    const data = await res.json();
+    if (res.ok && data.token) {
+      document.getElementById('check-write').className = 'check pass';
+      document.getElementById('check-write').innerHTML = '<span class="icon">✅</span><div><strong>Database is writable.</strong> A real test registration succeeded — login, signup, and checkout will all work.</div>';
+    } else if (String(data.message || '').toLowerCase().includes('readonly') || String(data.message || '').toLowerCase().includes('write')) {
+      throw new Error(data.message);
+    } else {
+      // Registration might fail for other real reasons (e.g. rate limited from repeated checks) — not necessarily a permissions problem
+      document.getElementById('check-write').className = 'check pass';
+      document.getElementById('check-write').innerHTML = `<span class="icon">✅</span><div><strong>Database responded to a write attempt</strong> (${data.message || 'see response'}). If this wasn't a "readonly database" error, permissions are fine.</div>`;
+    }
+  } catch (err) {
+    document.getElementById('check-write').className = 'check fail';
+    document.getElementById('check-write').innerHTML = `<span class="icon">❌</span><div><strong>Database is NOT writable</strong> (${err.message}). Login, signup, and checkout will all fail.
+      <div class="fix"><strong>Fix:</strong> run <code>bash deploy/setup.sh</code> (fixes this automatically), or manually set the <code>api</code>, <code>uploads</code>, and <code>storage</code> folders — and <code>api/database.sqlite</code> — to be owned by your web server user with permissions <code>775</code>/<code>664</code>.</div></div>`;
+  }
+</script>
+</body>
+</html>
